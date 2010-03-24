@@ -48,10 +48,13 @@ io_func (GIOChannel* channel,
 {
   guchar  buf[512];
   gsize read_bytes = 0;
+
   while (G_IO_STATUS_NORMAL == g_io_channel_read_chars (channel, (gchar*)buf, sizeof (buf), &read_bytes, NULL))
     {
       g_byte_array_append (buffer, buf, read_bytes);
     }
+
+  gtk_progress_bar_pulse (GTK_PROGRESS_BAR (progress));
   return TRUE;
 }
 
@@ -152,6 +155,7 @@ child_watch_cb (GPid      pid,
       g_test_log_buffer_free (tlb);
 
       g_io_channel_unref (channel);
+      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (progress), 0.0);
     }
 
   g_spawn_close_pid (pid);
@@ -280,7 +284,8 @@ main (int   argc,
   gtk_box_pack_start (GTK_BOX (box), file_chooser, FALSE, FALSE, 0);
   gtk_widget_show (button_run);
   gtk_box_pack_start (GTK_BOX (box), button_run, FALSE, FALSE, 0);
-  /* FIXME: add progress bar */
+  gtk_widget_show (progress);
+  gtk_box_pack_start (GTK_BOX (box), progress, FALSE, FALSE, 0);
   /* FIXME: add state information: "Runs: 3/3" "Errors: 2" "Failures: 2" */
 #if 0
   gtk_container_add_with_properties (GTK_CONTAINER (notebook), gtk_label_new ("FAILURES"),
