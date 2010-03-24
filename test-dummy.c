@@ -22,11 +22,17 @@
 
 #include <glib.h>
 
+static void
+dummy_first (void)
+{}
+
 int
 main (int   argc,
       char**argv)
 {
   g_test_init (&argc, &argv, NULL);
+
+  g_test_add_func ("/dummy/first", dummy_first);
 
   return g_test_run ();
 }
