@@ -22,6 +22,26 @@
 
 #include <glib/gi18n.h>
 
+static void
+selection_changed_cb (GtkFileChooser* chooser,
+                      GtkWindow     * window)
+{
+  GFile* selected = gtk_file_chooser_get_file (chooser);
+
+  if (selected)
+    {
+      gchar* base = g_file_get_basename (selected); /* FIXME: use the display name */
+      gchar* title = g_strdup_printf (_("%s - GLib Unit Tests"), base);
+      gtk_window_set_title (window, title);
+      g_free (title);
+      g_free (base);
+    }
+  else
+    {
+      gtk_window_set_title (window, _("GLib Unit Tests"));
+    }
+}
+
 int
 main (int   argc,
       char**argv)
@@ -33,13 +53,16 @@ main (int   argc,
   gtk_init (&argc, &argv);
 
   box = gtk_vbox_new (FALSE, 0);
-  file_chooser = gtk_file_chooser_button_new (_("Choose Unit Test"), GTK_FILE_CHOOSER_ACTION_OPEN);
+  file_chooser = gtk_file_chooser_button_new (_("Choose Unit Tests"), GTK_FILE_CHOOSER_ACTION_OPEN);
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 
   gtk_window_set_default_size (GTK_WINDOW (window), 300, 400);
   gtk_window_set_title (GTK_WINDOW (window), _("GLib Unit Tests"));
   g_signal_connect (window, "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);
+
+  g_signal_connect (file_chooser, "selection-changed",
+                    G_CALLBACK (selection_changed_cb), window);
 
   gtk_widget_show (file_chooser);
   gtk_box_pack_start (GTK_BOX (box), file_chooser, FALSE, FALSE, 0);
