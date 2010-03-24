@@ -26,15 +26,25 @@ int
 main (int   argc,
       char**argv)
 {
+  GtkWidget* box;
+  GtkWidget* file_chooser;
   GtkWidget* window;
 
   gtk_init (&argc, &argv);
 
+  box = gtk_vbox_new (FALSE, 0);
+  file_chooser = gtk_file_chooser_button_new (_("Choose Unit Test"), GTK_FILE_CHOOSER_ACTION_OPEN);
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 
+  gtk_window_set_default_size (GTK_WINDOW (window), 300, 400);
   gtk_window_set_title (GTK_WINDOW (window), _("GLib Unit Tests"));
   g_signal_connect (window, "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);
+
+  gtk_widget_show (file_chooser);
+  gtk_box_pack_start (GTK_BOX (box), file_chooser, FALSE, FALSE, 0);
+  gtk_widget_show (box);
+  gtk_container_add (GTK_CONTAINER (window), box);
 
   gtk_widget_show (window);
 
