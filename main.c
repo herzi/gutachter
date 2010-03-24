@@ -23,6 +23,7 @@
 #include <glib/gi18n.h>
 
 static GtkWidget* button_run = NULL;
+static GtkWidget* notebook = NULL;
 
 static void
 selection_changed_cb (GtkFileChooser* chooser,
@@ -44,6 +45,7 @@ selection_changed_cb (GtkFileChooser* chooser,
     }
 
   gtk_widget_set_sensitive (button_run, selected != NULL);
+  gtk_widget_set_sensitive (notebook, selected != NULL);
 }
 
 int
@@ -59,6 +61,7 @@ main (int   argc,
   box = gtk_vbox_new (FALSE, 0);
   button_run = gtk_button_new_from_stock (GTK_STOCK_EXECUTE);
   file_chooser = gtk_file_chooser_button_new (_("Choose Unit Tests"), GTK_FILE_CHOOSER_ACTION_OPEN);
+  notebook = gtk_notebook_new ();
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 
   gtk_window_set_default_size (GTK_WINDOW (window), 300, 400);
@@ -74,6 +77,19 @@ main (int   argc,
   gtk_box_pack_start (GTK_BOX (box), file_chooser, FALSE, FALSE, 0);
   gtk_widget_show (button_run);
   gtk_box_pack_start (GTK_BOX (box), button_run, FALSE, FALSE, 0);
+  /* FIXME: add progress bar */
+  /* FIXME: add state information: "Runs: 3/3" "Errors: 2" "Failures: 2" */
+#if 0
+  gtk_container_add_with_properties (GTK_CONTAINER (notebook), gtk_label_new ("FAILURES"),
+                                     "tab-label", _("Failures"),
+                                     NULL);
+#endif
+  gtk_container_add_with_properties (GTK_CONTAINER (notebook), gtk_label_new ("HIERARCHY"),
+                                     "tab-label", _("Hierarchy"),
+                                     NULL);
+  gtk_widget_show_all (notebook);
+  /* FIXME: pack the notebook into a paned with the text view */
+  gtk_container_add (GTK_CONTAINER (box), notebook);
   gtk_widget_show (box);
   gtk_container_add (GTK_CONTAINER (window), box);
 
