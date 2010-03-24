@@ -33,18 +33,54 @@ selection_changed_cb (GtkFileChooser* chooser,
 
   if (selected)
     {
+      GFile* parent = g_file_get_parent (selected);
       gchar* base = g_file_get_basename (selected); /* FIXME: use the display name */
       gchar* title = g_strdup_printf (_("%s - GLib Unit Tests"), base);
+      gchar* fd = g_strdup_printf ("%d", 1);
+      gchar* working_folder;
+      gchar* argv[] = { /* actually is "gchar const* argv[]" but g_spawn_async() requires a "gchar**" */
+              base,
+              "-l",
+              "--GTestLogFD",
+              fd,
+              NULL
+      };
+      GPid  pid = 0;
+      GError* error = NULL;
+
       gtk_window_set_title (window, title);
       g_free (title);
-      g_free (base);
+
+      /* FIXME: should only be necessary on UNIX */
+      working_folder = base;
+      base = g_strdup_printf ("./%s", working_folder);
+      g_free (working_folder);
+      argv[0] = base;
+
+      working_folder = g_file_get_path (parent);
+      if (!g_spawn_async (working_folder, argv, NULL,
+                          G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
+                          NULL, NULL, &pid, &error))
+        {
+          g_warning ("error executing \"%s\": %s",
+                     base, error->message);
+          g_error_free (error);
+          gtk_widget_set_sensitive (button_run, FALSE);
+        }
+      else
+        {
+          gtk_widget_set_sensitive (button_run, TRUE);
+        }
+
+      g_free (fd);
+      g_free (working_folder);
     }
   else
     {
       gtk_window_set_title (window, _("GLib Unit Tests"));
+      gtk_widget_set_sensitive (button_run, FALSE);
     }
 
-  gtk_widget_set_sensitive (button_run, selected != NULL);
   gtk_widget_set_sensitive (notebook, selected != NULL);
 }
 
