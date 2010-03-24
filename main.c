@@ -22,6 +22,8 @@
 
 #include <glib/gi18n.h>
 
+static GtkWidget* button_run = NULL;
+
 static void
 selection_changed_cb (GtkFileChooser* chooser,
                       GtkWindow     * window)
@@ -40,6 +42,8 @@ selection_changed_cb (GtkFileChooser* chooser,
     {
       gtk_window_set_title (window, _("GLib Unit Tests"));
     }
+
+  gtk_widget_set_sensitive (button_run, selected != NULL);
 }
 
 int
@@ -53,19 +57,23 @@ main (int   argc,
   gtk_init (&argc, &argv);
 
   box = gtk_vbox_new (FALSE, 0);
+  button_run = gtk_button_new_from_stock (GTK_STOCK_EXECUTE);
   file_chooser = gtk_file_chooser_button_new (_("Choose Unit Tests"), GTK_FILE_CHOOSER_ACTION_OPEN);
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 
   gtk_window_set_default_size (GTK_WINDOW (window), 300, 400);
-  gtk_window_set_title (GTK_WINDOW (window), _("GLib Unit Tests"));
   g_signal_connect (window, "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);
 
   g_signal_connect (file_chooser, "selection-changed",
                     G_CALLBACK (selection_changed_cb), window);
 
+  selection_changed_cb (GTK_FILE_CHOOSER (file_chooser), GTK_WINDOW (window));
+
   gtk_widget_show (file_chooser);
   gtk_box_pack_start (GTK_BOX (box), file_chooser, FALSE, FALSE, 0);
+  gtk_widget_show (button_run);
+  gtk_box_pack_start (GTK_BOX (box), button_run, FALSE, FALSE, 0);
   gtk_widget_show (box);
   gtk_container_add (GTK_CONTAINER (window), box);
 
