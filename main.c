@@ -156,6 +156,7 @@ child_watch_cb (GPid      pid,
 
       g_io_channel_unref (channel);
       gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (progress), 0.0);
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("not tested yet"));
     }
 
   g_spawn_close_pid (pid);
@@ -221,6 +222,7 @@ selection_changed_cb (GtkFileChooser* chooser,
           gtk_widget_set_sensitive (button_run, TRUE);
 
           gtk_progress_bar_pulse (GTK_PROGRESS_BAR (progress));
+          gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("Loading Test Paths..."));
         }
       close (pipes[1]);
 
