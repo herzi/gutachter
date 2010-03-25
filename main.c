@@ -43,6 +43,7 @@ typedef enum
 static GtkWidget* button_run = NULL;
 static GtkWidget* progress = NULL;
 static GtkWidget* notebook = NULL;
+static GtkWidget* tree = NULL;
 
 static GByteArray* buffer = NULL;
 static GHashTable* map = NULL;
@@ -54,6 +55,8 @@ static guint64 executed = 0;
 static guint64 tests = 0;
 static guint64 xvfb_display = 0;
 static GPid    xvfb_pid = 0;
+
+static GFileMonitor* file_monitor = NULL;
 
 static gboolean
 io_func (GIOChannel  * channel,
@@ -190,6 +193,8 @@ child_watch_cb (GPid      pid,
         }
       g_test_log_buffer_free (tlb);
 
+      gtk_tree_view_expand_all (GTK_TREE_VIEW (tree));
+
       g_io_channel_unref (channel);
       gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (progress), 0.0);
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("not tested yet"));
@@ -282,13 +287,42 @@ run_or_warn (GPid       * pid,
 }
 
 static void
+file_changed_cb (GFileMonitor     * monitor    G_GNUC_UNUSED,
+                 GFile            * file       G_GNUC_UNUSED,
+                 GFile            * other_file G_GNUC_UNUSED,
+                 GFileMonitorEvent  event,
+                 gpointer           user_data  G_GNUC_UNUSED)
+{
+  switch (event)
+    {
+    case G_FILE_MONITOR_EVENT_CHANGED:
+    case G_FILE_MONITOR_EVENT_CREATED:
+      g_warning ("FIXME: re-scan the file");
+      break;
+    case G_FILE_MONITOR_EVENT_DELETED:
+      g_warning ("FIXME: disable the UI bits for now");
+      break;
+    default:
+      g_print ("file changed: %d\n", event);
+      break;
+    }
+}
+
+static void
 selection_changed_cb (GtkWindow* window)
 {
   g_hash_table_remove_all (map);
   gtk_tree_store_clear (store);
 
+  if (file_monitor)
+    {
+      g_object_unref (file_monitor);
+      file_monitor = NULL;
+    }
+
   if (testcase)
     {
+      GError* error = NULL;
       gchar* base;
       gchar* title;
       GPid   pid = 0;
@@ -327,6 +361,10 @@ selection_changed_cb (GtkWindow* window)
           gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("Loading Test Paths..."));
         }
       close (pipes[1]);
+
+      file_monitor = g_file_monitor (testcase, G_FILE_MONITOR_NONE, NULL, &error);
+      g_signal_connect (file_monitor, "changed",
+                        G_CALLBACK (file_changed_cb), NULL);
     }
 
   if (!testcase)
@@ -553,7 +591,6 @@ main (int   argc,
   GtkWidget* box;
   GtkWidget* scrolled;
   GtkWidget* toolbar;
-  GtkWidget* tree;
   GtkWidget* window;
 
   gtk_init (&argc, &argv);
