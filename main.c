@@ -573,6 +573,8 @@ main (int   argc,
   tree = gtk_tree_view_new_with_model (GTK_TREE_MODEL (store));
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 
+  selection_changed_cb (GTK_WINDOW (window));
+
   gtk_window_set_default_size (GTK_WINDOW (window), 300, 400);
   g_signal_connect (window, "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);
@@ -581,11 +583,12 @@ main (int   argc,
   g_signal_connect (item, "clicked",
                     G_CALLBACK (open_item_clicked), window);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
-
-  selection_changed_cb (GTK_WINDOW (window));
-
+  item = gtk_separator_tool_item_new ();
+  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
+  button_run = GTK_WIDGET (gtk_tool_button_new_from_stock (GTK_STOCK_EXECUTE));
   g_signal_connect (button_run, "clicked",
                     G_CALLBACK (button_clicked_cb), NULL);
+  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), GTK_TOOL_ITEM (button_run), -1);
 
   gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (tree), -1,
                                               NULL, gtk_cell_renderer_text_new (),
@@ -598,8 +601,6 @@ main (int   argc,
 
   gtk_widget_show_all (toolbar);
   gtk_box_pack_start (GTK_BOX (box), toolbar, FALSE, FALSE, 0);
-  gtk_widget_show (button_run);
-  gtk_box_pack_start (GTK_BOX (box), button_run, FALSE, FALSE, 0);
   gtk_widget_show (progress);
   gtk_box_pack_start (GTK_BOX (box), progress, FALSE, FALSE, 0);
   /* FIXME: add state information: "Runs: 3/3" "Errors: 2" "Failures: 2" */
