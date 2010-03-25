@@ -30,6 +30,7 @@
 enum
 {
   COL_NAME,
+  COL_PASSED,
   N_COLUMNS
 };
 
@@ -67,6 +68,22 @@ io_func (GIOChannel  * channel,
   return TRUE;
 }
 
+static gboolean
+lookup_iter_for_path (GtkTreeIter* iter,
+                      gchar      * path)
+{
+  GtkTreeRowReference* reference = g_hash_table_lookup (map, path);
+  if (reference)
+    {
+      GtkTreePath* tree_path = gtk_tree_row_reference_get_path (reference);
+      g_assert (gtk_tree_model_get_iter (GTK_TREE_MODEL (store), iter, tree_path));
+      gtk_tree_path_free (tree_path);
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
 static void
 create_iter_for_path (GtkTreeIter* iter,
                       gchar      * path)
@@ -74,11 +91,8 @@ create_iter_for_path (GtkTreeIter* iter,
   GtkTreePath* tree_path;
   gchar      * last_slash;
 
-  if (g_hash_table_lookup (map, path))
+  if (lookup_iter_for_path (iter, path))
     {
-      tree_path = gtk_tree_row_reference_get_path (g_hash_table_lookup (map, path));
-      g_assert (gtk_tree_model_get_iter (GTK_TREE_MODEL (store), iter, tree_path));
-      gtk_tree_path_free (tree_path);
       g_free (path);
       return;
     }
@@ -87,9 +101,6 @@ create_iter_for_path (GtkTreeIter* iter,
   if (!last_slash || last_slash == path || *(last_slash + 1) == '\0')
     {
       gtk_tree_store_append (store, iter, NULL);
-      gtk_tree_store_set (store, iter,
-                          COL_NAME, path,
-                          -1);
     }
   else
     {
@@ -102,10 +113,12 @@ create_iter_for_path (GtkTreeIter* iter,
       last_slash++;
 
       gtk_tree_store_append (store, iter, &parent);
-      gtk_tree_store_set (store, iter,
-                          COL_NAME, last_slash,
-                          -1);
     }
+
+  gtk_tree_store_set (store, iter,
+                      COL_PASSED, FALSE,
+                      COL_NAME, last_slash,
+                      -1);
 
   tree_path = gtk_tree_model_get_path (GTK_TREE_MODEL (store), iter);
   g_hash_table_insert (map, path, gtk_tree_row_reference_new (GTK_TREE_MODEL (store), tree_path));
@@ -322,6 +335,7 @@ run_test_child_watch (GPid      pid,
       gsize length = 0;
       gchar* data = NULL;
       GIOStatus  status;
+      GtkTreeIter  iter;
 
       while (G_IO_STATUS_NORMAL == (status = g_io_channel_read_to_end (channel, &data, &length, &error)))
         {
@@ -332,18 +346,17 @@ run_test_child_watch (GPid      pid,
       g_test_log_buffer_push (tlb, buffer->len, buffer->data);
       for (msg = g_test_log_buffer_pop (tlb); msg; msg = g_test_log_buffer_pop (tlb))
         {
-          GtkTreeIter  iter;
-          gchar      * path;
-
           switch (msg->log_type)
             {
             case G_TEST_LOG_START_BINARY:
               break;
             case G_TEST_LOG_START_CASE:
+              lookup_iter_for_path (&iter, msg->strings[0]);
               break;
             case G_TEST_LOG_STOP_CASE:
-              path = g_strdup (msg->strings[0]);
-              /* FIXME: lookup_iter_for_path (&iter, path); */
+              gtk_tree_store_set (store, &iter,
+                                  COL_PASSED, msg->nums[0] == 0,
+                                  -1);
               g_warning ("status %d; nforks %d; elapsed %Lf",
                          (int)msg->nums[0], (int)msg->nums[1], msg->nums[2]);
               executed++;
@@ -417,7 +430,7 @@ main (int   argc,
 
   map = g_hash_table_new (g_str_hash, g_str_equal);
 
-  store = gtk_tree_store_new (N_COLUMNS, G_TYPE_STRING);
+  store = gtk_tree_store_new (N_COLUMNS, G_TYPE_STRING, G_TYPE_BOOLEAN);
 
   box = gtk_vbox_new (FALSE, 0);
   button_run = gtk_button_new_from_stock (GTK_STOCK_EXECUTE);
@@ -442,6 +455,10 @@ main (int   argc,
   gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (tree), -1,
                                               NULL, gtk_cell_renderer_text_new (),
                                               "text", COL_NAME,
+                                              NULL);
+  gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (tree), -1,
+                                              NULL, gtk_cell_renderer_toggle_new (),
+                                              "active", COL_PASSED,
                                               NULL);
 
   gtk_widget_show (file_chooser);
