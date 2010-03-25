@@ -40,7 +40,6 @@ typedef enum
   MODE_TEST
 } RunningMode;
 
-static GtkWidget* file_label = NULL;
 static GtkWidget* button_run = NULL;
 static GtkWidget* progress = NULL;
 static GtkWidget* notebook = NULL;
@@ -333,7 +332,7 @@ selection_changed_cb (GtkWindow* window)
   if (!testcase)
     {
       gtk_window_set_title (window, _("GLib Unit Tests"));
-      gtk_label_set_text (GTK_LABEL (file_label), _("no test selected"));
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("no test selected"));
       gtk_widget_set_sensitive (button_run, FALSE);
     }
   else
@@ -347,12 +346,9 @@ selection_changed_cb (GtkWindow* window)
         {
           g_warning ("error reading display name from file: %s", error->message);
           g_error_free (error);
-          gtk_label_set_text (GTK_LABEL (file_label), _("couldn't get test name"));
         }
       else
         {
-          gtk_label_set_text (GTK_LABEL (file_label), g_file_info_get_display_name (info));
-
           g_object_unref (info);
         }
     }
@@ -570,7 +566,6 @@ main (int   argc,
 
   box = gtk_vbox_new (FALSE, 0);
   button_run = gtk_button_new_from_stock (GTK_STOCK_EXECUTE);
-  file_label = gtk_label_new (NULL);
   notebook = gtk_notebook_new ();
   progress = gtk_progress_bar_new ();
   scrolled = gtk_scrolled_window_new (NULL, NULL);
@@ -603,8 +598,6 @@ main (int   argc,
 
   gtk_widget_show_all (toolbar);
   gtk_box_pack_start (GTK_BOX (box), toolbar, FALSE, FALSE, 0);
-  gtk_widget_show (file_label);
-  gtk_box_pack_start (GTK_BOX (box), file_label, FALSE, FALSE, 0);
   gtk_widget_show (button_run);
   gtk_box_pack_start (GTK_BOX (box), button_run, FALSE, FALSE, 0);
   gtk_widget_show (progress);
