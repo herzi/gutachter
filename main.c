@@ -285,9 +285,6 @@ selection_changed_cb (GtkFileChooser* chooser,
                       GtkWindow     * window)
 {
   GFile* selected = gtk_file_chooser_get_file (chooser);
-  gpointer key;
-  gpointer value;
-  GHashTableIter  iter;
 
   g_hash_table_remove_all (map);
   gtk_tree_store_clear (store);
@@ -519,6 +516,7 @@ main (int   argc,
   GtkWidget* box;
   GtkWidget* file_chooser;
   GtkWidget* scrolled;
+  GtkWidget* toolbar;
   GtkWidget* tree;
   GtkWidget* window;
 
@@ -536,6 +534,7 @@ main (int   argc,
   notebook = gtk_notebook_new ();
   progress = gtk_progress_bar_new ();
   scrolled = gtk_scrolled_window_new (NULL, NULL);
+  toolbar = gtk_toolbar_new ();
   tree = gtk_tree_view_new_with_model (GTK_TREE_MODEL (store));
   window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 
@@ -559,6 +558,8 @@ main (int   argc,
                                               "active", COL_PASSED,
                                               NULL);
 
+  gtk_widget_show (toolbar);
+  gtk_box_pack_start (GTK_BOX (box), toolbar, FALSE, FALSE, 0);
   gtk_widget_show (file_chooser);
   gtk_box_pack_start (GTK_BOX (box), file_chooser, FALSE, FALSE, 0);
   gtk_widget_show (button_run);
