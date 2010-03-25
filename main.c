@@ -589,7 +589,6 @@ main (int   argc,
 {
   GtkToolItem* item;
   GtkWidget* box;
-  GtkWidget* scrolled;
   GtkWidget* toolbar;
   GtkWidget* window;
 
@@ -603,7 +602,6 @@ main (int   argc,
 
   button_run = gtk_button_new_from_stock (GTK_STOCK_EXECUTE);
   progress = gtk_progress_bar_new ();
-  scrolled = gtk_scrolled_window_new (NULL, NULL);
   toolbar = gtk_toolbar_new ();
   window = gtk_test_window_new ();
   box = gtk_test_window_get_widget (GTK_TEST_WINDOW (window));
@@ -642,17 +640,7 @@ main (int   argc,
   gtk_widget_show (progress);
   gtk_box_pack_start (GTK_BOX (box), progress, FALSE, FALSE, 0);
   /* FIXME: add state information: "Runs: 3/3" "Errors: 2" "Failures: 2" */
-#if 0
-  gtk_container_add_with_properties (GTK_CONTAINER (notebook), gtk_label_new ("FAILURES"),
-                                     "tab-label", _("Failures"),
-                                     NULL);
-#endif
   gtk_widget_show (tree);
-  gtk_container_add (GTK_CONTAINER (scrolled), tree);
-  gtk_widget_show (scrolled);
-  gtk_container_add_with_properties (GTK_CONTAINER (notebook), scrolled,
-                                     "tab-label", _("Hierarchy"),
-                                     NULL);
   gtk_widget_show_all (notebook);
   /* FIXME: pack the notebook into a paned with the text view */
   gtk_container_add (GTK_CONTAINER (box), notebook);

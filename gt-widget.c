@@ -20,6 +20,8 @@
 
 #include "gt-widget.h"
 
+#include <glib/gi18n.h>
+
 struct _GtkTestWidgetPrivate
 {
   GtkWidget* hierarchy_view;
@@ -33,9 +35,24 @@ G_DEFINE_TYPE (GtkTestWidget, gtk_test_widget, GTK_TYPE_VBOX);
 static void
 gtk_test_widget_init (GtkTestWidget* self)
 {
+  GtkWidget* scrolled;
+
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WIDGET, GtkTestWidgetPrivate);
   PRIV (self)->hierarchy_view = gtk_tree_view_new ();
   PRIV (self)->notebook = gtk_notebook_new ();
+
+  scrolled = gtk_scrolled_window_new (NULL, NULL);
+
+  gtk_container_add (GTK_CONTAINER (scrolled), PRIV (self)->hierarchy_view);
+  gtk_widget_show (scrolled);
+  gtk_container_add_with_properties (GTK_CONTAINER (PRIV (self)->notebook), scrolled,
+                                     "tab-label", _("Hierarchy"),
+                                     NULL);
+#if 0
+  gtk_container_add_with_properties (GTK_CONTAINER (notebook), gtk_label_new ("FAILURES"),
+                                     "tab-label", _("Failures"),
+                                     NULL);
+#endif
 }
 
 static void
