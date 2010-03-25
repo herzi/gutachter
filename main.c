@@ -48,6 +48,8 @@ static GByteArray* buffer = NULL;
 static GHashTable* map = NULL;
 static GtkTreeStore* store = NULL;
 
+static GFile* testcase = NULL;
+
 static guint64 executed = 0;
 static guint64 tests = 0;
 static guint64 xvfb_display = 0;
@@ -197,14 +199,13 @@ child_watch_cb (GPid      pid,
 }
 
 static gboolean
-run_or_warn (GFile      * file,
-             GPid       * pid,
+run_or_warn (GPid       * pid,
              guint        pipe_id,
              RunningMode  mode)
 {
   gboolean  result = FALSE;
   GError  * error  = NULL;
-  GFile   * parent = g_file_get_parent (file);
+  GFile   * parent = g_file_get_parent (testcase);
   gchar   * base;
   gchar   * folder = g_file_get_path (parent);
   gchar   * argv[] = {
@@ -218,7 +219,7 @@ run_or_warn (GFile      * file,
   gchar** iter;
   gboolean found_display = FALSE;
 
-  base = g_file_get_basename (file);
+  base = g_file_get_basename (testcase);
 
   /* FIXME: this is X11 specific */
   for (iter = env; iter && *iter; iter++)
@@ -284,12 +285,17 @@ static void
 selection_changed_cb (GtkFileChooser* chooser,
                       GtkWindow     * window)
 {
-  GFile* selected = gtk_file_chooser_get_file (chooser);
+  if (testcase)
+    {
+      g_object_unref (testcase);
+    }
+
+  testcase = gtk_file_chooser_get_file (chooser);
 
   g_hash_table_remove_all (map);
   gtk_tree_store_clear (store);
 
-  if (selected)
+  if (testcase)
     {
       gchar* base;
       gchar* title;
@@ -302,14 +308,14 @@ selection_changed_cb (GtkFileChooser* chooser,
           exit (2);
         }
 
-      base = g_file_get_basename (selected); /* FIXME: use the display name */
+      base = g_file_get_basename (testcase); /* FIXME: use the display name */
       title = g_strdup_printf (_("%s - GLib Unit Tests"), base);
       g_free (base);
       gtk_window_set_title (window, title);
       g_free (title);
 
       tests = 0;
-      if (!run_or_warn (selected, &pid, pipes[1], MODE_LIST))
+      if (!run_or_warn (&pid, pipes[1], MODE_LIST))
         {
           gtk_widget_set_sensitive (button_run, FALSE);
           close (pipes[0]);
@@ -331,17 +337,13 @@ selection_changed_cb (GtkFileChooser* chooser,
       close (pipes[1]);
     }
 
-  if (!selected)
+  if (!testcase)
     {
       gtk_window_set_title (window, _("GLib Unit Tests"));
       gtk_widget_set_sensitive (button_run, FALSE);
     }
-  else
-    {
-      g_object_unref (selected);
-    }
 
-  gtk_widget_set_sensitive (notebook, selected != NULL);
+  gtk_widget_set_sensitive (notebook, testcase != NULL);
 }
 
 static void
@@ -417,9 +419,8 @@ run_test_child_watch (GPid      pid,
 
 static void
 button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
-                   gpointer   user_data)
+                   gpointer   user_data G_GNUC_UNUSED)
 {
-  GFile* test = gtk_file_chooser_get_file (user_data);
   GPid   pid = 0;
   int    pipes[2];
 
@@ -432,7 +433,7 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
     }
 
   executed = 0;
-  if (!run_or_warn (test, &pid, pipes[1], MODE_TEST))
+  if (!run_or_warn (&pid, pipes[1], MODE_TEST))
     {
       close (pipes[0]);
     }
@@ -452,6 +453,25 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
     }
 
   close (pipes[1]);
+}
+
+static void
+open_item_clicked (GtkButton* button G_GNUC_UNUSED,
+                   GtkWindow* window)
+{
+  GtkWidget* dialog = gtk_file_chooser_dialog_new (_("Choose Unit Tests"),
+                                                   window,
+                                                   GTK_FILE_CHOOSER_ACTION_OPEN,
+                                                   GTK_STOCK_CLOSE, GTK_RESPONSE_REJECT,
+                                                   GTK_STOCK_OPEN,  GTK_RESPONSE_ACCEPT,
+                                                   NULL);
+  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_ACCEPT);
+
+  gtk_dialog_run (GTK_DIALOG (dialog));
+
+  selection_changed_cb (GTK_FILE_CHOOSER (dialog), window);
+
+  gtk_widget_destroy (dialog);
 }
 
 static void
