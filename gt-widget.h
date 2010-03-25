@@ -36,10 +36,11 @@ typedef struct _GtkTestWidgetPrivate GtkTestWidgetPrivate;
 #define GTK_TEST_IS_WIDGET_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), GTK_TEST_TYPE_WIDGET))
 #define GTK_TEST_WIDGET_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), GTK_TEST_TYPE_WIDGET, GtkTestWidgetClass))
 
-GType      gtk_test_widget_get_type     (void);
-GtkWidget* gtk_test_widget_new          (void);
+GType      gtk_test_widget_get_type      (void);
+GtkWidget* gtk_test_widget_new           (void);
 #ifndef REFACTORING_FINISHED
-GtkWidget* gtk_test_widget_get_notebook (GtkTestWidget* self);
+GtkWidget* gtk_test_widget_get_notebook  (GtkTestWidget* self);
+GtkWidget* gtk_test_widget_get_hierarchy (GtkTestWidget* self);
 #endif
 
 struct _GtkTestWidget

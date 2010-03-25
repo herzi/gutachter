@@ -22,6 +22,7 @@
 
 struct _GtkTestWidgetPrivate
 {
+  GtkWidget* hierarchy_view;
   GtkWidget* notebook;
 };
 
@@ -33,6 +34,7 @@ static void
 gtk_test_widget_init (GtkTestWidget* self)
 {
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WIDGET, GtkTestWidgetPrivate);
+  PRIV (self)->hierarchy_view = gtk_tree_view_new ();
   PRIV (self)->notebook = gtk_notebook_new ();
 }
 
@@ -40,6 +42,14 @@ static void
 gtk_test_widget_class_init (GtkTestWidgetClass* self_class)
 {
   g_type_class_add_private (self_class, sizeof (GtkTestWidgetPrivate));
+}
+
+GtkWidget*
+gtk_test_widget_get_hierarchy (GtkTestWidget* self)
+{
+  g_return_val_if_fail (GTK_TEST_IS_WIDGET (self), NULL);
+
+  return PRIV (self)->hierarchy_view;
 }
 
 GtkWidget*

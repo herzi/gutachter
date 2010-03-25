@@ -605,10 +605,12 @@ main (int   argc,
   progress = gtk_progress_bar_new ();
   scrolled = gtk_scrolled_window_new (NULL, NULL);
   toolbar = gtk_toolbar_new ();
-  tree = gtk_tree_view_new_with_model (GTK_TREE_MODEL (store));
   window = gtk_test_window_new ();
   box = gtk_test_window_get_widget (GTK_TEST_WINDOW (window));
+  tree = gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (box));
   notebook = gtk_test_widget_get_notebook (GTK_TEST_WIDGET (box));
+
+  gtk_tree_view_set_model (GTK_TREE_VIEW (tree), GTK_TREE_MODEL (store));
 
   selection_changed_cb (GTK_WINDOW (window));
 
