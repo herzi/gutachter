@@ -33,6 +33,12 @@ enum
   N_COLUMNS
 };
 
+typedef enum
+{
+  MODE_LIST,
+  MODE_TEST
+} RunningMode;
+
 static GtkWidget* button_run = NULL;
 static GtkWidget* progress = NULL;
 static GtkWidget* notebook = NULL;
@@ -40,6 +46,9 @@ static GtkWidget* notebook = NULL;
 static GByteArray* buffer = NULL;
 static GHashTable* map = NULL;
 static GtkTreeStore* store = NULL;
+
+static guint64 executed = 0;
+static guint64 tests = 0;
 
 static gboolean
 io_func (GIOChannel  * channel,
@@ -152,6 +161,7 @@ child_watch_cb (GPid      pid,
             case G_TEST_LOG_LIST_CASE:
               path = g_strdup (msg->strings[0]);;
               create_iter_for_path (&iter, path);
+              tests++;
               break;
             default:
               g_warning ("unexpected message type: %d", msg->log_type);
@@ -170,8 +180,10 @@ child_watch_cb (GPid      pid,
 }
 
 static gboolean
-run_or_warn (GFile* file,
-             GPid * pid)
+run_or_warn (GFile      * file,
+             GPid       * pid,
+             guint        pipe_id,
+             RunningMode  mode)
 {
   gboolean  result = FALSE;
   GError  * error  = NULL;
@@ -181,14 +193,25 @@ run_or_warn (GFile* file,
   gchar   * argv[] = {
           NULL,
           NULL,
+          "-q",
           NULL,
           NULL
   };
 
   base = g_file_get_basename (file);
 
+  switch (mode)
+    {
+    case MODE_TEST:
+      break;
+    case MODE_LIST:
+      argv[3] = "-l";
+      break;
+    }
+
   /* FIXME: should only be necessary on UNIX */
   argv[0] = g_strdup_printf ("./%s", base);
+  argv[1] = g_strdup_printf ("--GTestLogFD=%u", pipe_id);
 
   result = g_spawn_async (folder, argv, NULL,
                           G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_LEAVE_DESCRIPTORS_OPEN | G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
@@ -201,6 +224,7 @@ run_or_warn (GFile* file,
       g_error_free (error);
     }
 
+  g_free (argv[1]);
   g_free (argv[0]);
   g_free (folder);
   g_object_unref (parent);
@@ -233,7 +257,8 @@ selection_changed_cb (GtkFileChooser* chooser,
       gtk_window_set_title (window, title);
       g_free (title);
 
-      if (!run_or_warn (selected, &pid))
+      tests = 0;
+      if (!run_or_warn (selected, &pid, pipes[1], MODE_LIST))
         {
           gtk_widget_set_sensitive (button_run, FALSE);
           close (pipes[0]);
@@ -271,8 +296,10 @@ selection_changed_cb (GtkFileChooser* chooser,
 static void
 run_test_child_watch (GPid      pid,
                       gint      status,
-                      gpointer  user_data G_GNUC_UNUSED)
+                      gpointer  user_data)
 {
+  GIOChannel* channel = user_data;
+
   g_spawn_close_pid (pid);
 
   if (WIFEXITED (status) && WEXITSTATUS (status))
@@ -289,8 +316,52 @@ run_test_child_watch (GPid      pid,
     }
   else if (WIFEXITED (status))
     {
+      GTestLogMsg *msg;
+      GTestLogBuffer* tlb;
+      GError* error = NULL;
+      gsize length = 0;
+      gchar* data = NULL;
+      GIOStatus  status;
+
+      while (G_IO_STATUS_NORMAL == (status = g_io_channel_read_to_end (channel, &data, &length, &error)))
+        {
+          g_byte_array_append (buffer, (guchar*)data, length);
+        }
+
+      tlb = g_test_log_buffer_new ();
+      g_test_log_buffer_push (tlb, buffer->len, buffer->data);
+      for (msg = g_test_log_buffer_pop (tlb); msg; msg = g_test_log_buffer_pop (tlb))
+        {
+          GtkTreeIter  iter;
+          gchar      * path;
+
+          switch (msg->log_type)
+            {
+            case G_TEST_LOG_START_BINARY:
+              break;
+            case G_TEST_LOG_START_CASE:
+              break;
+            case G_TEST_LOG_STOP_CASE:
+              path = g_strdup (msg->strings[0]);
+              /* FIXME: lookup_iter_for_path (&iter, path); */
+              g_warning ("status %d; nforks %d; elapsed %Lf",
+                         (int)msg->nums[0], (int)msg->nums[1], msg->nums[2]);
+              executed++;
+              gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (progress), 1.0 * executed / tests);
+              break;
+            default:
+              g_warning ("unexpected message type: %d", msg->log_type);
+            }
+
+          g_test_log_msg_free (msg);
+        }
+      g_test_log_buffer_free (tlb);
+
+      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (progress), 1.0);
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("exited cleanly"));
     }
+
+  g_io_channel_unref (channel);
 }
 
 static void
@@ -309,7 +380,8 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
       return;
     }
 
-  if (!run_or_warn (test, &pid))
+  executed = 0;
+  if (!run_or_warn (test, &pid, pipes[1], MODE_TEST))
     {
       close (pipes[0]);
     }
@@ -324,7 +396,7 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
       g_child_watch_add (pid, run_test_child_watch, channel);
       gtk_widget_set_sensitive (button_run, TRUE);
 
-      gtk_progress_bar_pulse (GTK_PROGRESS_BAR (progress));
+      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (progress), 0.0);
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("Starting Tests..."));
     }
 
