@@ -21,6 +21,7 @@
 #ifndef GTK_TEST_H
 #define GTK_TEST_H
 
+#include <gt-widget.h>
 #include <gt-window.h>
 
 #endif /* !GTK_TEST_H */

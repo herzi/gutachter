@@ -601,7 +601,6 @@ main (int   argc,
 
   g_idle_add (setup_xvfb, NULL);
 
-  box = gtk_vbox_new (FALSE, 0);
   button_run = gtk_button_new_from_stock (GTK_STOCK_EXECUTE);
   notebook = gtk_notebook_new ();
   progress = gtk_progress_bar_new ();
@@ -609,6 +608,7 @@ main (int   argc,
   toolbar = gtk_toolbar_new ();
   tree = gtk_tree_view_new_with_model (GTK_TREE_MODEL (store));
   window = gtk_test_window_new ();
+  box = gtk_test_window_get_widget (GTK_TEST_WINDOW (window));
 
   selection_changed_cb (GTK_WINDOW (window));
 

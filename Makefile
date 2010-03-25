@@ -10,7 +10,9 @@ clean:
 gtk-tester: main.o libgtk-tester.a
 	$(LINK)
 
-libgtk-tester.a: gt-window.o
+libgtk-tester.a: \
+	gt-widget.o \
+	gt-window.o
 	$(AR)
 
 %.o: %.c $(wildcard *.h)

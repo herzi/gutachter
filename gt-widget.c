@@ -18,46 +18,22 @@
  * USA
  */
 
-#include "gt-window.h"
+#include "gt-widget.h"
 
-#include <gtk-test.h>
-
-struct _GtkTestWindowPrivate
-{
-  GtkWidget* widget;
-};
-
-#define PRIV(i) (((GtkTestWindow*)(i))->_private)
-
-G_DEFINE_TYPE (GtkTestWindow, gtk_test_window, GTK_TYPE_WINDOW);
+G_DEFINE_TYPE (GtkTestWidget, gtk_test_widget, GTK_TYPE_VBOX);
 
 static void
-gtk_test_window_init (GtkTestWindow* self)
-{
-  PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WINDOW, GtkTestWindowPrivate);
-  PRIV (self)->widget = gtk_test_widget_new ();
-
-  gtk_window_set_default_size (GTK_WINDOW (self), 300, 400);
-}
+gtk_test_widget_init (GtkTestWidget* self G_GNUC_UNUSED)
+{}
 
 static void
-gtk_test_window_class_init (GtkTestWindowClass* self_class)
-{
-  g_type_class_add_private (self_class, sizeof (GtkTestWindowPrivate));
-}
+gtk_test_widget_class_init (GtkTestWidgetClass* self_class G_GNUC_UNUSED)
+{}
 
 GtkWidget*
-gtk_test_window_get_widget (GtkTestWindow* self)
+gtk_test_widget_new (void)
 {
-  g_return_val_if_fail (GTK_TEST_IS_WINDOW (self), NULL);
-
-  return PRIV (self)->widget;
-}
-
-GtkWidget*
-gtk_test_window_new (void)
-{
-  return g_object_new (GTK_TEST_TYPE_WINDOW,
+  return g_object_new (GTK_TEST_TYPE_WIDGET,
                        NULL);
 }
 
