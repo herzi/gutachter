@@ -90,6 +90,7 @@ static void
 create_iter_for_path (GtkTreeIter* iter,
                       gchar      * path)
 {
+  GtkTreeRowReference* reference;
   GtkTreePath* tree_path;
   gchar      * last_slash;
 
@@ -123,7 +124,8 @@ create_iter_for_path (GtkTreeIter* iter,
                       -1);
 
   tree_path = gtk_tree_model_get_path (GTK_TREE_MODEL (store), iter);
-  g_hash_table_insert (map, path, gtk_tree_row_reference_new (GTK_TREE_MODEL (store), tree_path));
+  reference = gtk_tree_row_reference_new (GTK_TREE_MODEL (store), tree_path);
+  g_hash_table_insert (map, path, reference);
   gtk_tree_path_free (tree_path);
 }
 
@@ -287,11 +289,7 @@ selection_changed_cb (GtkFileChooser* chooser,
   gpointer value;
   GHashTableIter  iter;
 
-  for (g_hash_table_iter_init (&iter, map); g_hash_table_iter_next (&iter, &key, &value) ; g_hash_table_iter_init (&iter, map))
-    {
-      g_free (key);
-      g_object_unref (value);
-    }
+  g_hash_table_remove_all (map);
   gtk_tree_store_clear (store);
 
   if (selected)
@@ -526,7 +524,7 @@ main (int   argc,
 
   gtk_init (&argc, &argv);
 
-  map = g_hash_table_new (g_str_hash, g_str_equal);
+  map = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GFreeFunc)gtk_tree_row_reference_free);
 
   store = gtk_tree_store_new (N_COLUMNS, G_TYPE_STRING, G_TYPE_BOOLEAN);
 
