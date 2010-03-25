@@ -20,15 +20,35 @@
 
 #include "gt-widget.h"
 
+struct _GtkTestWidgetPrivate
+{
+  GtkWidget* notebook;
+};
+
+#define PRIV(i) (((GtkTestWidget*)(i))->_private)
+
 G_DEFINE_TYPE (GtkTestWidget, gtk_test_widget, GTK_TYPE_VBOX);
 
 static void
-gtk_test_widget_init (GtkTestWidget* self G_GNUC_UNUSED)
-{}
+gtk_test_widget_init (GtkTestWidget* self)
+{
+  PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WIDGET, GtkTestWidgetPrivate);
+  PRIV (self)->notebook = gtk_notebook_new ();
+}
 
 static void
-gtk_test_widget_class_init (GtkTestWidgetClass* self_class G_GNUC_UNUSED)
-{}
+gtk_test_widget_class_init (GtkTestWidgetClass* self_class)
+{
+  g_type_class_add_private (self_class, sizeof (GtkTestWidgetPrivate));
+}
+
+GtkWidget*
+gtk_test_widget_get_notebook (GtkTestWidget* self)
+{
+  g_return_val_if_fail (GTK_TEST_IS_WIDGET (self), NULL);
+
+  return PRIV (self)->notebook;
+}
 
 GtkWidget*
 gtk_test_widget_new (void)
