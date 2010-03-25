@@ -602,8 +602,8 @@ main (int   argc,
 
   button_run = gtk_button_new_from_stock (GTK_STOCK_EXECUTE);
   progress = gtk_progress_bar_new ();
-  toolbar = gtk_toolbar_new ();
   window = gtk_test_window_new ();
+  toolbar = gtk_test_window_get_toolbar (GTK_TEST_WINDOW (window));
   box = gtk_test_window_get_widget (GTK_TEST_WINDOW (window));
   tree = gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (box));
   notebook = gtk_test_widget_get_notebook (GTK_TEST_WIDGET (box));

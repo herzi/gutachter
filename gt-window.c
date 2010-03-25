@@ -24,6 +24,7 @@
 
 struct _GtkTestWindowPrivate
 {
+  GtkWidget* toolbar;
   GtkWidget* widget;
 };
 
@@ -35,6 +36,7 @@ static void
 gtk_test_window_init (GtkTestWindow* self)
 {
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WINDOW, GtkTestWindowPrivate);
+  PRIV (self)->toolbar = gtk_toolbar_new ();
   PRIV (self)->widget = gtk_test_widget_new ();
 
   gtk_window_set_default_size (GTK_WINDOW (self), 300, 400);
@@ -44,6 +46,14 @@ static void
 gtk_test_window_class_init (GtkTestWindowClass* self_class)
 {
   g_type_class_add_private (self_class, sizeof (GtkTestWindowPrivate));
+}
+
+GtkWidget*
+gtk_test_window_get_toolbar (GtkTestWindow* self)
+{
+  g_return_val_if_fail (GTK_TEST_IS_WINDOW (self), NULL);
+
+  return PRIV (self)->toolbar;
 }
 
 GtkWidget*

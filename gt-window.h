@@ -36,10 +36,11 @@ typedef struct _GtkTestWindowPrivate GtkTestWindowPrivate;
 #define GTK_TEST_IS_WINDOW_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), GTK_TEST_TYPE_WINDOW))
 #define GTK_TEST_WINDOW_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), GTK_TEST_TYPE_WINDOW, GtkTestWindowClass))
 
-GType      gtk_test_window_get_type   (void);
-GtkWidget* gtk_test_window_new        (void);
+GType      gtk_test_window_get_type    (void);
+GtkWidget* gtk_test_window_new         (void);
 #ifndef REFACTORING_FINISHED
-GtkWidget* gtk_test_window_get_widget (GtkTestWindow* self);
+GtkWidget* gtk_test_window_get_widget  (GtkTestWindow* self);
+GtkWidget* gtk_test_window_get_toolbar (GtkTestWindow* self);
 #endif
 
 struct _GtkTestWindow
