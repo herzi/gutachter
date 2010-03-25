@@ -513,6 +513,7 @@ int
 main (int   argc,
       char**argv)
 {
+  GtkToolItem* item;
   GtkWidget* box;
   GtkWidget* file_chooser;
   GtkWidget* scrolled;
@@ -542,6 +543,11 @@ main (int   argc,
   g_signal_connect (window, "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);
 
+  item = gtk_tool_button_new_from_stock (GTK_STOCK_OPEN);
+  g_signal_connect (item, "clicked",
+                    G_CALLBACK (open_item_clicked), window);
+  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
+
   g_signal_connect (file_chooser, "selection-changed",
                     G_CALLBACK (selection_changed_cb), window);
   selection_changed_cb (GTK_FILE_CHOOSER (file_chooser), GTK_WINDOW (window));
@@ -558,7 +564,7 @@ main (int   argc,
                                               "active", COL_PASSED,
                                               NULL);
 
-  gtk_widget_show (toolbar);
+  gtk_widget_show_all (toolbar);
   gtk_box_pack_start (GTK_BOX (box), toolbar, FALSE, FALSE, 0);
   gtk_widget_show (file_chooser);
   gtk_box_pack_start (GTK_BOX (box), file_chooser, FALSE, FALSE, 0);
