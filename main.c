@@ -50,6 +50,8 @@ static GtkTreeStore* store = NULL;
 
 static guint64 executed = 0;
 static guint64 tests = 0;
+static guint64 xvfb_display = 0;
+static GPid    xvfb_pid = 0;
 
 static gboolean
 io_func (GIOChannel  * channel,
@@ -107,7 +109,7 @@ create_iter_for_path (GtkTreeIter* iter,
       GtkTreeIter  parent;
 
       *last_slash = '\0';
-      create_iter_for_path (&parent, path);
+      create_iter_for_path (&parent, g_strdup (path));
       *last_slash = '/';
 
       last_slash++;
@@ -210,8 +212,39 @@ run_or_warn (GFile      * file,
           NULL,
           NULL
   };
+  gchar** env = g_listenv ();
+  gchar** iter;
+  gboolean found_display = FALSE;
 
   base = g_file_get_basename (file);
+
+  /* FIXME: this is X11 specific */
+  for (iter = env; iter && *iter; iter++)
+    {
+      if (!g_str_has_prefix (*iter, "DISPLAY="))
+        {
+          g_free (*iter);
+          *iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT, xvfb_display);
+          found_display = TRUE;
+          break;
+        }
+    }
+
+  if (!found_display)
+    {
+      gchar** new_env = g_new (gchar*, g_strv_length (env) + 2);
+      gchar** new_iter = new_env;
+
+      *new_iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT, xvfb_display);
+      for (new_iter++, iter = env; iter && *iter; iter++, new_iter++)
+        {
+          *new_iter = *iter;
+        }
+      *new_iter = NULL;
+
+      g_free (env);
+      env = new_env;
+    }
 
   switch (mode)
     {
@@ -226,8 +259,8 @@ run_or_warn (GFile      * file,
   argv[0] = g_strdup_printf ("./%s", base);
   argv[1] = g_strdup_printf ("--GTestLogFD=%u", pipe_id);
 
-  result = g_spawn_async (folder, argv, NULL,
-                          G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_LEAVE_DESCRIPTORS_OPEN | G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
+  result = g_spawn_async (folder, argv, env,
+                          G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_LEAVE_DESCRIPTORS_OPEN ,//| G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
                           NULL, NULL, pid, &error);
 
   if (!result)
@@ -250,6 +283,16 @@ selection_changed_cb (GtkFileChooser* chooser,
                       GtkWindow     * window)
 {
   GFile* selected = gtk_file_chooser_get_file (chooser);
+  gpointer key;
+  gpointer value;
+  GHashTableIter  iter;
+
+  for (g_hash_table_iter_init (&iter, map); g_hash_table_iter_next (&iter, &key, &value) ; g_hash_table_iter_init (&iter, map))
+    {
+      g_free (key);
+      g_object_unref (value);
+    }
+  gtk_tree_store_clear (store);
 
   if (selected)
     {
@@ -416,6 +459,61 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
   close (pipes[1]);
 }
 
+static void
+xvfb_child_watch (GPid      pid,
+                  gint      status,
+                  gpointer  user_data)
+{
+  g_spawn_close_pid (pid);
+
+  if (WIFEXITED (status))
+    {
+      if (WEXITSTATUS (status))
+        {
+          g_message ("xvfb exit code: %d", WEXITSTATUS (status));
+          g_idle_add (user_data, NULL);
+        }
+    }
+  else if (WIFSIGNALED (status))
+    {
+    }
+
+  g_assert_cmpint (pid, ==, xvfb_pid);
+
+  xvfb_pid = 0;
+}
+
+static gboolean
+setup_xvfb (gpointer data G_GNUC_UNUSED)
+{
+  gchar* display = g_strdup_printf (":%" G_GUINT64_FORMAT, ++xvfb_display);
+  gchar* argv[] = {
+          "Xvfb",
+          display,
+          NULL
+  };
+  GError* error = NULL;
+
+  g_assert_cmpint (xvfb_pid, ==, 0);
+
+  if (g_spawn_async (g_get_home_dir (),
+                     argv, NULL,
+                     G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH | G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
+                     NULL, NULL,
+                     &xvfb_pid, &error))
+    {
+      g_child_watch_add (xvfb_pid, xvfb_child_watch, setup_xvfb);
+    }
+  else
+    {
+      g_warning ("error starting Xvfb: %s", error->message);
+      g_error_free (error);
+    }
+
+  g_free (display);
+  return FALSE;
+}
+
 int
 main (int   argc,
       char**argv)
@@ -431,6 +529,8 @@ main (int   argc,
   map = g_hash_table_new (g_str_hash, g_str_equal);
 
   store = gtk_tree_store_new (N_COLUMNS, G_TYPE_STRING, G_TYPE_BOOLEAN);
+
+  g_idle_add (setup_xvfb, NULL);
 
   box = gtk_vbox_new (FALSE, 0);
   button_run = gtk_button_new_from_stock (GTK_STOCK_EXECUTE);
@@ -490,6 +590,10 @@ main (int   argc,
   gtk_main ();
 
   g_hash_table_destroy (map);
+  if (kill (xvfb_pid, SIGTERM) < 0)
+    {
+      perror ("kill()");
+    }
   return 0;
 }
 
