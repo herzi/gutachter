@@ -42,9 +42,9 @@ static GHashTable* map = NULL;
 static GtkTreeStore* store = NULL;
 
 static gboolean
-io_func (GIOChannel* channel,
-         GIOCondition condition,
-         gpointer data)
+io_func (GIOChannel  * channel,
+         GIOCondition  condition G_GNUC_UNUSED,
+         gpointer      data      G_GNUC_UNUSED)
 {
   guchar  buf[512];
   gsize read_bytes = 0;
@@ -114,7 +114,14 @@ child_watch_cb (GPid      pid,
     }
   else if (!WIFEXITED (status))
     {
-      g_warning ("child didn't exit normally: %d", status);
+      if (WIFSIGNALED (status))
+        {
+          g_warning ("child exited with signal %d", WTERMSIG (status));
+        }
+      else
+        {
+          g_warning ("child didn't exit normally: %d", status);
+        }
     }
   else
     {
@@ -162,6 +169,45 @@ child_watch_cb (GPid      pid,
   g_spawn_close_pid (pid);
 }
 
+static gboolean
+run_or_warn (GFile* file,
+             GPid * pid)
+{
+  gboolean  result = FALSE;
+  GError  * error  = NULL;
+  GFile   * parent = g_file_get_parent (file);
+  gchar   * base;
+  gchar   * folder = g_file_get_path (parent);
+  gchar   * argv[] = {
+          NULL,
+          NULL,
+          NULL,
+          NULL
+  };
+
+  base = g_file_get_basename (file);
+
+  /* FIXME: should only be necessary on UNIX */
+  argv[0] = g_strdup_printf ("./%s", base);
+
+  result = g_spawn_async (folder, argv, NULL,
+                          G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_LEAVE_DESCRIPTORS_OPEN | G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
+                          NULL, NULL, pid, &error);
+
+  if (!result)
+    {
+      g_warning ("error executing \"%s\": %s",
+                 base, error->message); /* FIXME: use display name */
+      g_error_free (error);
+    }
+
+  g_free (argv[0]);
+  g_free (folder);
+  g_object_unref (parent);
+
+  return result;
+}
+
 static void
 selection_changed_cb (GtkFileChooser* chooser,
                       GtkWindow     * window)
@@ -170,9 +216,9 @@ selection_changed_cb (GtkFileChooser* chooser,
 
   if (selected)
     {
-      GFile* parent = g_file_get_parent (selected);
-      gchar* base = g_file_get_basename (selected); /* FIXME: use the display name */
-      gchar* title = g_strdup_printf (_("%s - GLib Unit Tests"), base);
+      gchar* base;
+      gchar* title;
+      GPid   pid = 0;
       int pipes[2];
 
       if (pipe (pipes) < 0)
@@ -180,33 +226,15 @@ selection_changed_cb (GtkFileChooser* chooser,
           perror ("pipe()");
           exit (2);
         }
-      gchar* fd = g_strdup_printf ("--GTestLogFD=%u", pipes[1]);
-      gchar* working_folder = g_file_get_path (parent);
-      gchar* argv[] = { /* actually is "gchar const* argv[]" but g_spawn_async() requires a "gchar**" */
-              NULL,
-              "-q",
-              "-l",
-              fd,
-              NULL
-      };
-      GPid  pid = 0;
-      GError* error = NULL;
 
+      base = g_file_get_basename (selected); /* FIXME: use the display name */
+      title = g_strdup_printf (_("%s - GLib Unit Tests"), base);
+      g_free (base);
       gtk_window_set_title (window, title);
       g_free (title);
 
-      /* FIXME: should only be necessary on UNIX */
-      argv[0] = g_strdup_printf ("./%s", base);
-      g_free (base);
-      base = argv[0];
-
-      if (!g_spawn_async (working_folder, argv, NULL,
-                          G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_LEAVE_DESCRIPTORS_OPEN | G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
-                          NULL, NULL, &pid, &error))
+      if (!run_or_warn (selected, &pid))
         {
-          g_warning ("error executing \"%s\": %s",
-                     base, error->message);
-          g_error_free (error);
           gtk_widget_set_sensitive (button_run, FALSE);
           close (pipes[0]);
         }
@@ -225,10 +253,6 @@ selection_changed_cb (GtkFileChooser* chooser,
           gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("Loading Test Paths..."));
         }
       close (pipes[1]);
-
-      g_free (fd);
-      g_free (working_folder);
-      g_free (base);
     }
 
   if (!selected)
@@ -242,6 +266,69 @@ selection_changed_cb (GtkFileChooser* chooser,
     }
 
   gtk_widget_set_sensitive (notebook, selected != NULL);
+}
+
+static void
+run_test_child_watch (GPid      pid,
+                      gint      status,
+                      gpointer  user_data G_GNUC_UNUSED)
+{
+  g_spawn_close_pid (pid);
+
+  if (WIFEXITED (status) && WEXITSTATUS (status))
+    {
+      gchar* text = g_strdup_printf (_("exited with exit code %d"), WEXITSTATUS (status));
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), text);
+      g_free (text);
+    }
+  else if (WIFSIGNALED (status))
+    {
+      gchar* text = g_strdup_printf (_("exited with signal %d"), WTERMSIG (status));
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), text);
+      g_free (text);
+    }
+  else if (WIFEXITED (status))
+    {
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("exited cleanly"));
+    }
+}
+
+static void
+button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
+                   gpointer   user_data)
+{
+  GFile* test = gtk_file_chooser_get_file (user_data);
+  GPid   pid = 0;
+  int    pipes[2];
+
+  gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("Running tests..."));
+
+  if (pipe (pipes))
+    {
+      perror ("pipe()");
+      return;
+    }
+
+  if (!run_or_warn (test, &pid))
+    {
+      close (pipes[0]);
+    }
+  else
+    {
+      GIOChannel* channel = g_io_channel_unix_new (pipes[0]);
+      g_io_channel_set_encoding (channel, NULL, NULL);
+      g_io_channel_set_buffered (channel, FALSE);
+      g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
+      buffer = g_byte_array_new ();
+      g_io_add_watch (channel, G_IO_IN, io_func, buffer);
+      g_child_watch_add (pid, run_test_child_watch, channel);
+      gtk_widget_set_sensitive (button_run, TRUE);
+
+      gtk_progress_bar_pulse (GTK_PROGRESS_BAR (progress));
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("Starting Tests..."));
+    }
+
+  close (pipes[1]);
 }
 
 int
@@ -276,6 +363,9 @@ main (int   argc,
   g_signal_connect (file_chooser, "selection-changed",
                     G_CALLBACK (selection_changed_cb), window);
   selection_changed_cb (GTK_FILE_CHOOSER (file_chooser), GTK_WINDOW (window));
+
+  g_signal_connect (button_run, "clicked",
+                    G_CALLBACK (button_clicked_cb), file_chooser);
 
   gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (tree), -1,
                                               NULL, gtk_cell_renderer_text_new (),
