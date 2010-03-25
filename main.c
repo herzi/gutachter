@@ -40,6 +40,7 @@ typedef enum
   MODE_TEST
 } RunningMode;
 
+static GtkWidget* file_label = NULL;
 static GtkWidget* button_run = NULL;
 static GtkWidget* progress = NULL;
 static GtkWidget* notebook = NULL;
@@ -282,16 +283,8 @@ run_or_warn (GPid       * pid,
 }
 
 static void
-selection_changed_cb (GtkFileChooser* chooser,
-                      GtkWindow     * window)
+selection_changed_cb (GtkWindow* window)
 {
-  if (testcase)
-    {
-      g_object_unref (testcase);
-    }
-
-  testcase = gtk_file_chooser_get_file (chooser);
-
   g_hash_table_remove_all (map);
   gtk_tree_store_clear (store);
 
@@ -340,7 +333,28 @@ selection_changed_cb (GtkFileChooser* chooser,
   if (!testcase)
     {
       gtk_window_set_title (window, _("GLib Unit Tests"));
+      gtk_label_set_text (GTK_LABEL (file_label), _("no test selected"));
       gtk_widget_set_sensitive (button_run, FALSE);
+    }
+  else
+    {
+      GFileInfo* info;
+      GError   * error = NULL;
+
+      info = g_file_query_info (testcase, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME, G_FILE_QUERY_INFO_NONE, NULL, &error);
+
+      if (error)
+        {
+          g_warning ("error reading display name from file: %s", error->message);
+          g_error_free (error);
+          gtk_label_set_text (GTK_LABEL (file_label), _("couldn't get test name"));
+        }
+      else
+        {
+          gtk_label_set_text (GTK_LABEL (file_label), g_file_info_get_display_name (info));
+
+          g_object_unref (info);
+        }
     }
 
   gtk_widget_set_sensitive (notebook, testcase != NULL);
@@ -469,7 +483,13 @@ open_item_clicked (GtkButton* button G_GNUC_UNUSED,
 
   gtk_dialog_run (GTK_DIALOG (dialog));
 
-  selection_changed_cb (GTK_FILE_CHOOSER (dialog), window);
+  if (testcase)
+    {
+      g_object_unref (testcase);
+    }
+  testcase = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
+
+  selection_changed_cb (window);
 
   gtk_widget_destroy (dialog);
 }
@@ -535,7 +555,6 @@ main (int   argc,
 {
   GtkToolItem* item;
   GtkWidget* box;
-  GtkWidget* file_chooser;
   GtkWidget* scrolled;
   GtkWidget* toolbar;
   GtkWidget* tree;
@@ -551,7 +570,7 @@ main (int   argc,
 
   box = gtk_vbox_new (FALSE, 0);
   button_run = gtk_button_new_from_stock (GTK_STOCK_EXECUTE);
-  file_chooser = gtk_file_chooser_button_new (_("Choose Unit Tests"), GTK_FILE_CHOOSER_ACTION_OPEN);
+  file_label = gtk_label_new (NULL);
   notebook = gtk_notebook_new ();
   progress = gtk_progress_bar_new ();
   scrolled = gtk_scrolled_window_new (NULL, NULL);
@@ -568,12 +587,10 @@ main (int   argc,
                     G_CALLBACK (open_item_clicked), window);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
 
-  g_signal_connect (file_chooser, "selection-changed",
-                    G_CALLBACK (selection_changed_cb), window);
-  selection_changed_cb (GTK_FILE_CHOOSER (file_chooser), GTK_WINDOW (window));
+  selection_changed_cb (GTK_WINDOW (window));
 
   g_signal_connect (button_run, "clicked",
-                    G_CALLBACK (button_clicked_cb), file_chooser);
+                    G_CALLBACK (button_clicked_cb), NULL);
 
   gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (tree), -1,
                                               NULL, gtk_cell_renderer_text_new (),
@@ -586,8 +603,8 @@ main (int   argc,
 
   gtk_widget_show_all (toolbar);
   gtk_box_pack_start (GTK_BOX (box), toolbar, FALSE, FALSE, 0);
-  gtk_widget_show (file_chooser);
-  gtk_box_pack_start (GTK_BOX (box), file_chooser, FALSE, FALSE, 0);
+  gtk_widget_show (file_label);
+  gtk_box_pack_start (GTK_BOX (box), file_label, FALSE, FALSE, 0);
   gtk_widget_show (button_run);
   gtk_box_pack_start (GTK_BOX (box), button_run, FALSE, FALSE, 0);
   gtk_widget_show (progress);
