@@ -18,10 +18,23 @@
  * USA
  */
 
-#ifndef GG_WINDOW_H
-#define GG_WINDOW_H
+#include "gt-window.h"
 
+G_DEFINE_TYPE (GtkTestWindow, gtk_test_window, GTK_TYPE_WINDOW);
 
-#endif /* !GG_WINDOW_H */
+static void
+gtk_test_window_init (GtkTestWindow* self G_GNUC_UNUSED)
+{}
+
+static void
+gtk_test_window_class_init (GtkTestWindowClass* self_class G_GNUC_UNUSED)
+{}
+
+GtkWidget*
+gtk_test_window_new (void)
+{
+  return g_object_new (GTK_TEST_TYPE_WINDOW,
+                       NULL);
+}
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

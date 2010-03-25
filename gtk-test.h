@@ -18,7 +18,11 @@
  * USA
  */
 
-#include "gg-window.h"
+#ifndef GTK_TEST_H
+#define GTK_TEST_H
 
+#include <gt-window.h>
+
+#endif /* !GTK_TEST_H */
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

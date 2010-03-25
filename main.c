@@ -23,7 +23,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#include <gtk/gtk.h>
+#include <gtk-test.h>
 
 #include <glib/gi18n.h>
 
@@ -608,7 +608,7 @@ main (int   argc,
   scrolled = gtk_scrolled_window_new (NULL, NULL);
   toolbar = gtk_toolbar_new ();
   tree = gtk_tree_view_new_with_model (GTK_TREE_MODEL (store));
-  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  window = gtk_test_window_new ();
 
   selection_changed_cb (GTK_WINDOW (window));
 

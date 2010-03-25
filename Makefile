@@ -1,5 +1,5 @@
 AR=@echo "  AR    " $@; ar qc $@ $^
-COMPILE=@echo "  CC    " $@; gcc -c -o $@ $< -g -O2 -Wall -Wextra $(shell pkg-config --cflags gtk+-2.0)
+COMPILE=@echo "  CC    " $@; gcc -c -o $@ $< -g -O2 -Wall -Wextra -I. $(shell pkg-config --cflags gtk+-2.0)
 LINK=@echo "  CCLD  " $@; gcc -o $@ $^ -g -O2 -Wall -Wextra $(shell pkg-config --libs gtk+-2.0)
 
 all: libgtk-tester.a gtk-tester test-dummy
@@ -10,7 +10,7 @@ clean:
 gtk-tester: main.o libgtk-tester.a
 	$(LINK)
 
-libgtk-tester.a: gg-window.o
+libgtk-tester.a: gt-window.o
 	$(AR)
 
 %.o: %.c $(wildcard *.h)
