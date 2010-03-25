@@ -23,8 +23,10 @@
 G_DEFINE_TYPE (GtkTestWindow, gtk_test_window, GTK_TYPE_WINDOW);
 
 static void
-gtk_test_window_init (GtkTestWindow* self G_GNUC_UNUSED)
-{}
+gtk_test_window_init (GtkTestWindow* self)
+{
+  gtk_window_set_default_size (GTK_WINDOW (self), 300, 400);
+}
 
 static void
 gtk_test_window_class_init (GtkTestWindowClass* self_class G_GNUC_UNUSED)

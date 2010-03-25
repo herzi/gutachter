@@ -612,7 +612,6 @@ main (int   argc,
 
   selection_changed_cb (GTK_WINDOW (window));
 
-  gtk_window_set_default_size (GTK_WINDOW (window), 300, 400);
   g_signal_connect (window, "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);
 
