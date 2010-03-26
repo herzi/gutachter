@@ -12,6 +12,7 @@ gtk-tester: main.o libgtk-tester.a
 
 libgtk-tester.a: \
 	gt-hierarchy.o \
+	gt-runner.o \
 	gt-widget.o \
 	gt-window.o
 	$(AR)
