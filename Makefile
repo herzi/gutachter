@@ -13,6 +13,7 @@ gtk-tester: main.o libgtk-tester.a
 libgtk-tester.a: \
 	gt-hierarchy.o \
 	gt-runner.o \
+	gt-suite.o \
 	gt-widget.o \
 	gt-window.o \
 	gt-xvfb-wrapper.o

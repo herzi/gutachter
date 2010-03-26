@@ -18,16 +18,10 @@
  * USA
  */
 
-#ifndef GTK_TEST_H
-#define GTK_TEST_H
+#ifndef GT_SUITE_H
+#define GT_SUITE_H
 
-#include <gt-hierarchy.h>
-#include <gt-runner.h>
-#include <gt-suite.h>
-#include <gt-widget.h>
-#include <gt-window.h>
-#include <gt-xvfb-wrapper.h>
 
-#endif /* !GTK_TEST_H */
+#endif /* !GT_SUITE_H */
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
