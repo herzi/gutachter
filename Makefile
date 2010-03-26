@@ -14,7 +14,8 @@ libgtk-tester.a: \
 	gt-hierarchy.o \
 	gt-runner.o \
 	gt-widget.o \
-	gt-window.o
+	gt-window.o \
+	gt-xvfb-wrapper.o
 	$(AR)
 
 %.o: %.c $(wildcard *.h)
