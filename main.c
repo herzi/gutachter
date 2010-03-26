@@ -42,8 +42,6 @@ static GHashTable* map = NULL;
 static guint64 executed = 0;
 static guint64 tests = 0;
 
-static GFileMonitor* file_monitor = NULL;
-
 static gboolean
 io_func (GIOChannel  * channel,
          GIOCondition  condition G_GNUC_UNUSED,
@@ -275,42 +273,13 @@ run_or_warn (GPid       * pid,
 }
 
 static void
-file_changed_cb (GFileMonitor     * monitor    G_GNUC_UNUSED,
-                 GFile            * file       G_GNUC_UNUSED,
-                 GFile            * other_file G_GNUC_UNUSED,
-                 GFileMonitorEvent  event,
-                 gpointer           user_data  G_GNUC_UNUSED)
-{
-  switch (event)
-    {
-    case G_FILE_MONITOR_EVENT_CHANGED:
-    case G_FILE_MONITOR_EVENT_CREATED:
-      g_warning ("FIXME: re-scan the file");
-      break;
-    case G_FILE_MONITOR_EVENT_DELETED:
-      g_warning ("FIXME: disable the UI bits for now");
-      break;
-    default:
-      g_print ("file changed: %d\n", event);
-      break;
-    }
-}
-
-static void
 selection_changed_cb (GtkWindow* window)
 {
   g_hash_table_remove_all (map);
   gtk_tree_store_clear (GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))))));
 
-  if (file_monitor)
-    {
-      g_object_unref (file_monitor);
-      file_monitor = NULL;
-    }
-
   if (gtk_test_runner_get_file (GTK_TEST_RUNNER (window)))
     {
-      GError* error = NULL;
       gchar* base;
       gchar* title;
       GPid   pid = 0;
@@ -349,10 +318,6 @@ selection_changed_cb (GtkWindow* window)
           gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("Loading Test Paths..."));
         }
       close (pipes[1]);
-
-      file_monitor = g_file_monitor (gtk_test_runner_get_file (GTK_TEST_RUNNER (window)), G_FILE_MONITOR_NONE, NULL, &error);
-      g_signal_connect (file_monitor, "changed",
-                        G_CALLBACK (file_changed_cb), NULL);
     }
 
   if (!gtk_test_runner_get_file (GTK_TEST_RUNNER (window)))
