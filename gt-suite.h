@@ -21,6 +21,36 @@
 #ifndef GT_SUITE_H
 #define GT_SUITE_H
 
+#include <gio/gio.h>
+
+G_BEGIN_DECLS
+
+typedef struct _GtkTestSuite        GtkTestSuite;
+typedef struct _GtkTestSuiteClass   GtkTestSuiteClass;
+typedef struct _GtkTestSuitePrivate GtkTestSuitePrivate;
+
+#define GTK_TEST_TYPE_SUITE         (gtk_test_suite_get_type ())
+#define GTK_TEST_SUITE(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), GTK_TEST_TYPE_SUITE, GtkTestSuite))
+#define GTK_TEST_SUITE_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c), GTK_TEST_TYPE_SUITE, GtkTestSuiteClass))
+#define GTK_TEST_IS_SUITE(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), GTK_TEST_TYPE_SUITE))
+#define GTK_TEST_IS_SUITE_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), GTK_TEST_TYPE_SUITE))
+#define GTK_TEST_SUITE_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), GTK_TEST_TYPE_SUITE, GtkTestSuiteClass))
+
+GType         gtk_test_suite_get_type (void);
+GtkTestSuite* gtk_test_suite_new      (GFile* file);
+
+struct _GtkTestSuite
+{
+  GObject              base_instance;
+  GtkTestSuitePrivate* _private;
+};
+
+struct _GtkTestSuiteClass
+{
+  GObjectClass         base_class;
+};
+
+G_END_DECLS
 
 #endif /* !GT_SUITE_H */
 

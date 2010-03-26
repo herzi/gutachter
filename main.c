@@ -34,6 +34,7 @@ typedef enum
 } RunningMode;
 
 static GtkWidget* window = NULL;
+static GtkTestSuite* suite = NULL;
 static GtkTestXvfbWrapper* xvfb = NULL;
 
 static GByteArray* buffer = NULL;
@@ -475,8 +476,19 @@ open_item_clicked (GtkButton* button G_GNUC_UNUSED,
 
   gtk_dialog_run (GTK_DIALOG (dialog));
 
+  if (suite)
+    {
+      g_object_unref (suite);
+      suite = NULL;
+    }
+
   file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
-  gtk_test_runner_set_file  (GTK_TEST_RUNNER (window), file);
+  gtk_test_runner_set_file (GTK_TEST_RUNNER (window), file);
+
+  if (file)
+    {
+      suite = gtk_test_suite_new (file);
+    }
   g_object_unref (file);
 
   selection_changed_cb (window);

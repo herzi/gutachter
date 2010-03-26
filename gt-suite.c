@@ -20,5 +20,21 @@
 
 #include "gt-suite.h"
 
+G_DEFINE_TYPE (GtkTestSuite, gtk_test_suite, G_TYPE_OBJECT);
+
+static void
+gtk_test_suite_init (GtkTestSuite* self G_GNUC_UNUSED)
+{}
+
+static void
+gtk_test_suite_class_init (GtkTestSuiteClass* self_class G_GNUC_UNUSED)
+{}
+
+GtkTestSuite*
+gtk_test_suite_new (GFile* file G_GNUC_UNUSED)
+{
+  return g_object_new (GTK_TEST_TYPE_SUITE,
+                       NULL);
+}
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
