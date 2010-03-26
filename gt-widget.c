@@ -26,6 +26,7 @@ struct _GtkTestWidgetPrivate
 {
   GtkWidget* hierarchy_view;
   GtkWidget* notebook;
+  GtkWidget* progress;
 };
 
 #define PRIV(i) (((GtkTestWidget*)(i))->_private)
@@ -40,6 +41,7 @@ gtk_test_widget_init (GtkTestWidget* self)
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WIDGET, GtkTestWidgetPrivate);
   PRIV (self)->hierarchy_view = gtk_tree_view_new ();
   PRIV (self)->notebook = gtk_notebook_new ();
+  PRIV (self)->progress = gtk_progress_bar_new ();
 
   scrolled = gtk_scrolled_window_new (NULL, NULL);
 
@@ -75,6 +77,14 @@ gtk_test_widget_get_notebook (GtkTestWidget* self)
   g_return_val_if_fail (GTK_TEST_IS_WIDGET (self), NULL);
 
   return PRIV (self)->notebook;
+}
+
+GtkWidget*
+gtk_test_widget_get_progress (GtkTestWidget* self)
+{
+  g_return_val_if_fail (GTK_TEST_IS_WIDGET (self), NULL);
+
+  return PRIV (self)->progress;
 }
 
 GtkWidget*

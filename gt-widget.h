@@ -39,8 +39,9 @@ typedef struct _GtkTestWidgetPrivate GtkTestWidgetPrivate;
 GType      gtk_test_widget_get_type      (void);
 GtkWidget* gtk_test_widget_new           (void);
 #ifndef REFACTORING_FINISHED
-GtkWidget* gtk_test_widget_get_notebook  (GtkTestWidget* self);
 GtkWidget* gtk_test_widget_get_hierarchy (GtkTestWidget* self);
+GtkWidget* gtk_test_widget_get_notebook  (GtkTestWidget* self);
+GtkWidget* gtk_test_widget_get_progress  (GtkTestWidget* self);
 #endif
 
 struct _GtkTestWidget
