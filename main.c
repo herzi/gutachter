@@ -34,6 +34,7 @@ typedef enum
 } RunningMode;
 
 static GtkWidget* window = NULL;
+static GtkTestXvfbWrapper* xvfb = NULL;
 
 static GByteArray* buffer = NULL;
 static GHashTable* map = NULL;
@@ -583,6 +584,8 @@ main (int   argc,
 
   gtk_init (&argc, &argv);
 
+  xvfb = gtk_test_xvfb_wrapper_new ();
+
   map = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GFreeFunc)gtk_tree_row_reference_free);
 
   g_idle_add (setup_xvfb, NULL);
@@ -605,6 +608,7 @@ main (int   argc,
   gtk_main ();
 
   g_hash_table_destroy (map);
+  g_object_unref (xvfb);
   if (kill (xvfb_pid, SIGTERM) < 0)
     {
       perror ("kill()");

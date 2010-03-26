@@ -20,5 +20,21 @@
 
 #include "gt-xvfb-wrapper.h"
 
+G_DEFINE_TYPE (GtkTestXvfbWrapper, gtk_test_xvfb_wrapper, G_TYPE_OBJECT);
+
+static void
+gtk_test_xvfb_wrapper_init (GtkTestXvfbWrapper* self G_GNUC_UNUSED)
+{}
+
+static void
+gtk_test_xvfb_wrapper_class_init (GtkTestXvfbWrapperClass* self_class G_GNUC_UNUSED)
+{}
+
+GtkTestXvfbWrapper*
+gtk_test_xvfb_wrapper_new (void)
+{
+  return g_object_new (GTK_TEST_TYPE_XVFB_WRAPPER,
+                       NULL);
+}
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

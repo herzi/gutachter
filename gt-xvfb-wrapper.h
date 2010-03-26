@@ -21,6 +21,36 @@
 #ifndef GT_XVFB_WRAPPER_H
 #define GT_XVFB_WRAPPER_H
 
+#include <glib-object.h>
+
+G_BEGIN_DECLS
+
+typedef struct _GtkTestXvfbWrapper        GtkTestXvfbWrapper;
+typedef struct _GtkTestXvfbWrapperClass   GtkTestXvfbWrapperClass;
+typedef struct _GtkTestXvfbWrapperPrivate GtkTestXvfbWrapperPrivate;
+
+#define GTK_TEST_TYPE_XVFB_WRAPPER         (gtk_test_xvfb_wrapper_get_type ())
+#define GTK_TEST_XVFB_WRAPPER(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), GTK_TEST_TYPE_XVFB_WRAPPER, GtkTestXvfbWrapper))
+#define GTK_TEST_XVFB_WRAPPER_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c), GTK_TEST_TYPE_XVFB_WRAPPER, GtkTestXvfbWrapperClass))
+#define GTK_TEST_IS_XVFB_WRAPPER(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), GTK_TEST_TYPE_XVFB_WRAPPER))
+#define GTK_TEST_IS_XVFB_WRAPPER_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), GTK_TEST_TYPE_XVFB_WRAPPER))
+#define GTK_TEST_XVFB_WRAPPER_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), GTK_TEST_TYPE_XVFB_WRAPPER, GtkTestXvfbWrapperClass))
+
+GType               gtk_test_xvfb_wrapper_get_type (void);
+GtkTestXvfbWrapper* gtk_test_xvfb_wrapper_new      (void);
+
+struct _GtkTestXvfbWrapper
+{
+  GObject                    base_instance;
+  GtkTestXvfbWrapperPrivate* _private;
+};
+
+struct _GtkTestXvfbWrapperClass
+{
+  GObjectClass               base_class;
+};
+
+G_END_DECLS
 
 #endif /* !GT_XVFB_WRAPPER_H */
 
