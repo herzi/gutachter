@@ -33,6 +33,7 @@ typedef enum
   MODE_TEST
 } RunningMode;
 
+static GtkWidget* window = NULL;
 static GtkWidget* button_run = NULL;
 static GtkWidget* progress = NULL;
 static GtkWidget* notebook = NULL;
@@ -581,7 +582,6 @@ main (int   argc,
       char**argv)
 {
   GtkWidget* widget;
-  GtkWidget* window;
 
   gtk_init (&argc, &argv);
 
