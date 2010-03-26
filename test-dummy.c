@@ -20,7 +20,7 @@
  * if advised of the possibility of such damage.
  */
 
-#include <glib.h>
+#include <gtk/gtk.h>
 
 static void
 dummy_first (void)
@@ -30,7 +30,7 @@ int
 main (int   argc,
       char**argv)
 {
-  g_test_init (&argc, &argv, NULL);
+  gtk_test_init (&argc, &argv, NULL);
 
   g_test_add_func ("/dummy/first", dummy_first);
 
