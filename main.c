@@ -617,7 +617,7 @@ main (int   argc,
   /* FIXME: pack the notebook into a paned with the text view */
   gtk_container_add (GTK_CONTAINER (box), notebook);
   gtk_widget_show (box);
-  gtk_container_add (GTK_CONTAINER (window), box);
+  gtk_container_add (GTK_CONTAINER (gtk_test_window_get_box (GTK_TEST_WINDOW (window))), box);
 
   selection_changed_cb (GTK_WINDOW (window));
 

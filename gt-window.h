@@ -39,6 +39,7 @@ typedef struct _GtkTestWindowPrivate GtkTestWindowPrivate;
 GType      gtk_test_window_get_type    (void);
 GtkWidget* gtk_test_window_new         (void);
 #ifndef REFACTORING_FINISHED
+GtkWidget* gtk_test_window_get_box     (GtkTestWindow* self);
 GtkWidget* gtk_test_window_get_exec    (GtkTestWindow* self);
 GtkWidget* gtk_test_window_get_open    (GtkTestWindow* self);
 GtkWidget* gtk_test_window_get_toolbar (GtkTestWindow* self);
