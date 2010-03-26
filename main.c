@@ -41,7 +41,6 @@ static GHashTable* map = NULL;
 
 static guint64 executed = 0;
 static guint64 tests = 0;
-static guint64 xvfb_display = 0;
 static GPid    xvfb_pid = 0;
 
 static GFileMonitor* file_monitor = NULL;
@@ -222,7 +221,7 @@ run_or_warn (GPid       * pid,
       if (!g_str_has_prefix (*iter, "DISPLAY="))
         {
           g_free (*iter);
-          *iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT, xvfb_display);
+          *iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT, gtk_test_xvfb_wrapper_get_display (xvfb));
           found_display = TRUE;
           break;
         }
@@ -233,7 +232,7 @@ run_or_warn (GPid       * pid,
       gchar** new_env = g_new (gchar*, g_strv_length (env) + 2);
       gchar** new_iter = new_env;
 
-      *new_iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT, xvfb_display);
+      *new_iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT, gtk_test_xvfb_wrapper_get_display (xvfb));
       for (new_iter++, iter = env; iter && *iter; iter++, new_iter++)
         {
           *new_iter = *iter;
@@ -548,15 +547,20 @@ xvfb_child_watch (GPid      pid,
 static gboolean
 setup_xvfb (gpointer data G_GNUC_UNUSED)
 {
-  gchar* display = g_strdup_printf (":%" G_GUINT64_FORMAT, ++xvfb_display);
+  gchar* display;
   gchar* argv[] = {
           "Xvfb",
-          display,
+          NULL,
           NULL
   };
   GError* error = NULL;
 
   g_assert_cmpint (xvfb_pid, ==, 0);
+
+  gtk_test_xvfb_wrapper_set_display (xvfb,
+                                     1 + gtk_test_xvfb_wrapper_get_display (xvfb));
+  display = g_strdup_printf (":%" G_GUINT64_FORMAT, gtk_test_xvfb_wrapper_get_display (xvfb));
+  argv[1] = display;
 
   if (g_spawn_async (g_get_home_dir (),
                      argv, NULL,
