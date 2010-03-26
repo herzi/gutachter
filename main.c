@@ -37,7 +37,6 @@ static GtkWidget* window = NULL;
 
 static GByteArray* buffer = NULL;
 static GHashTable* map = NULL;
-static GtkTreeStore* store = NULL;
 
 static GFile* testcase = NULL;
 
@@ -72,6 +71,7 @@ lookup_iter_for_path (GtkTreeIter* iter,
   GtkTreeRowReference* reference = g_hash_table_lookup (map, path);
   if (reference)
     {
+      GtkTreeStore* store = GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window)))))));
       GtkTreePath* tree_path = gtk_tree_row_reference_get_path (reference);
       g_assert (gtk_tree_model_get_iter (GTK_TREE_MODEL (store), iter, tree_path));
       gtk_tree_path_free (tree_path);
@@ -86,8 +86,9 @@ create_iter_for_path (GtkTreeIter* iter,
                       gchar      * path)
 {
   GtkTreeRowReference* reference;
-  GtkTreePath* tree_path;
-  gchar      * last_slash;
+  GtkTreeStore       * store = GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window)))))));
+  GtkTreePath        * tree_path;
+  gchar              * last_slash;
 
   if (lookup_iter_for_path (iter, path))
     {
@@ -302,7 +303,7 @@ static void
 selection_changed_cb (GtkWindow* window)
 {
   g_hash_table_remove_all (map);
-  gtk_tree_store_clear (store);
+  gtk_tree_store_clear (GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))))));
 
   if (file_monitor)
     {
@@ -407,6 +408,7 @@ run_test_child_watch (GPid      pid,
     }
   else if (WIFEXITED (status))
     {
+      GtkTreeStore* store = GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window)))))));
       GTestLogMsg *msg;
       GTestLogBuffer* tlb;
       GError* error = NULL;
@@ -587,7 +589,6 @@ main (int   argc,
 
   window = gtk_test_window_new ();
   widget = gtk_test_window_get_widget (GTK_TEST_WINDOW (window));
-  store = GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window)))))));
 
   g_signal_connect (window, "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);
