@@ -588,7 +588,6 @@ main (int   argc,
   gtk_init (&argc, &argv);
 
   map = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GFreeFunc)gtk_tree_row_reference_free);
-  store = gtk_test_hierarchy_new ();
 
   g_idle_add (setup_xvfb, NULL);
 
@@ -598,8 +597,7 @@ main (int   argc,
   progress = gtk_test_widget_get_progress (GTK_TEST_WIDGET (box));
   tree = gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (box));
   notebook = gtk_test_widget_get_notebook (GTK_TEST_WIDGET (box));
-
-  gtk_tree_view_set_model (GTK_TREE_VIEW (tree), GTK_TREE_MODEL (store));
+  store = GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (tree)));
 
   g_signal_connect (window, "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);

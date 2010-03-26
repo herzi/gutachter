@@ -37,6 +37,7 @@ G_DEFINE_TYPE (GtkTestWidget, gtk_test_widget, GTK_TYPE_VBOX);
 static void
 gtk_test_widget_init (GtkTestWidget* self)
 {
+  GtkTreeStore* store;
   GtkWidget* scrolled;
 
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WIDGET, GtkTestWidgetPrivate);
@@ -52,6 +53,11 @@ gtk_test_widget_init (GtkTestWidget* self)
                                               NULL, gtk_cell_renderer_toggle_new (),
                                               "active", GTK_TEST_HIERARCHY_COLUMN_PASSED,
                                               NULL);
+
+  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), FALSE);
+
+  store = gtk_test_hierarchy_new ();
+  gtk_tree_view_set_model (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), GTK_TREE_MODEL (store));
 
   scrolled = gtk_scrolled_window_new (NULL, NULL);
 
