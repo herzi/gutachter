@@ -20,6 +20,7 @@
 
 #include "gt-widget.h"
 
+#include <gtk-test.h>
 #include <glib/gi18n.h>
 
 struct _GtkTestWidgetPrivate
@@ -42,6 +43,15 @@ gtk_test_widget_init (GtkTestWidget* self)
   PRIV (self)->hierarchy_view = gtk_tree_view_new ();
   PRIV (self)->notebook = gtk_notebook_new ();
   PRIV (self)->progress = gtk_progress_bar_new ();
+
+  gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), -1,
+                                              NULL, gtk_cell_renderer_text_new (),
+                                              "text", GTK_TEST_HIERARCHY_COLUMN_NAME,
+                                              NULL);
+  gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), -1,
+                                              NULL, gtk_cell_renderer_toggle_new (),
+                                              "active", GTK_TEST_HIERARCHY_COLUMN_PASSED,
+                                              NULL);
 
   scrolled = gtk_scrolled_window_new (NULL, NULL);
 

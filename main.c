@@ -601,8 +601,6 @@ main (int   argc,
 
   gtk_tree_view_set_model (GTK_TREE_VIEW (tree), GTK_TREE_MODEL (store));
 
-  selection_changed_cb (GTK_WINDOW (window));
-
   g_signal_connect (window, "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);
 
@@ -617,15 +615,6 @@ main (int   argc,
                     G_CALLBACK (button_clicked_cb), NULL);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), GTK_TOOL_ITEM (button_run), -1);
 
-  gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (tree), -1,
-                                              NULL, gtk_cell_renderer_text_new (),
-                                              "text", GTK_TEST_HIERARCHY_COLUMN_NAME,
-                                              NULL);
-  gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (tree), -1,
-                                              NULL, gtk_cell_renderer_toggle_new (),
-                                              "active", GTK_TEST_HIERARCHY_COLUMN_PASSED,
-                                              NULL);
-
   gtk_widget_show_all (toolbar);
   gtk_box_pack_start (GTK_BOX (box), toolbar, FALSE, FALSE, 0);
   gtk_widget_show (progress);
@@ -637,6 +626,8 @@ main (int   argc,
   gtk_container_add (GTK_CONTAINER (box), notebook);
   gtk_widget_show (box);
   gtk_container_add (GTK_CONTAINER (window), box);
+
+  selection_changed_cb (GTK_WINDOW (window));
 
   gtk_widget_show (window);
 
