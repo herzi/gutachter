@@ -34,7 +34,6 @@ typedef enum
 } RunningMode;
 
 static GtkWidget* window = NULL;
-static GtkWidget* notebook = NULL;
 static GtkWidget* tree = NULL;
 
 static GByteArray* buffer = NULL;
@@ -383,7 +382,7 @@ selection_changed_cb (GtkWindow* window)
         }
     }
 
-  gtk_widget_set_sensitive (notebook, testcase != NULL);
+  gtk_widget_set_sensitive (gtk_test_widget_get_notebook (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window)))), testcase != NULL);
 }
 
 static void
@@ -590,7 +589,6 @@ main (int   argc,
   window = gtk_test_window_new ();
   widget = gtk_test_window_get_widget (GTK_TEST_WINDOW (window));
   tree = gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (widget));
-  notebook = gtk_test_widget_get_notebook (GTK_TEST_WIDGET (widget));
   store = GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (tree)));
 
   g_signal_connect (window, "destroy",
