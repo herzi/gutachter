@@ -36,7 +36,7 @@ G_DEFINE_TYPE (GtkTestXvfbWrapper, gtk_test_xvfb_wrapper, G_TYPE_OBJECT);
 gboolean
 setup_xvfb (gpointer data)
 {
-  GtkTestXvfbWrapper* xvfb = data;
+  GtkTestXvfbWrapper* self = data;
   gchar* display;
   gchar* argv[] = {
           "Xvfb",
@@ -44,23 +44,19 @@ setup_xvfb (gpointer data)
           NULL
   };
   GError* error = NULL;
-  GPid    pid = 0;
 
-  g_assert_cmpint (gtk_test_xvfb_wrapper_get_pid (xvfb), ==, 0);
+  g_assert_cmpint (PRIV (self)->pid, ==, 0);
 
-  gtk_test_xvfb_wrapper_set_display (xvfb,
-                                     1 + gtk_test_xvfb_wrapper_get_display (xvfb));
-  display = g_strdup_printf (":%" G_GUINT64_FORMAT, gtk_test_xvfb_wrapper_get_display (xvfb));
+  display = g_strdup_printf (":%" G_GUINT64_FORMAT, ++PRIV (self)->display);
   argv[1] = display;
 
   if (g_spawn_async (g_get_home_dir (),
                      argv, NULL,
                      G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH | G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
                      NULL, NULL,
-                     &pid, &error))
+                     &PRIV (self)->pid, &error))
     {
-      gtk_test_xvfb_wrapper_set_pid (xvfb, pid);
-      g_child_watch_add (pid, xvfb_child_watch, setup_xvfb);
+      g_child_watch_add (PRIV (self)->pid, xvfb_child_watch, setup_xvfb);
     }
   else
     {
