@@ -61,11 +61,18 @@ gtk_test_widget_init (GtkTestWidget* self)
 
   scrolled = gtk_scrolled_window_new (NULL, NULL);
 
+  gtk_widget_show (PRIV (self)->progress);
+  gtk_box_pack_start (GTK_BOX (self), PRIV (self)->progress, FALSE, FALSE, 0);
+  /* FIXME: add state information: "Runs: 3/3" "Errors: 2" "Failures: 2" */
+  gtk_widget_show (PRIV (self)->hierarchy_view);
   gtk_container_add (GTK_CONTAINER (scrolled), PRIV (self)->hierarchy_view);
   gtk_widget_show (scrolled);
   gtk_container_add_with_properties (GTK_CONTAINER (PRIV (self)->notebook), scrolled,
                                      "tab-label", _("Hierarchy"),
                                      NULL);
+  gtk_widget_show (PRIV (self)->notebook);
+  /* FIXME: pack the notebook into a paned with the text view */
+  gtk_container_add (GTK_CONTAINER (self), PRIV (self)->notebook);
 #if 0
   gtk_container_add_with_properties (GTK_CONTAINER (notebook), gtk_label_new ("FAILURES"),
                                      "tab-label", _("Failures"),

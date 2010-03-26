@@ -607,13 +607,6 @@ main (int   argc,
   g_signal_connect (button_run, "clicked",
                     G_CALLBACK (button_clicked_cb), NULL);
 
-  gtk_widget_show (progress);
-  gtk_box_pack_start (GTK_BOX (box), progress, FALSE, FALSE, 0);
-  /* FIXME: add state information: "Runs: 3/3" "Errors: 2" "Failures: 2" */
-  gtk_widget_show (tree);
-  gtk_widget_show_all (notebook);
-  /* FIXME: pack the notebook into a paned with the text view */
-  gtk_container_add (GTK_CONTAINER (box), notebook);
   gtk_widget_show (box);
   gtk_container_add (GTK_CONTAINER (gtk_test_window_get_box (GTK_TEST_WINDOW (window))), box);
 
