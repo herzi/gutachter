@@ -603,10 +603,9 @@ main (int   argc,
 
   g_signal_connect (gtk_test_window_get_open (GTK_TEST_WINDOW (window)), "clicked",
                     G_CALLBACK (open_item_clicked), window);
-  button_run = GTK_WIDGET (gtk_tool_button_new_from_stock (GTK_STOCK_EXECUTE));
+  button_run = gtk_test_window_get_exec (GTK_TEST_WINDOW (window));
   g_signal_connect (button_run, "clicked",
                     G_CALLBACK (button_clicked_cb), NULL);
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), GTK_TOOL_ITEM (button_run), -1);
 
   gtk_widget_show_all (toolbar);
   gtk_box_pack_start (GTK_BOX (box), toolbar, FALSE, FALSE, 0);

@@ -24,6 +24,7 @@
 
 struct _GtkTestWindowPrivate
 {
+  GtkToolItem* execute_button;
   GtkToolItem* open_button;
   GtkWidget  * toolbar;
   GtkWidget  * widget;
@@ -40,17 +41,27 @@ gtk_test_window_init (GtkTestWindow* self)
   PRIV (self)->toolbar = gtk_toolbar_new ();
   PRIV (self)->widget = gtk_test_widget_new ();
   PRIV (self)->open_button = gtk_tool_button_new_from_stock (GTK_STOCK_OPEN);
+  PRIV (self)->execute_button = gtk_tool_button_new_from_stock (GTK_STOCK_EXECUTE);
 
   gtk_window_set_default_size (GTK_WINDOW (self), 300, 400);
 
   gtk_toolbar_insert (GTK_TOOLBAR (PRIV (self)->toolbar), PRIV (self)->open_button, -1);
   gtk_toolbar_insert (GTK_TOOLBAR (PRIV (self)->toolbar), gtk_separator_tool_item_new (), -1);
+  gtk_toolbar_insert (GTK_TOOLBAR (PRIV (self)->toolbar), PRIV (self)->execute_button, -1);
 }
 
 static void
 gtk_test_window_class_init (GtkTestWindowClass* self_class)
 {
   g_type_class_add_private (self_class, sizeof (GtkTestWindowPrivate));
+}
+
+GtkWidget*
+gtk_test_window_get_exec (GtkTestWindow* self)
+{
+  g_return_val_if_fail (GTK_TEST_IS_WINDOW (self), NULL);
+
+  return GTK_WIDGET (PRIV (self)->execute_button);
 }
 
 GtkWidget*
