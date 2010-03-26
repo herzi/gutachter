@@ -44,6 +44,10 @@ void                gtk_test_xvfb_wrapper_set_display (GtkTestXvfbWrapper* self,
                                                        guint64             display);
 void                gtk_test_xvfb_wrapper_set_pid     (GtkTestXvfbWrapper* self,
                                                        GPid                pid);
+gboolean            setup_xvfb                        (gpointer            data);
+void                xvfb_child_watch                  (GPid                pid,
+                                                       gint                status,
+                                                       gpointer            user_data);
 
 struct _GtkTestXvfbWrapper
 {

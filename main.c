@@ -519,7 +519,7 @@ open_item_clicked (GtkButton* button G_GNUC_UNUSED,
   gtk_widget_destroy (dialog);
 }
 
-static void
+void
 xvfb_child_watch (GPid      pid,
                   gint      status,
                   gpointer  user_data)
@@ -543,7 +543,7 @@ xvfb_child_watch (GPid      pid,
   gtk_test_xvfb_wrapper_set_pid (xvfb, 0);
 }
 
-static gboolean
+gboolean
 setup_xvfb (gpointer data G_GNUC_UNUSED)
 {
   gchar* display;
