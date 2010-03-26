@@ -602,10 +602,8 @@ main (int   argc,
   g_signal_connect (window, "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);
 
-  item = gtk_tool_button_new_from_stock (GTK_STOCK_OPEN);
-  g_signal_connect (item, "clicked",
+  g_signal_connect (gtk_test_window_get_open (GTK_TEST_WINDOW (window)), "clicked",
                     G_CALLBACK (open_item_clicked), window);
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
   item = gtk_separator_tool_item_new ();
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
   button_run = GTK_WIDGET (gtk_tool_button_new_from_stock (GTK_STOCK_EXECUTE));
