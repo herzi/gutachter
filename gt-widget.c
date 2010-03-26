@@ -32,7 +32,8 @@ struct _GtkTestWidgetPrivate
 
 #define PRIV(i) (((GtkTestWidget*)(i))->_private)
 
-G_DEFINE_TYPE (GtkTestWidget, gtk_test_widget, GTK_TYPE_VBOX);
+G_DEFINE_TYPE_WITH_CODE (GtkTestWidget, gtk_test_widget, GTK_TYPE_VBOX,
+                         G_IMPLEMENT_INTERFACE (GTK_TEST_TYPE_RUNNER, NULL));
 
 static void
 gtk_test_widget_init (GtkTestWidget* self)

@@ -21,6 +21,26 @@
 #ifndef GT_RUNNER_H
 #define GT_RUNNER_H
 
+#include <glib-object.h>
+
+G_BEGIN_DECLS
+
+typedef struct _GtkTestRunner      GtkTestRunner;
+typedef struct _GtkTestRunnerIface GtkTestRunnerIface;
+
+#define GTK_TEST_TYPE_RUNNER         (gtk_test_runner_get_type ())
+#define GTK_TEST_RUNNER(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), GTK_TEST_TYPE_RUNNER, GtkTestRunner))
+#define GTK_TEST_IS_RUNNER(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), GTK_TEST_TYPE_RUNNER))
+#define GTK_TEST_RUNNER_GET_IFACE(i) (G_TYPE_INSTANCE_GET_INTERFACE ((i), GTK_TEST_TYPE_RUNNER, GtkTestRunnerIface))
+
+GType gtk_test_runner_get_type (void);
+
+struct _GtkTestRunnerIface
+{
+  GTypeInterface  base_interface;
+};
+
+G_END_DECLS
 
 #endif /* !GT_RUNNER_H */
 

@@ -33,7 +33,8 @@ struct _GtkTestWindowPrivate
 
 #define PRIV(i) (((GtkTestWindow*)(i))->_private)
 
-G_DEFINE_TYPE (GtkTestWindow, gtk_test_window, GTK_TYPE_WINDOW);
+G_DEFINE_TYPE_WITH_CODE (GtkTestWindow, gtk_test_window, GTK_TYPE_WINDOW,
+                         G_IMPLEMENT_INTERFACE (GTK_TEST_TYPE_RUNNER, NULL));
 
 static void
 gtk_test_window_init (GtkTestWindow* self)

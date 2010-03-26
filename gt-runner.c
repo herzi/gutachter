@@ -20,5 +20,22 @@
 
 #include "gt-runner.h"
 
+GType
+gtk_test_runner_get_type (void)
+{
+  static GType  stored_type = 0;
+
+  if (g_once_init_enter (&stored_type))
+    {
+      GType  registered_type = g_type_register_static_simple (G_TYPE_INTERFACE,
+                                                              "GtkTestRunner",
+                                                              sizeof (GtkTestRunnerIface), NULL,
+                                                              0, NULL, 0);
+
+      g_once_init_leave (&stored_type, registered_type);
+    }
+
+  return stored_type;
+}
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
