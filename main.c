@@ -27,13 +27,6 @@
 
 #include <glib/gi18n.h>
 
-enum
-{
-  COL_NAME,
-  COL_PASSED,
-  N_COLUMNS
-};
-
 typedef enum
 {
   MODE_LIST,
@@ -124,8 +117,8 @@ create_iter_for_path (GtkTreeIter* iter,
     }
 
   gtk_tree_store_set (store, iter,
-                      COL_PASSED, FALSE,
-                      COL_NAME, last_slash,
+                      GTK_TEST_HIERARCHY_COLUMN_PASSED, FALSE,
+                      GTK_TEST_HIERARCHY_COLUMN_NAME, last_slash,
                       -1);
 
   tree_path = gtk_tree_model_get_path (GTK_TREE_MODEL (store), iter);
@@ -443,7 +436,7 @@ run_test_child_watch (GPid      pid,
               break;
             case G_TEST_LOG_STOP_CASE:
               gtk_tree_store_set (store, &iter,
-                                  COL_PASSED, msg->nums[0] == 0,
+                                  GTK_TEST_HIERARCHY_COLUMN_PASSED, msg->nums[0] == 0,
                                   -1);
               g_warning ("status %d; nforks %d; elapsed %Lf",
                          (int)msg->nums[0], (int)msg->nums[1], msg->nums[2]);
@@ -595,8 +588,7 @@ main (int   argc,
   gtk_init (&argc, &argv);
 
   map = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GFreeFunc)gtk_tree_row_reference_free);
-
-  store = gtk_tree_store_new (N_COLUMNS, G_TYPE_STRING, G_TYPE_BOOLEAN);
+  store = gtk_test_hierarchy_new ();
 
   g_idle_add (setup_xvfb, NULL);
 
@@ -627,11 +619,11 @@ main (int   argc,
 
   gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (tree), -1,
                                               NULL, gtk_cell_renderer_text_new (),
-                                              "text", COL_NAME,
+                                              "text", GTK_TEST_HIERARCHY_COLUMN_NAME,
                                               NULL);
   gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (tree), -1,
                                               NULL, gtk_cell_renderer_toggle_new (),
-                                              "active", COL_PASSED,
+                                              "active", GTK_TEST_HIERARCHY_COLUMN_PASSED,
                                               NULL);
 
   gtk_widget_show_all (toolbar);

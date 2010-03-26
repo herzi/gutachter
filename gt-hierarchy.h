@@ -21,6 +21,20 @@
 #ifndef GT_HIERARCHY_H
 #define GT_HIERARCHY_H
 
+#include <gtk/gtk.h>
+
+G_BEGIN_DECLS
+
+enum
+{
+  GTK_TEST_HIERARCHY_COLUMN_NAME,
+  GTK_TEST_HIERARCHY_COLUMN_PASSED,
+  GTK_TEST_HIERARCHY_N_COLUMNS
+};
+
+GtkTreeStore* gtk_test_hierarchy_new (void);
+
+G_END_DECLS
 
 #endif /* !GT_HIERARCHY_H */
 
