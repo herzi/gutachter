@@ -83,7 +83,7 @@ setup_xvfb (gpointer data)
                      NULL, NULL,
                      &PRIV (self)->pid, &error))
     {
-      g_child_watch_add (PRIV (self)->pid, xvfb_child_watch, setup_xvfb);
+      g_child_watch_add (PRIV (self)->pid, xvfb_child_watch, self);
     }
   else
     {
