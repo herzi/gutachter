@@ -531,8 +531,6 @@ main (int   argc,
 
   map = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GFreeFunc)gtk_tree_row_reference_free);
 
-  g_idle_add (setup_xvfb, xvfb);
-
   window = gtk_test_window_new ();
   widget = gtk_test_window_get_widget (GTK_TEST_WINDOW (window));
 

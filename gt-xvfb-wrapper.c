@@ -32,9 +32,11 @@ struct _GtkTestXvfbWrapperPrivate
 
 #define PRIV(i) (((GtkTestXvfbWrapper*)(i))->_private)
 
+static gboolean setup_xvfb (gpointer  data);
+
 G_DEFINE_TYPE (GtkTestXvfbWrapper, gtk_test_xvfb_wrapper, G_TYPE_OBJECT);
 
-void
+static void
 xvfb_child_watch (GPid      pid,
                   gint      status,
                   gpointer  user_data)
@@ -58,7 +60,7 @@ xvfb_child_watch (GPid      pid,
   PRIV (user_data)->pid = 0;
 }
 
-gboolean
+static gboolean
 setup_xvfb (gpointer data)
 {
   GtkTestXvfbWrapper* self = data;
@@ -97,6 +99,8 @@ static void
 gtk_test_xvfb_wrapper_init (GtkTestXvfbWrapper* self)
 {
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_XVFB_WRAPPER, GtkTestXvfbWrapperPrivate);
+
+  g_idle_add (setup_xvfb, self);
 }
 
 static void
