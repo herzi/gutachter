@@ -33,8 +33,10 @@ struct _GtkTestWindowPrivate
 
 #define PRIV(i) (((GtkTestWindow*)(i))->_private)
 
+static void implement_gtk_test_runner (GtkTestRunnerIface* iface);
+
 G_DEFINE_TYPE_WITH_CODE (GtkTestWindow, gtk_test_window, GTK_TYPE_WINDOW,
-                         G_IMPLEMENT_INTERFACE (GTK_TEST_TYPE_RUNNER, NULL));
+                         G_IMPLEMENT_INTERFACE (GTK_TEST_TYPE_RUNNER, implement_gtk_test_runner));
 
 static void
 gtk_test_window_init (GtkTestWindow* self)
@@ -64,6 +66,26 @@ static void
 gtk_test_window_class_init (GtkTestWindowClass* self_class)
 {
   g_type_class_add_private (self_class, sizeof (GtkTestWindowPrivate));
+}
+
+static GFile*
+get_file (GtkTestRunner* runner)
+{
+  return gtk_test_runner_get_file (GTK_TEST_RUNNER (PRIV (runner)->widget));
+}
+
+static void
+set_file (GtkTestRunner* runner,
+          GFile        * file)
+{
+  gtk_test_runner_set_file (GTK_TEST_RUNNER (PRIV (runner)->widget), file);
+}
+
+static void
+implement_gtk_test_runner (GtkTestRunnerIface* iface)
+{
+  iface->get_file = get_file;
+  iface->set_file = set_file;
 }
 
 GtkWidget*

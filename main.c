@@ -38,8 +38,6 @@ static GtkWidget* window = NULL;
 static GByteArray* buffer = NULL;
 static GHashTable* map = NULL;
 
-static GFile* testcase = NULL;
-
 static guint64 executed = 0;
 static guint64 tests = 0;
 static guint64 xvfb_display = 0;
@@ -201,7 +199,7 @@ run_or_warn (GPid       * pid,
 {
   gboolean  result = FALSE;
   GError  * error  = NULL;
-  GFile   * parent = g_file_get_parent (testcase);
+  GFile   * parent = g_file_get_parent (gtk_test_runner_get_file (GTK_TEST_RUNNER (window)));
   gchar   * base;
   gchar   * folder = g_file_get_path (parent);
   gchar   * argv[] = {
@@ -215,7 +213,7 @@ run_or_warn (GPid       * pid,
   gchar** iter;
   gboolean found_display = FALSE;
 
-  base = g_file_get_basename (testcase);
+  base = g_file_get_basename (gtk_test_runner_get_file (GTK_TEST_RUNNER (window)));
 
   /* FIXME: this is X11 specific */
   for (iter = env; iter && *iter; iter++)
@@ -311,7 +309,7 @@ selection_changed_cb (GtkWindow* window)
       file_monitor = NULL;
     }
 
-  if (testcase)
+  if (gtk_test_runner_get_file (GTK_TEST_RUNNER (window)))
     {
       GError* error = NULL;
       gchar* base;
@@ -325,7 +323,7 @@ selection_changed_cb (GtkWindow* window)
           exit (2);
         }
 
-      base = g_file_get_basename (testcase); /* FIXME: use the display name */
+      base = g_file_get_basename (gtk_test_runner_get_file (GTK_TEST_RUNNER (window))); /* FIXME: use the display name */
       title = g_strdup_printf (_("%s - GLib Unit Tests"), base);
       g_free (base);
       gtk_window_set_title (window, title);
@@ -353,12 +351,12 @@ selection_changed_cb (GtkWindow* window)
         }
       close (pipes[1]);
 
-      file_monitor = g_file_monitor (testcase, G_FILE_MONITOR_NONE, NULL, &error);
+      file_monitor = g_file_monitor (gtk_test_runner_get_file (GTK_TEST_RUNNER (window)), G_FILE_MONITOR_NONE, NULL, &error);
       g_signal_connect (file_monitor, "changed",
                         G_CALLBACK (file_changed_cb), NULL);
     }
 
-  if (!testcase)
+  if (!gtk_test_runner_get_file (GTK_TEST_RUNNER (window)))
     {
       gtk_window_set_title (window, _("GLib Unit Tests"));
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("no test selected"));
@@ -369,7 +367,8 @@ selection_changed_cb (GtkWindow* window)
       GFileInfo* info;
       GError   * error = NULL;
 
-      info = g_file_query_info (testcase, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME, G_FILE_QUERY_INFO_NONE, NULL, &error);
+      info = g_file_query_info (gtk_test_runner_get_file (GTK_TEST_RUNNER (window)),
+                                G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME, G_FILE_QUERY_INFO_NONE, NULL, &error);
 
       if (error)
         {
@@ -382,7 +381,8 @@ selection_changed_cb (GtkWindow* window)
         }
     }
 
-  gtk_widget_set_sensitive (gtk_test_widget_get_notebook (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window)))), testcase != NULL);
+  gtk_widget_set_sensitive (gtk_test_widget_get_notebook (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window)))),
+                            gtk_test_runner_get_file (GTK_TEST_RUNNER (window)) != NULL);
 }
 
 static void
@@ -505,15 +505,15 @@ open_item_clicked (GtkButton* button G_GNUC_UNUSED,
                                                    GTK_STOCK_CLOSE, GTK_RESPONSE_REJECT,
                                                    GTK_STOCK_OPEN,  GTK_RESPONSE_ACCEPT,
                                                    NULL);
+  GFile* file;
+
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_ACCEPT);
 
   gtk_dialog_run (GTK_DIALOG (dialog));
 
-  if (testcase)
-    {
-      g_object_unref (testcase);
-    }
-  testcase = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
+  file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
+  gtk_test_runner_set_file  (GTK_TEST_RUNNER (window), file);
+  g_object_unref (file);
 
   selection_changed_cb (window);
 

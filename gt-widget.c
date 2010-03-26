@@ -25,6 +25,7 @@
 
 struct _GtkTestWidgetPrivate
 {
+  GFile    * file;
   GtkWidget* hierarchy_view;
   GtkWidget* notebook;
   GtkWidget* progress;
@@ -32,8 +33,10 @@ struct _GtkTestWidgetPrivate
 
 #define PRIV(i) (((GtkTestWidget*)(i))->_private)
 
+static void implement_gtk_test_runner (GtkTestRunnerIface* iface);
+
 G_DEFINE_TYPE_WITH_CODE (GtkTestWidget, gtk_test_widget, GTK_TYPE_VBOX,
-                         G_IMPLEMENT_INTERFACE (GTK_TEST_TYPE_RUNNER, NULL));
+                         G_IMPLEMENT_INTERFACE (GTK_TEST_TYPE_RUNNER, implement_gtk_test_runner));
 
 static void
 gtk_test_widget_init (GtkTestWidget* self)
@@ -82,9 +85,58 @@ gtk_test_widget_init (GtkTestWidget* self)
 }
 
 static void
+dispose (GObject* object)
+{
+  if (PRIV (object)->file)
+    {
+      gtk_test_runner_set_file (GTK_TEST_RUNNER (object), NULL);
+    }
+
+  G_OBJECT_CLASS (gtk_test_widget_parent_class)->dispose (object);
+}
+
+static void
 gtk_test_widget_class_init (GtkTestWidgetClass* self_class)
 {
+  GObjectClass* object_class = G_OBJECT_CLASS (self_class);
+
+  object_class->dispose = dispose;
+
   g_type_class_add_private (self_class, sizeof (GtkTestWidgetPrivate));
+}
+
+static GFile*
+get_file (GtkTestRunner* runner)
+{
+  return PRIV (runner)->file;
+}
+
+static void
+set_file (GtkTestRunner* runner,
+          GFile        * file)
+{
+  if (file == PRIV (runner)->file)
+    {
+      return;
+    }
+
+  if (PRIV (runner)->file)
+    {
+      g_object_unref (PRIV (runner)->file);
+      PRIV (runner)->file = NULL;
+    }
+
+  if (file)
+    {
+      PRIV (runner)->file = g_object_ref (file);
+    }
+}
+
+static void
+implement_gtk_test_runner (GtkTestRunnerIface* iface)
+{
+  iface->get_file = get_file;
+  iface->set_file = set_file;
 }
 
 GtkWidget*

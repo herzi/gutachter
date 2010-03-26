@@ -21,7 +21,7 @@
 #ifndef GT_RUNNER_H
 #define GT_RUNNER_H
 
-#include <glib-object.h>
+#include <gio/gio.h>
 
 G_BEGIN_DECLS
 
@@ -33,11 +33,19 @@ typedef struct _GtkTestRunnerIface GtkTestRunnerIface;
 #define GTK_TEST_IS_RUNNER(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), GTK_TEST_TYPE_RUNNER))
 #define GTK_TEST_RUNNER_GET_IFACE(i) (G_TYPE_INSTANCE_GET_INTERFACE ((i), GTK_TEST_TYPE_RUNNER, GtkTestRunnerIface))
 
-GType gtk_test_runner_get_type (void);
+GType  gtk_test_runner_get_type (void);
+GFile* gtk_test_runner_get_file (GtkTestRunner* self);
+void   gtk_test_runner_set_file (GtkTestRunner* self,
+                                 GFile        * file);
 
 struct _GtkTestRunnerIface
 {
   GTypeInterface  base_interface;
+
+  /* vtable */
+  GFile* (*get_file) (GtkTestRunner* self);
+  void   (*set_file) (GtkTestRunner* self,
+                      GFile        * file);
 };
 
 G_END_DECLS

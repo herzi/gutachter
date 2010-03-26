@@ -38,4 +38,42 @@ gtk_test_runner_get_type (void)
   return stored_type;
 }
 
+GFile*
+gtk_test_runner_get_file (GtkTestRunner* self)
+{
+  GtkTestRunnerIface* iface;
+
+  g_return_val_if_fail (GTK_TEST_IS_RUNNER (self), NULL);
+
+  iface = GTK_TEST_RUNNER_GET_IFACE (self);
+  if (!iface->get_file)
+    {
+      g_warning ("%s(%s): %s doesn't implement gtk_test_runner_get_file()",
+                 G_STRFUNC, G_STRLOC, G_OBJECT_TYPE_NAME (self));
+      return NULL;
+    }
+
+  return iface->get_file (self);
+}
+
+void
+gtk_test_runner_set_file (GtkTestRunner* self,
+                          GFile        * file)
+{
+  GtkTestRunnerIface* iface;
+
+  g_return_if_fail (GTK_TEST_IS_RUNNER (self));
+
+  iface = GTK_TEST_RUNNER_GET_IFACE (self);
+  if (!iface->set_file)
+    {
+      g_warning ("%s(%s): %s doesn't implement gtk_test_runner_set_file()",
+                 G_STRFUNC, G_STRLOC, G_OBJECT_TYPE_NAME (self));
+    }
+  else
+    {
+      iface->set_file (self, file);
+    }
+}
+
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
