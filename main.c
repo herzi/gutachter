@@ -34,7 +34,6 @@ typedef enum
 } RunningMode;
 
 static GtkWidget* window = NULL;
-static GtkWidget* button_run = NULL;
 static GtkWidget* progress = NULL;
 static GtkWidget* notebook = NULL;
 static GtkWidget* tree = NULL;
@@ -337,7 +336,7 @@ selection_changed_cb (GtkWindow* window)
       tests = 0;
       if (!run_or_warn (&pid, pipes[1], MODE_LIST))
         {
-          gtk_widget_set_sensitive (button_run, FALSE);
+          gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), FALSE);
           close (pipes[0]);
         }
       else
@@ -349,7 +348,7 @@ selection_changed_cb (GtkWindow* window)
           buffer = g_byte_array_new ();
           g_io_add_watch (channel, G_IO_IN, io_func, buffer);
           g_child_watch_add (pid, child_watch_cb, channel);
-          gtk_widget_set_sensitive (button_run, TRUE);
+          gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), TRUE);
 
           gtk_progress_bar_pulse (GTK_PROGRESS_BAR (progress));
           gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("Loading Test Paths..."));
@@ -365,7 +364,7 @@ selection_changed_cb (GtkWindow* window)
     {
       gtk_window_set_title (window, _("GLib Unit Tests"));
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("no test selected"));
-      gtk_widget_set_sensitive (button_run, FALSE);
+      gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), FALSE);
     }
   else
     {
@@ -488,7 +487,7 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
       buffer = g_byte_array_new ();
       g_io_add_watch (channel, G_IO_IN, io_func, buffer);
       g_child_watch_add (pid, run_test_child_watch, channel);
-      gtk_widget_set_sensitive (button_run, TRUE);
+      gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), TRUE);
 
       gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (progress), 0.0);
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("Starting Tests..."));
@@ -601,8 +600,7 @@ main (int   argc,
 
   g_signal_connect (gtk_test_window_get_open (GTK_TEST_WINDOW (window)), "clicked",
                     G_CALLBACK (open_item_clicked), window);
-  button_run = gtk_test_window_get_exec (GTK_TEST_WINDOW (window));
-  g_signal_connect (button_run, "clicked",
+  g_signal_connect (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), "clicked",
                     G_CALLBACK (button_clicked_cb), NULL);
 
   selection_changed_cb (GTK_WINDOW (window));
