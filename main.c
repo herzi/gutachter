@@ -523,8 +523,6 @@ int
 main (int   argc,
       char**argv)
 {
-  GtkWidget* widget;
-
   gtk_init (&argc, &argv);
 
   xvfb = gtk_test_xvfb_wrapper_new ();
@@ -532,7 +530,6 @@ main (int   argc,
   map = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GFreeFunc)gtk_tree_row_reference_free);
 
   window = gtk_test_window_new ();
-  widget = gtk_test_window_get_widget (GTK_TEST_WINDOW (window));
 
   g_signal_connect (window, "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);
