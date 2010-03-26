@@ -34,7 +34,6 @@ typedef enum
 } RunningMode;
 
 static GtkWidget* window = NULL;
-static GtkWidget* progress = NULL;
 static GtkWidget* notebook = NULL;
 static GtkWidget* tree = NULL;
 
@@ -64,7 +63,7 @@ io_func (GIOChannel  * channel,
       g_byte_array_append (buffer, buf, read_bytes);
     }
 
-  gtk_progress_bar_pulse (GTK_PROGRESS_BAR (progress));
+  gtk_progress_bar_pulse (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))));
   return TRUE;
 }
 
@@ -189,8 +188,8 @@ child_watch_cb (GPid      pid,
       gtk_tree_view_expand_all (GTK_TREE_VIEW (tree));
 
       g_io_channel_unref (channel);
-      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (progress), 0.0);
-      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("not tested yet"));
+      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), 0.0);
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("not tested yet"));
     }
 
   g_spawn_close_pid (pid);
@@ -350,8 +349,8 @@ selection_changed_cb (GtkWindow* window)
           g_child_watch_add (pid, child_watch_cb, channel);
           gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), TRUE);
 
-          gtk_progress_bar_pulse (GTK_PROGRESS_BAR (progress));
-          gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("Loading Test Paths..."));
+          gtk_progress_bar_pulse (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))));
+          gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("Loading Test Paths..."));
         }
       close (pipes[1]);
 
@@ -363,7 +362,7 @@ selection_changed_cb (GtkWindow* window)
   if (!testcase)
     {
       gtk_window_set_title (window, _("GLib Unit Tests"));
-      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("no test selected"));
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("no test selected"));
       gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), FALSE);
     }
   else
@@ -399,13 +398,13 @@ run_test_child_watch (GPid      pid,
   if (WIFEXITED (status) && WEXITSTATUS (status))
     {
       gchar* text = g_strdup_printf (_("exited with exit code %d"), WEXITSTATUS (status));
-      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), text);
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), text);
       g_free (text);
     }
   else if (WIFSIGNALED (status))
     {
       gchar* text = g_strdup_printf (_("exited with signal %d"), WTERMSIG (status));
-      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), text);
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), text);
       g_free (text);
     }
   else if (WIFEXITED (status))
@@ -441,7 +440,7 @@ run_test_child_watch (GPid      pid,
               g_warning ("status %d; nforks %d; elapsed %Lf",
                          (int)msg->nums[0], (int)msg->nums[1], msg->nums[2]);
               executed++;
-              gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (progress), 1.0 * executed / tests);
+              gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), 1.0 * executed / tests);
               break;
             default:
               g_warning ("unexpected message type: %d", msg->log_type);
@@ -451,8 +450,8 @@ run_test_child_watch (GPid      pid,
         }
       g_test_log_buffer_free (tlb);
 
-      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (progress), 1.0);
-      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("exited cleanly"));
+      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), 1.0);
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("exited cleanly"));
     }
 
   g_io_channel_unref (channel);
@@ -465,7 +464,7 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
   GPid   pid = 0;
   int    pipes[2];
 
-  gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("Running tests..."));
+  gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("Running tests..."));
 
   if (pipe (pipes))
     {
@@ -489,8 +488,8 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
       g_child_watch_add (pid, run_test_child_watch, channel);
       gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), TRUE);
 
-      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (progress), 0.0);
-      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (progress), _("Starting Tests..."));
+      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), 0.0);
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("Starting Tests..."));
     }
 
   close (pipes[1]);
@@ -590,7 +589,6 @@ main (int   argc,
 
   window = gtk_test_window_new ();
   widget = gtk_test_window_get_widget (GTK_TEST_WINDOW (window));
-  progress = gtk_test_widget_get_progress (GTK_TEST_WIDGET (widget));
   tree = gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (widget));
   notebook = gtk_test_widget_get_notebook (GTK_TEST_WIDGET (widget));
   store = GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (tree)));
