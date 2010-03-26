@@ -53,6 +53,8 @@ gtk_test_window_init (GtkTestWindow* self)
 
   gtk_widget_show_all (PRIV (self)->toolbar);
   gtk_box_pack_start (GTK_BOX (PRIV (self)->box), PRIV (self)->toolbar, FALSE, FALSE, 0);
+  gtk_widget_show (PRIV (self)->widget);
+  gtk_container_add (GTK_CONTAINER (PRIV (self)->box), PRIV (self)->widget);
   gtk_widget_show (PRIV (self)->box);
   gtk_container_add (GTK_CONTAINER (self), PRIV (self)->box);
 }

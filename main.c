@@ -607,9 +607,6 @@ main (int   argc,
   g_signal_connect (button_run, "clicked",
                     G_CALLBACK (button_clicked_cb), NULL);
 
-  gtk_widget_show (box);
-  gtk_container_add (GTK_CONTAINER (gtk_test_window_get_box (GTK_TEST_WINDOW (window))), box);
-
   selection_changed_cb (GTK_WINDOW (window));
 
   gtk_widget_show (window);
