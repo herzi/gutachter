@@ -20,7 +20,7 @@
 
 #include <stdlib.h>
 #include <sys/types.h>
-#include <sys/wait.h>
+#include <sys/wait.h> /* WIFEXITED() */
 #include <unistd.h>
 
 #include <gtk-test.h>
@@ -517,30 +517,6 @@ open_item_clicked (GtkButton* button G_GNUC_UNUSED,
   selection_changed_cb (window);
 
   gtk_widget_destroy (dialog);
-}
-
-void
-xvfb_child_watch (GPid      pid,
-                  gint      status,
-                  gpointer  user_data)
-{
-  g_spawn_close_pid (pid);
-
-  if (WIFEXITED (status))
-    {
-      if (WEXITSTATUS (status))
-        {
-          g_message ("xvfb exit code: %d", WEXITSTATUS (status));
-          g_idle_add (user_data, NULL);
-        }
-    }
-  else if (WIFSIGNALED (status))
-    {
-    }
-
-  g_assert_cmpint (pid, ==, gtk_test_xvfb_wrapper_get_pid (xvfb));
-
-  gtk_test_xvfb_wrapper_set_pid (xvfb, 0);
 }
 
 int

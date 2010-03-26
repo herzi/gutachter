@@ -20,8 +20,9 @@
 
 #include "gt-xvfb-wrapper.h"
 
-#include <errno.h>  /* errno */
-#include <string.h> /* strerror() */
+#include <errno.h>    /* errno */
+#include <string.h>   /* strerror() */
+#include <sys/wait.h> /* WIFEXITED() */
 
 struct _GtkTestXvfbWrapperPrivate
 {
@@ -32,6 +33,30 @@ struct _GtkTestXvfbWrapperPrivate
 #define PRIV(i) (((GtkTestXvfbWrapper*)(i))->_private)
 
 G_DEFINE_TYPE (GtkTestXvfbWrapper, gtk_test_xvfb_wrapper, G_TYPE_OBJECT);
+
+void
+xvfb_child_watch (GPid      pid,
+                  gint      status,
+                  gpointer  user_data)
+{
+  g_spawn_close_pid (pid);
+
+  if (WIFEXITED (status))
+    {
+      if (WEXITSTATUS (status))
+        {
+          g_message ("xvfb exit code: %d", WEXITSTATUS (status));
+          g_idle_add (setup_xvfb, user_data);
+        }
+    }
+  else if (WIFSIGNALED (status))
+    {
+    }
+
+  g_assert_cmpint (pid, ==, PRIV (user_data)->pid);
+
+  PRIV (user_data)->pid = 0;
+}
 
 gboolean
 setup_xvfb (gpointer data)
