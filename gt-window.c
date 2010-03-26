@@ -44,6 +44,7 @@ gtk_test_window_init (GtkTestWindow* self)
   gtk_window_set_default_size (GTK_WINDOW (self), 300, 400);
 
   gtk_toolbar_insert (GTK_TOOLBAR (PRIV (self)->toolbar), PRIV (self)->open_button, -1);
+  gtk_toolbar_insert (GTK_TOOLBAR (PRIV (self)->toolbar), gtk_separator_tool_item_new (), -1);
 }
 
 static void

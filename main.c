@@ -580,7 +580,6 @@ int
 main (int   argc,
       char**argv)
 {
-  GtkToolItem* item;
   GtkWidget* box;
   GtkWidget* toolbar;
   GtkWidget* window;
@@ -604,8 +603,6 @@ main (int   argc,
 
   g_signal_connect (gtk_test_window_get_open (GTK_TEST_WINDOW (window)), "clicked",
                     G_CALLBACK (open_item_clicked), window);
-  item = gtk_separator_tool_item_new ();
-  gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
   button_run = GTK_WIDGET (gtk_tool_button_new_from_stock (GTK_STOCK_EXECUTE));
   g_signal_connect (button_run, "clicked",
                     G_CALLBACK (button_clicked_cb), NULL);
