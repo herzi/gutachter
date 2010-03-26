@@ -607,8 +607,6 @@ main (int   argc,
   g_signal_connect (button_run, "clicked",
                     G_CALLBACK (button_clicked_cb), NULL);
 
-  gtk_widget_show_all (toolbar);
-  gtk_box_pack_start (GTK_BOX (box), toolbar, FALSE, FALSE, 0);
   gtk_widget_show (progress);
   gtk_box_pack_start (GTK_BOX (box), progress, FALSE, FALSE, 0);
   /* FIXME: add state information: "Runs: 3/3" "Errors: 2" "Failures: 2" */

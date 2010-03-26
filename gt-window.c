@@ -51,6 +51,8 @@ gtk_test_window_init (GtkTestWindow* self)
   gtk_toolbar_insert (GTK_TOOLBAR (PRIV (self)->toolbar), gtk_separator_tool_item_new (), -1);
   gtk_toolbar_insert (GTK_TOOLBAR (PRIV (self)->toolbar), PRIV (self)->execute_button, -1);
 
+  gtk_widget_show_all (PRIV (self)->toolbar);
+  gtk_box_pack_start (GTK_BOX (PRIV (self)->box), PRIV (self)->toolbar, FALSE, FALSE, 0);
   gtk_widget_show (PRIV (self)->box);
   gtk_container_add (GTK_CONTAINER (self), PRIV (self)->box);
 }
