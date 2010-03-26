@@ -34,7 +34,6 @@ typedef enum
 } RunningMode;
 
 static GtkWidget* window = NULL;
-static GtkWidget* tree = NULL;
 
 static GByteArray* buffer = NULL;
 static GHashTable* map = NULL;
@@ -184,7 +183,7 @@ child_watch_cb (GPid      pid,
         }
       g_test_log_buffer_free (tlb);
 
-      gtk_tree_view_expand_all (GTK_TREE_VIEW (tree));
+      gtk_tree_view_expand_all (GTK_TREE_VIEW (gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))));
 
       g_io_channel_unref (channel);
       gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), 0.0);
@@ -588,8 +587,7 @@ main (int   argc,
 
   window = gtk_test_window_new ();
   widget = gtk_test_window_get_widget (GTK_TEST_WINDOW (window));
-  tree = gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (widget));
-  store = GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (tree)));
+  store = GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window)))))));
 
   g_signal_connect (window, "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);
