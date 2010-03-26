@@ -580,8 +580,7 @@ int
 main (int   argc,
       char**argv)
 {
-  GtkWidget* box;
-  GtkWidget* toolbar;
+  GtkWidget* widget;
   GtkWidget* window;
 
   gtk_init (&argc, &argv);
@@ -591,11 +590,10 @@ main (int   argc,
   g_idle_add (setup_xvfb, NULL);
 
   window = gtk_test_window_new ();
-  toolbar = gtk_test_window_get_toolbar (GTK_TEST_WINDOW (window));
-  box = gtk_test_window_get_widget (GTK_TEST_WINDOW (window));
-  progress = gtk_test_widget_get_progress (GTK_TEST_WIDGET (box));
-  tree = gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (box));
-  notebook = gtk_test_widget_get_notebook (GTK_TEST_WIDGET (box));
+  widget = gtk_test_window_get_widget (GTK_TEST_WINDOW (window));
+  progress = gtk_test_widget_get_progress (GTK_TEST_WIDGET (widget));
+  tree = gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (widget));
+  notebook = gtk_test_widget_get_notebook (GTK_TEST_WIDGET (widget));
   store = GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (tree)));
 
   g_signal_connect (window, "destroy",
