@@ -23,6 +23,7 @@
 struct _GtkTestXvfbWrapperPrivate
 {
   guint64  display;
+  GPid     pid;
 };
 
 #define PRIV(i) (((GtkTestXvfbWrapper*)(i))->_private)
@@ -49,6 +50,14 @@ gtk_test_xvfb_wrapper_get_display (GtkTestXvfbWrapper* self)
   return PRIV (self)->display;
 }
 
+GPid
+gtk_test_xvfb_wrapper_get_pid (GtkTestXvfbWrapper* self)
+{
+  g_return_val_if_fail (GTK_TEST_IS_XVFB_WRAPPER (self), 0);
+
+  return PRIV (self)->pid;
+}
+
 GtkTestXvfbWrapper*
 gtk_test_xvfb_wrapper_new (void)
 {
@@ -63,6 +72,15 @@ gtk_test_xvfb_wrapper_set_display (GtkTestXvfbWrapper* self,
   g_return_if_fail (GTK_TEST_IS_XVFB_WRAPPER (self));
 
   PRIV (self)->display = display;
+}
+
+void
+gtk_test_xvfb_wrapper_set_pid (GtkTestXvfbWrapper* self,
+                               GPid                pid)
+{
+  g_return_if_fail (GTK_TEST_IS_XVFB_WRAPPER (self));
+
+  PRIV (self)->pid = pid;
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

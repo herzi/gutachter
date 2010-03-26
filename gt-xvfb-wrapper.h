@@ -39,8 +39,11 @@ typedef struct _GtkTestXvfbWrapperPrivate GtkTestXvfbWrapperPrivate;
 GType               gtk_test_xvfb_wrapper_get_type    (void);
 GtkTestXvfbWrapper* gtk_test_xvfb_wrapper_new         (void);
 guint64             gtk_test_xvfb_wrapper_get_display (GtkTestXvfbWrapper* self);
+GPid                gtk_test_xvfb_wrapper_get_pid     (GtkTestXvfbWrapper* self);
 void                gtk_test_xvfb_wrapper_set_display (GtkTestXvfbWrapper* self,
                                                        guint64             display);
+void                gtk_test_xvfb_wrapper_set_pid     (GtkTestXvfbWrapper* self,
+                                                       GPid                pid);
 
 struct _GtkTestXvfbWrapper
 {

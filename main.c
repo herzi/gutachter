@@ -41,7 +41,6 @@ static GHashTable* map = NULL;
 
 static guint64 executed = 0;
 static guint64 tests = 0;
-static GPid    xvfb_pid = 0;
 
 static GFileMonitor* file_monitor = NULL;
 
@@ -539,9 +538,9 @@ xvfb_child_watch (GPid      pid,
     {
     }
 
-  g_assert_cmpint (pid, ==, xvfb_pid);
+  g_assert_cmpint (pid, ==, gtk_test_xvfb_wrapper_get_pid (xvfb));
 
-  xvfb_pid = 0;
+  gtk_test_xvfb_wrapper_set_pid (xvfb, 0);
 }
 
 static gboolean
@@ -554,8 +553,9 @@ setup_xvfb (gpointer data G_GNUC_UNUSED)
           NULL
   };
   GError* error = NULL;
+  GPid    pid = 0;
 
-  g_assert_cmpint (xvfb_pid, ==, 0);
+  g_assert_cmpint (gtk_test_xvfb_wrapper_get_pid (xvfb), ==, 0);
 
   gtk_test_xvfb_wrapper_set_display (xvfb,
                                      1 + gtk_test_xvfb_wrapper_get_display (xvfb));
@@ -566,9 +566,10 @@ setup_xvfb (gpointer data G_GNUC_UNUSED)
                      argv, NULL,
                      G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH | G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
                      NULL, NULL,
-                     &xvfb_pid, &error))
+                     &pid, &error))
     {
-      g_child_watch_add (xvfb_pid, xvfb_child_watch, setup_xvfb);
+      gtk_test_xvfb_wrapper_set_pid (xvfb, pid);
+      g_child_watch_add (pid, xvfb_child_watch, setup_xvfb);
     }
   else
     {
@@ -612,11 +613,11 @@ main (int   argc,
   gtk_main ();
 
   g_hash_table_destroy (map);
-  g_object_unref (xvfb);
-  if (kill (xvfb_pid, SIGTERM) < 0)
+  if (kill (gtk_test_xvfb_wrapper_get_pid (xvfb), SIGTERM) < 0)
     {
       perror ("kill()");
     }
+  g_object_unref (xvfb);
   return 0;
 }
 
