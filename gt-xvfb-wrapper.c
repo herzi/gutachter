@@ -20,6 +20,9 @@
 
 #include "gt-xvfb-wrapper.h"
 
+#include <errno.h>  /* errno */
+#include <string.h> /* strerror() */
+
 struct _GtkTestXvfbWrapperPrivate
 {
   guint64  display;
@@ -37,8 +40,36 @@ gtk_test_xvfb_wrapper_init (GtkTestXvfbWrapper* self)
 }
 
 static void
+finalize (GObject* object)
+{
+  if (PRIV (object)->pid)
+    {
+      if (kill (PRIV (object)->pid, SIGTERM) < 0)
+        {
+          int error = errno;
+          g_warning ("%s(%s): error killing the Xvfb process (%d on :%" G_GUINT64_FORMAT "): %s",
+                     G_STRFUNC, G_STRLOC,
+                     PRIV (object)->pid,
+                     PRIV (object)->display,
+                     strerror (error));
+        }
+      else
+        {
+          /* FIXME: try to wait until we are sure that it's quit */
+          PRIV (object)->pid = 0;
+        }
+    }
+
+  G_OBJECT_CLASS (gtk_test_xvfb_wrapper_parent_class)->finalize (object);
+}
+
+static void
 gtk_test_xvfb_wrapper_class_init (GtkTestXvfbWrapperClass* self_class)
 {
+  GObjectClass* object_class = G_OBJECT_CLASS (self_class);
+
+  object_class->finalize = finalize;
+
   g_type_class_add_private (self_class, sizeof (GtkTestXvfbWrapperPrivate));
 }
 

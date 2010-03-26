@@ -613,10 +613,6 @@ main (int   argc,
   gtk_main ();
 
   g_hash_table_destroy (map);
-  if (kill (gtk_test_xvfb_wrapper_get_pid (xvfb), SIGTERM) < 0)
-    {
-      perror ("kill()");
-    }
   g_object_unref (xvfb);
   return 0;
 }
