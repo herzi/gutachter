@@ -24,11 +24,12 @@
 
 struct _GtkTestSuitePrivate
 {
-  GByteArray* buffer;
-  guint64     executed;
-  GFile     * file;
-  GHashTable* iter_map;
-  guint64     tests;
+  GByteArray  * buffer;
+  guint64       executed;
+  GFile       * file;
+  GFileMonitor* file_monitor;
+  GHashTable  * iter_map;
+  guint64       tests;
 };
 
 enum
@@ -53,6 +54,7 @@ gtk_test_suite_init (GtkTestSuite* self)
 static void
 finalize (GObject* object)
 {
+  g_object_unref (PRIV (object)->file_monitor);
   g_object_unref (PRIV (object)->file);
   g_byte_array_free (PRIV (object)->buffer, TRUE);
   g_hash_table_destroy (PRIV (object)->iter_map);
@@ -61,17 +63,46 @@ finalize (GObject* object)
 }
 
 static void
+file_changed_cb (GFileMonitor     * monitor    G_GNUC_UNUSED,
+                 GFile            * file       G_GNUC_UNUSED,
+                 GFile            * other_file G_GNUC_UNUSED,
+                 GFileMonitorEvent  event,
+                 gpointer           user_data  G_GNUC_UNUSED)
+{
+  switch (event)
+    {
+    case G_FILE_MONITOR_EVENT_CHANGED:
+    case G_FILE_MONITOR_EVENT_CREATED:
+      g_warning ("FIXME: re-scan the file");
+      break;
+    case G_FILE_MONITOR_EVENT_DELETED:
+      g_warning ("FIXME: disable the UI bits for now");
+      break;
+    default:
+      g_print ("file changed: %d\n", event);
+      break;
+    }
+}
+
+static void
 set_property (GObject     * object,
               guint         prop_id,
               GValue const* value,
               GParamSpec  * pspec)
 {
+  GError* error = NULL;
+
   switch (prop_id)
     {
     case PROP_FILE:
       g_return_if_fail (!PRIV (object)->file);
       g_return_if_fail (g_value_get_object (value));
       PRIV (object)->file = g_value_dup_object (value);
+
+      PRIV (object)->file_monitor = g_file_monitor (PRIV (object)->file, G_FILE_MONITOR_NONE, NULL, &error);
+      g_signal_connect (PRIV (object)->file_monitor, "changed",
+                        G_CALLBACK (file_changed_cb), object);
+
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);

@@ -25,7 +25,6 @@
 
 struct _GtkTestWidgetPrivate
 {
-  GFileMonitor* file_monitor;
   GtkWidget   * hierarchy_view;
   GtkWidget   * notebook;
   GtkWidget   * progress;
@@ -145,28 +144,6 @@ get_suite (GtkTestRunner* runner)
 }
 
 static void
-file_changed_cb (GFileMonitor     * monitor    G_GNUC_UNUSED,
-                 GFile            * file       G_GNUC_UNUSED,
-                 GFile            * other_file G_GNUC_UNUSED,
-                 GFileMonitorEvent  event,
-                 gpointer           user_data  G_GNUC_UNUSED)
-{
-  switch (event)
-    {
-    case G_FILE_MONITOR_EVENT_CHANGED:
-    case G_FILE_MONITOR_EVENT_CREATED:
-      g_warning ("FIXME: re-scan the file");
-      break;
-    case G_FILE_MONITOR_EVENT_DELETED:
-      g_warning ("FIXME: disable the UI bits for now");
-      break;
-    default:
-      g_print ("file changed: %d\n", event);
-      break;
-    }
-}
-
-static void
 set_file (GtkTestRunner* runner,
           GFile        * file)
 {
@@ -180,23 +157,10 @@ set_file (GtkTestRunner* runner,
       return;
     }
 
-  if (PRIV (runner)->file_monitor)
-    {
-      g_object_unref (PRIV (runner)->file_monitor);
-      PRIV (runner)->file_monitor = NULL;
-    }
-
   if (file)
     {
       GtkTestSuite* suite = gtk_test_suite_new (file);
-      GError      * error = NULL;
-
       gtk_test_widget_set_suite (GTK_TEST_WIDGET (runner), suite);
-
-      PRIV (runner)->file_monitor = g_file_monitor (gtk_test_suite_get_file (suite), G_FILE_MONITOR_NONE, NULL, &error);
-      g_signal_connect (PRIV (runner)->file_monitor, "changed",
-                        G_CALLBACK (file_changed_cb), NULL);
-
       g_object_unref (suite);
     }
   else
