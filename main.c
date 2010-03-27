@@ -38,7 +38,6 @@ static GtkTestSuite* suite = NULL;
 static GtkTestXvfbWrapper* xvfb = NULL;
 
 static GByteArray* buffer = NULL;
-static GHashTable* map = NULL;
 
 static gboolean
 io_func (GIOChannel  * channel,
@@ -61,7 +60,7 @@ static gboolean
 lookup_iter_for_path (GtkTreeIter* iter,
                       gchar      * path)
 {
-  GtkTreeRowReference* reference = g_hash_table_lookup (map, path);
+  GtkTreeRowReference* reference = g_hash_table_lookup (gtk_test_suite_get_iter_map (suite), path);
   if (reference)
     {
       GtkTreeStore* store = GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window)))))));
@@ -114,7 +113,7 @@ create_iter_for_path (GtkTreeIter* iter,
 
   tree_path = gtk_tree_model_get_path (GTK_TREE_MODEL (store), iter);
   reference = gtk_tree_row_reference_new (GTK_TREE_MODEL (store), tree_path);
-  g_hash_table_insert (map, path, reference);
+  g_hash_table_insert (gtk_test_suite_get_iter_map (suite), path, reference);
   gtk_tree_path_free (tree_path);
 }
 
@@ -274,7 +273,11 @@ run_or_warn (GPid       * pid,
 static void
 selection_changed_cb (GtkWindow* window)
 {
-  g_hash_table_remove_all (map);
+  if (suite)
+    {
+      g_hash_table_remove_all (gtk_test_suite_get_iter_map (suite));
+    }
+
   gtk_tree_store_clear (GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))))));
 
   if (gtk_test_runner_get_file (GTK_TEST_RUNNER (window)))
@@ -504,8 +507,6 @@ main (int   argc,
 
   xvfb = gtk_test_xvfb_wrapper_new ();
 
-  map = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GFreeFunc)gtk_tree_row_reference_free);
-
   window = gtk_test_window_new ();
 
   g_signal_connect (window, "destroy",
@@ -522,7 +523,7 @@ main (int   argc,
 
   gtk_main ();
 
-  g_hash_table_destroy (map);
+  g_object_unref (suite);
   g_object_unref (xvfb);
   return 0;
 }

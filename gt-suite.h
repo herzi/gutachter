@@ -39,6 +39,7 @@ typedef struct _GtkTestSuitePrivate GtkTestSuitePrivate;
 GType         gtk_test_suite_get_type     (void);
 GtkTestSuite* gtk_test_suite_new          (GFile       * file);
 guint64       gtk_test_suite_get_executed (GtkTestSuite* self);
+GHashTable*   gtk_test_suite_get_iter_map (GtkTestSuite* self);
 guint64       gtk_test_suite_get_tests    (GtkTestSuite* self);
 void          gtk_test_suite_set_executed (GtkTestSuite* self,
                                            guint64       executed);

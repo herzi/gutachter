@@ -20,10 +20,13 @@
 
 #include "gt-suite.h"
 
+#include <gtk/gtk.h>
+
 struct _GtkTestSuitePrivate
 {
-  guint64  executed;
-  guint64  tests;
+  guint64     executed;
+  GHashTable* iter_map;
+  guint64     tests;
 };
 
 #define PRIV(i) (((GtkTestSuite*)(i))->_private)
@@ -34,11 +37,25 @@ static void
 gtk_test_suite_init (GtkTestSuite* self)
 {
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_SUITE, GtkTestSuitePrivate);
+
+  PRIV (self)->iter_map = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GFreeFunc)gtk_tree_row_reference_free);
+}
+
+static void
+finalize (GObject* object)
+{
+  g_hash_table_destroy (PRIV (object)->iter_map);
+
+  G_OBJECT_CLASS (gtk_test_suite_parent_class)->finalize (object);
 }
 
 static void
 gtk_test_suite_class_init (GtkTestSuiteClass* self_class)
 {
+  GObjectClass* object_class = G_OBJECT_CLASS (self_class);
+
+  object_class->finalize = finalize;
+
   g_type_class_add_private (self_class, sizeof (GtkTestSuitePrivate));
 }
 
@@ -48,6 +65,14 @@ gtk_test_suite_get_executed (GtkTestSuite* self)
   g_return_val_if_fail (GTK_TEST_IS_SUITE (self), G_GUINT64_CONSTANT (0));
 
   return PRIV (self)->executed;
+}
+
+GHashTable*
+gtk_test_suite_get_iter_map (GtkTestSuite* self)
+{
+  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), NULL);
+
+  return PRIV (self)->iter_map;
 }
 
 guint64
