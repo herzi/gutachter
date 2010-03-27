@@ -26,8 +26,15 @@ struct _GtkTestSuitePrivate
 {
   GByteArray* buffer;
   guint64     executed;
+  GFile     * file;
   GHashTable* iter_map;
   guint64     tests;
+};
+
+enum
+{
+  PROP_0,
+  PROP_FILE
 };
 
 #define PRIV(i) (((GtkTestSuite*)(i))->_private)
@@ -53,11 +60,34 @@ finalize (GObject* object)
 }
 
 static void
+set_property (GObject     * object,
+              guint         prop_id,
+              GValue const* value,
+              GParamSpec  * pspec)
+{
+  switch (prop_id)
+    {
+    case PROP_FILE:
+      g_return_if_fail (!PRIV (object)->file);
+      PRIV (object)->file = g_value_dup_object (value);
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+static void
 gtk_test_suite_class_init (GtkTestSuiteClass* self_class)
 {
   GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
-  object_class->finalize = finalize;
+  object_class->finalize     = finalize;
+  object_class->set_property = set_property;
+
+  g_object_class_install_property (object_class, PROP_FILE,
+                                   g_param_spec_object ("file", NULL, NULL,
+                                                        G_TYPE_FILE, G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
 
   g_type_class_add_private (self_class, sizeof (GtkTestSuitePrivate));
 }
@@ -78,6 +108,14 @@ gtk_test_suite_get_executed (GtkTestSuite* self)
   return PRIV (self)->executed;
 }
 
+GFile*
+gtk_test_suite_get_file (GtkTestSuite* self)
+{
+  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), NULL);
+
+  return PRIV (self)->file;
+}
+
 GHashTable*
 gtk_test_suite_get_iter_map (GtkTestSuite* self)
 {
@@ -95,9 +133,10 @@ gtk_test_suite_get_tests (GtkTestSuite* self)
 }
 
 GtkTestSuite*
-gtk_test_suite_new (GFile* file G_GNUC_UNUSED)
+gtk_test_suite_new (GFile* file)
 {
   return g_object_new (GTK_TEST_TYPE_SUITE,
+                       "file", file,
                        NULL);
 }
 
