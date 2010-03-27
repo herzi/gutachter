@@ -25,7 +25,6 @@
 
 struct _GtkTestWidgetPrivate
 {
-  GFile       * file;
   GFileMonitor* file_monitor;
   GtkWidget   * hierarchy_view;
   GtkWidget   * notebook;
@@ -95,9 +94,9 @@ gtk_test_widget_init (GtkTestWidget* self)
 static void
 dispose (GObject* object)
 {
-  if (PRIV (object)->file)
+  if (PRIV (object)->suite)
     {
-      gtk_test_runner_set_file (GTK_TEST_RUNNER (object), NULL);
+      gtk_test_widget_set_suite (GTK_TEST_WIDGET (object), NULL);
     }
 
   G_OBJECT_CLASS (gtk_test_widget_parent_class)->dispose (object);
@@ -136,7 +135,7 @@ gtk_test_widget_class_init (GtkTestWidgetClass* self_class)
 static GFile*
 get_file (GtkTestRunner* runner)
 {
-  return PRIV (runner)->file;
+  return PRIV (runner)->suite ? gtk_test_suite_get_file (PRIV (runner)->suite) : NULL;
 }
 
 static GtkTestSuite*
@@ -171,18 +170,20 @@ static void
 set_file (GtkTestRunner* runner,
           GFile        * file)
 {
-  if (file == PRIV (runner)->file)
+  if (!file && !PRIV (runner)->suite)
     {
       return;
     }
 
-  if (PRIV (runner)->file)
+  if (file && PRIV (runner)->suite && file == gtk_test_suite_get_file (PRIV (runner)->suite))
+    {
+      return;
+    }
+
+  if (PRIV (runner)->file_monitor)
     {
       g_object_unref (PRIV (runner)->file_monitor);
       PRIV (runner)->file_monitor = NULL;
-
-      g_object_unref (PRIV (runner)->file);
-      PRIV (runner)->file = NULL;
     }
 
   if (file)
@@ -190,13 +191,12 @@ set_file (GtkTestRunner* runner,
       GtkTestSuite* suite = gtk_test_suite_new (file);
       GError      * error = NULL;
 
-      PRIV (runner)->file = g_object_ref (file);
+      gtk_test_widget_set_suite (GTK_TEST_WIDGET (runner), suite);
 
-      PRIV (runner)->file_monitor = g_file_monitor (PRIV (runner)->file, G_FILE_MONITOR_NONE, NULL, &error);
+      PRIV (runner)->file_monitor = g_file_monitor (gtk_test_suite_get_file (suite), G_FILE_MONITOR_NONE, NULL, &error);
       g_signal_connect (PRIV (runner)->file_monitor, "changed",
                         G_CALLBACK (file_changed_cb), NULL);
 
-      gtk_test_widget_set_suite (GTK_TEST_WIDGET (runner), suite);
       g_object_unref (suite);
     }
   else

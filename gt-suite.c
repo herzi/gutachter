@@ -53,6 +53,7 @@ gtk_test_suite_init (GtkTestSuite* self)
 static void
 finalize (GObject* object)
 {
+  g_object_unref (PRIV (object)->file);
   g_byte_array_free (PRIV (object)->buffer, TRUE);
   g_hash_table_destroy (PRIV (object)->iter_map);
 
@@ -69,6 +70,7 @@ set_property (GObject     * object,
     {
     case PROP_FILE:
       g_return_if_fail (!PRIV (object)->file);
+      g_return_if_fail (g_value_get_object (value));
       PRIV (object)->file = g_value_dup_object (value);
       break;
     default:
