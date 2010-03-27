@@ -480,29 +480,6 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
   close (pipes[1]);
 }
 
-static void
-open_item_clicked (GtkButton* button G_GNUC_UNUSED,
-                   GtkWindow* window)
-{
-  GtkWidget* dialog = gtk_file_chooser_dialog_new (_("Choose Unit Tests"),
-                                                   window,
-                                                   GTK_FILE_CHOOSER_ACTION_OPEN,
-                                                   GTK_STOCK_CLOSE, GTK_RESPONSE_REJECT,
-                                                   GTK_STOCK_OPEN,  GTK_RESPONSE_ACCEPT,
-                                                   NULL);
-  GFile* file;
-
-  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_ACCEPT);
-
-  gtk_dialog_run (GTK_DIALOG (dialog));
-
-  file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
-  gtk_test_runner_set_file (GTK_TEST_RUNNER (window), file);
-  g_object_unref (file);
-
-  gtk_widget_destroy (dialog);
-}
-
 int
 main (int   argc,
       char**argv)
@@ -518,8 +495,6 @@ main (int   argc,
   g_signal_connect (window, "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);
 
-  g_signal_connect (gtk_test_window_get_open (GTK_TEST_WINDOW (window)), "clicked",
-                    G_CALLBACK (open_item_clicked), window);
   g_signal_connect (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), "clicked",
                     G_CALLBACK (button_clicked_cb), NULL);
 

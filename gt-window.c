@@ -22,6 +22,8 @@
 
 #include <gtk-test.h>
 
+#include <glib/gi18n.h>
+
 struct _GtkTestWindowPrivate
 {
   GtkWidget  * box;
@@ -53,6 +55,29 @@ forward_notify (GObject   * object G_GNUC_UNUSED,
 }
 
 static void
+open_item_clicked (GtkButton* button G_GNUC_UNUSED,
+                   GtkWindow* window)
+{
+  GtkWidget* dialog = gtk_file_chooser_dialog_new (_("Choose Unit Tests"),
+                                                   window,
+                                                   GTK_FILE_CHOOSER_ACTION_OPEN,
+                                                   GTK_STOCK_CLOSE, GTK_RESPONSE_REJECT,
+                                                   GTK_STOCK_OPEN,  GTK_RESPONSE_ACCEPT,
+                                                   NULL);
+  GFile* file;
+
+  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_ACCEPT);
+
+  gtk_dialog_run (GTK_DIALOG (dialog));
+
+  file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
+  gtk_test_runner_set_file (GTK_TEST_RUNNER (window), file);
+  g_object_unref (file);
+
+  gtk_widget_destroy (dialog);
+}
+
+static void
 gtk_test_window_init (GtkTestWindow* self)
 {
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WINDOW, GtkTestWindowPrivate);
@@ -63,6 +88,9 @@ gtk_test_window_init (GtkTestWindow* self)
   PRIV (self)->box = gtk_vbox_new (FALSE, 0);
 
   gtk_window_set_default_size (GTK_WINDOW (self), 300, 400);
+
+  g_signal_connect (PRIV (self)->open_button, "clicked",
+                    G_CALLBACK (open_item_clicked), self);
 
   gtk_toolbar_insert (GTK_TOOLBAR (PRIV (self)->toolbar), PRIV (self)->open_button, -1);
   gtk_toolbar_insert (GTK_TOOLBAR (PRIV (self)->toolbar), gtk_separator_tool_item_new (), -1);
