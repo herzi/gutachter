@@ -22,6 +22,7 @@
 #define GT_WIDGET_H
 
 #include <gtk/gtk.h>
+#include <gt-suite.h>
 
 G_BEGIN_DECLS
 
@@ -43,6 +44,8 @@ GtkWidget* gtk_test_widget_get_hierarchy (GtkTestWidget* self);
 GtkWidget* gtk_test_widget_get_notebook  (GtkTestWidget* self);
 GtkWidget* gtk_test_widget_get_progress  (GtkTestWidget* self);
 #endif
+void       gtk_test_widget_set_suite     (GtkTestWidget* self,
+                                          GtkTestSuite * suite); /* FIXME: consider moving to GtkTestRunner */
 
 struct _GtkTestWidget
 {

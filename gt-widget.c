@@ -178,9 +178,6 @@ set_file (GtkTestRunner* runner,
 
   if (PRIV (runner)->file)
     {
-      g_object_unref (PRIV (runner)->suite);
-      PRIV (runner)->suite = NULL;
-
       g_object_unref (PRIV (runner)->file_monitor);
       PRIV (runner)->file_monitor = NULL;
 
@@ -190,7 +187,8 @@ set_file (GtkTestRunner* runner,
 
   if (file)
     {
-      GError* error = NULL;
+      GtkTestSuite* suite = gtk_test_suite_new (file);
+      GError      * error = NULL;
 
       PRIV (runner)->file = g_object_ref (file);
 
@@ -198,10 +196,13 @@ set_file (GtkTestRunner* runner,
       g_signal_connect (PRIV (runner)->file_monitor, "changed",
                         G_CALLBACK (file_changed_cb), NULL);
 
-      PRIV (runner)->suite = gtk_test_suite_new (file);
+      gtk_test_widget_set_suite (GTK_TEST_WIDGET (runner), suite);
+      g_object_unref (suite);
     }
-
-  g_object_notify (G_OBJECT (runner), "test-suite");
+  else
+    {
+      gtk_test_widget_set_suite (GTK_TEST_WIDGET (runner), NULL);
+    }
 }
 
 static void
@@ -241,6 +242,32 @@ gtk_test_widget_new (void)
 {
   return g_object_new (GTK_TEST_TYPE_WIDGET,
                        NULL);
+}
+
+void
+gtk_test_widget_set_suite (GtkTestWidget* self,
+                           GtkTestSuite * suite)
+{
+  g_return_if_fail (GTK_TEST_IS_WIDGET (self));
+  g_return_if_fail (!suite || GTK_TEST_IS_SUITE (suite));
+
+  if (PRIV (self)->suite == suite)
+    {
+      return;
+    }
+
+  if (PRIV (self)->suite)
+    {
+      g_object_unref (PRIV (self)->suite);
+      PRIV (self)->suite = NULL;
+    }
+
+  if (suite)
+    {
+      PRIV (self)->suite = g_object_ref (suite);
+    }
+
+  g_object_notify (G_OBJECT (self), "test-suite");
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
