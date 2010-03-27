@@ -34,7 +34,6 @@ typedef enum
 } RunningMode;
 
 static GtkWidget* window = NULL;
-static GtkTestXvfbWrapper* xvfb = NULL;
 
 static gboolean
 io_func (GIOChannel  * channel,
@@ -192,6 +191,7 @@ run_or_warn (GPid       * pid,
              guint        pipe_id,
              RunningMode  mode)
 {
+  GtkTestXvfbWrapper* xvfb = gtk_test_xvfb_wrapper_get_instance ();
   gboolean  result = FALSE;
   GError  * error  = NULL;
   GFile   * parent = g_file_get_parent (gtk_test_runner_get_file (GTK_TEST_RUNNER (window)));
@@ -216,7 +216,8 @@ run_or_warn (GPid       * pid,
       if (!g_str_has_prefix (*iter, "DISPLAY="))
         {
           g_free (*iter);
-          *iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT, gtk_test_xvfb_wrapper_get_display (xvfb));
+          *iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT,
+                                   gtk_test_xvfb_wrapper_get_display (xvfb));
           found_display = TRUE;
           break;
         }
@@ -266,6 +267,7 @@ run_or_warn (GPid       * pid,
   g_free (argv[0]);
   g_free (folder);
   g_object_unref (parent);
+  g_object_unref (xvfb);
 
   return result;
 }
@@ -501,6 +503,8 @@ int
 main (int   argc,
       char**argv)
 {
+  GtkTestXvfbWrapper* xvfb;
+
   gtk_init (&argc, &argv);
 
   xvfb = gtk_test_xvfb_wrapper_get_instance ();
