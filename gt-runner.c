@@ -20,6 +20,14 @@
 
 #include "gt-runner.h"
 
+static void
+gtk_test_runner_iface_init (GtkTestRunnerIface* iface)
+{
+  g_object_interface_install_property (iface,
+                                       g_param_spec_object ("test-suite", NULL, NULL,
+                                                            GTK_TEST_TYPE_SUITE, G_PARAM_READABLE));
+}
+
 GType
 gtk_test_runner_get_type (void)
 {
@@ -29,7 +37,8 @@ gtk_test_runner_get_type (void)
     {
       GType  registered_type = g_type_register_static_simple (G_TYPE_INTERFACE,
                                                               "GtkTestRunner",
-                                                              sizeof (GtkTestRunnerIface), NULL,
+                                                              sizeof (GtkTestRunnerIface),
+                                                              (GClassInitFunc) gtk_test_runner_iface_init,
                                                               0, NULL, 0);
 
       g_once_init_leave (&stored_type, registered_type);

@@ -33,6 +33,12 @@ struct _GtkTestWidgetPrivate
   GtkTestSuite* suite;
 };
 
+enum
+{
+  PROP_0,
+  PROP_TEST_SUITE
+};
+
 #define PRIV(i) (((GtkTestWidget*)(i))->_private)
 
 static void implement_gtk_test_runner (GtkTestRunnerIface* iface);
@@ -98,11 +104,31 @@ dispose (GObject* object)
 }
 
 static void
+get_property (GObject   * object,
+              guint       prop_id,
+              GValue    * value,
+              GParamSpec* pspec)
+{
+  switch (prop_id)
+    {
+    case PROP_TEST_SUITE:
+      g_value_set_object (value, PRIV (object)->suite);
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+static void
 gtk_test_widget_class_init (GtkTestWidgetClass* self_class)
 {
   GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
-  object_class->dispose = dispose;
+  object_class->dispose      = dispose;
+  object_class->get_property = get_property;
+
+  g_object_class_override_property (object_class, PROP_TEST_SUITE, "test-suite");
 
   g_type_class_add_private (self_class, sizeof (GtkTestWidgetPrivate));
 }
