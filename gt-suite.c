@@ -22,6 +22,7 @@
 
 struct _GtkTestSuitePrivate
 {
+  guint64  executed;
   guint64  tests;
 };
 
@@ -42,6 +43,14 @@ gtk_test_suite_class_init (GtkTestSuiteClass* self_class)
 }
 
 guint64
+gtk_test_suite_get_executed (GtkTestSuite* self)
+{
+  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), G_GUINT64_CONSTANT (0));
+
+  return PRIV (self)->executed;
+}
+
+guint64
 gtk_test_suite_get_tests (GtkTestSuite* self)
 {
   g_return_val_if_fail (GTK_TEST_IS_SUITE (self), G_GUINT64_CONSTANT (0));
@@ -54,6 +63,15 @@ gtk_test_suite_new (GFile* file G_GNUC_UNUSED)
 {
   return g_object_new (GTK_TEST_TYPE_SUITE,
                        NULL);
+}
+
+void
+gtk_test_suite_set_executed (GtkTestSuite* self,
+                             guint64       executed)
+{
+  g_return_if_fail (GTK_TEST_IS_SUITE (self));
+
+  PRIV (self)->executed = executed;
 }
 
 void
