@@ -24,6 +24,7 @@
 
 struct _GtkTestSuitePrivate
 {
+  GByteArray* buffer;
   guint64     executed;
   GHashTable* iter_map;
   guint64     tests;
@@ -38,12 +39,14 @@ gtk_test_suite_init (GtkTestSuite* self)
 {
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_SUITE, GtkTestSuitePrivate);
 
+  PRIV (self)->buffer = g_byte_array_new ();
   PRIV (self)->iter_map = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GFreeFunc)gtk_tree_row_reference_free);
 }
 
 static void
 finalize (GObject* object)
 {
+  g_byte_array_free (PRIV (object)->buffer, TRUE);
   g_hash_table_destroy (PRIV (object)->iter_map);
 
   G_OBJECT_CLASS (gtk_test_suite_parent_class)->finalize (object);
@@ -57,6 +60,14 @@ gtk_test_suite_class_init (GtkTestSuiteClass* self_class)
   object_class->finalize = finalize;
 
   g_type_class_add_private (self_class, sizeof (GtkTestSuitePrivate));
+}
+
+GByteArray*
+gtk_test_suite_get_buffer (GtkTestSuite* self)
+{
+  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), NULL);
+
+  return PRIV (self)->buffer;
 }
 
 guint64
