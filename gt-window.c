@@ -45,6 +45,14 @@ G_DEFINE_TYPE_WITH_CODE (GtkTestWindow, gtk_test_window, GTK_TYPE_WINDOW,
                          G_IMPLEMENT_INTERFACE (GTK_TEST_TYPE_RUNNER, implement_gtk_test_runner));
 
 static void
+forward_notify (GObject   * object G_GNUC_UNUSED,
+                GParamSpec* pspec,
+                gpointer    user_data)
+{
+  g_object_notify (user_data, pspec->name);
+}
+
+static void
 gtk_test_window_init (GtkTestWindow* self)
 {
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WINDOW, GtkTestWindowPrivate);
@@ -66,6 +74,9 @@ gtk_test_window_init (GtkTestWindow* self)
   gtk_container_add (GTK_CONTAINER (PRIV (self)->box), PRIV (self)->widget);
   gtk_widget_show (PRIV (self)->box);
   gtk_container_add (GTK_CONTAINER (self), PRIV (self)->box);
+
+  g_signal_connect (PRIV (self)->widget, "notify::test-suite",
+                    G_CALLBACK (forward_notify), self);
 }
 
 static void
@@ -86,13 +97,24 @@ get_property (GObject   * object,
 }
 
 static void
+destroy (GtkObject* object)
+{
+  PRIV (object)->execute_button = NULL;
+
+  GTK_OBJECT_CLASS (gtk_test_window_parent_class)->destroy (object);
+}
+
+static void
 gtk_test_window_class_init (GtkTestWindowClass* self_class)
 {
   GObjectClass* object_class = G_OBJECT_CLASS (self_class);
+  GtkObjectClass* gtk_object_class = GTK_OBJECT_CLASS (self_class);
 
   object_class->get_property = get_property;
 
   g_object_class_override_property (object_class, PROP_TEST_SUITE, "test-suite");
+
+  gtk_object_class->destroy = destroy;
 
   g_type_class_add_private (self_class, sizeof (GtkTestWindowPrivate));
 }

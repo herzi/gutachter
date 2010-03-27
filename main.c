@@ -325,9 +325,15 @@ selection_changed_cb (GtkWindow* window)
 
   if (!gtk_test_runner_get_file (GTK_TEST_RUNNER (window)))
     {
+      GtkWidget* button = gtk_test_window_get_exec (GTK_TEST_WINDOW (window));
+
       gtk_window_set_title (window, _("GLib Unit Tests"));
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("no test selected"));
-      gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), FALSE);
+
+      if (button)
+        {
+          gtk_widget_set_sensitive (button, FALSE);
+        }
     }
   else
     {
@@ -494,8 +500,6 @@ open_item_clicked (GtkButton* button G_GNUC_UNUSED,
   gtk_test_runner_set_file (GTK_TEST_RUNNER (window), file);
   g_object_unref (file);
 
-  selection_changed_cb (window);
-
   gtk_widget_destroy (dialog);
 }
 
@@ -519,6 +523,8 @@ main (int   argc,
   g_signal_connect (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), "clicked",
                     G_CALLBACK (button_clicked_cb), NULL);
 
+  g_signal_connect (window, "notify::test-suite",
+                    G_CALLBACK (selection_changed_cb), NULL);
   selection_changed_cb (GTK_WINDOW (window));
 
   gtk_widget_show (window);

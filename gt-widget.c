@@ -200,6 +200,8 @@ set_file (GtkTestRunner* runner,
 
       PRIV (runner)->suite = gtk_test_suite_new (file);
     }
+
+  g_object_notify (G_OBJECT (runner), "test-suite");
 }
 
 static void
