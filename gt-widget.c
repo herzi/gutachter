@@ -30,6 +30,7 @@ struct _GtkTestWidgetPrivate
   GtkWidget   * hierarchy_view;
   GtkWidget   * notebook;
   GtkWidget   * progress;
+  GtkTestSuite* suite;
 };
 
 #define PRIV(i) (((GtkTestWidget*)(i))->_private)
@@ -112,6 +113,12 @@ get_file (GtkTestRunner* runner)
   return PRIV (runner)->file;
 }
 
+static GtkTestSuite*
+get_suite (GtkTestRunner* runner)
+{
+  return PRIV (runner)->suite;
+}
+
 static void
 file_changed_cb (GFileMonitor     * monitor    G_GNUC_UNUSED,
                  GFile            * file       G_GNUC_UNUSED,
@@ -145,6 +152,9 @@ set_file (GtkTestRunner* runner,
 
   if (PRIV (runner)->file)
     {
+      g_object_unref (PRIV (runner)->suite);
+      PRIV (runner)->suite = NULL;
+
       g_object_unref (PRIV (runner)->file_monitor);
       PRIV (runner)->file_monitor = NULL;
 
@@ -161,14 +171,17 @@ set_file (GtkTestRunner* runner,
       PRIV (runner)->file_monitor = g_file_monitor (PRIV (runner)->file, G_FILE_MONITOR_NONE, NULL, &error);
       g_signal_connect (PRIV (runner)->file_monitor, "changed",
                         G_CALLBACK (file_changed_cb), NULL);
+
+      PRIV (runner)->suite = gtk_test_suite_new (file);
     }
 }
 
 static void
 implement_gtk_test_runner (GtkTestRunnerIface* iface)
 {
-  iface->get_file = get_file;
-  iface->set_file = set_file;
+  iface->get_file  = get_file;
+  iface->get_suite = get_suite;
+  iface->set_file  = set_file;
 }
 
 GtkWidget*

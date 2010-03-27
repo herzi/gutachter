@@ -56,6 +56,24 @@ gtk_test_runner_get_file (GtkTestRunner* self)
   return iface->get_file (self);
 }
 
+GtkTestSuite*
+gtk_test_runner_get_suite (GtkTestRunner* self)
+{
+  GtkTestRunnerIface* iface;
+
+  g_return_val_if_fail (GTK_TEST_IS_RUNNER (self), NULL);
+
+  iface = GTK_TEST_RUNNER_GET_IFACE (self);
+  if (!iface->get_suite)
+    {
+      g_warning ("%s(%s): %s doesn't implement gtk_test_runner_get_suite()",
+                 G_STRFUNC, G_STRLOC, G_OBJECT_TYPE_NAME (self));
+      return NULL;
+    }
+
+  return iface->get_suite (self);
+}
+
 void
 gtk_test_runner_set_file (GtkTestRunner* self,
                           GFile        * file)

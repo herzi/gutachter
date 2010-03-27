@@ -74,6 +74,12 @@ get_file (GtkTestRunner* runner)
   return gtk_test_runner_get_file (GTK_TEST_RUNNER (PRIV (runner)->widget));
 }
 
+static GtkTestSuite*
+get_suite (GtkTestRunner* runner)
+{
+  return gtk_test_runner_get_suite (GTK_TEST_RUNNER (PRIV (runner)->widget));
+}
+
 static void
 set_file (GtkTestRunner* runner,
           GFile        * file)
@@ -84,8 +90,9 @@ set_file (GtkTestRunner* runner,
 static void
 implement_gtk_test_runner (GtkTestRunnerIface* iface)
 {
-  iface->get_file = get_file;
-  iface->set_file = set_file;
+  iface->get_file  = get_file;
+  iface->get_suite = get_suite;
+  iface->set_file  = set_file;
 }
 
 GtkWidget*
