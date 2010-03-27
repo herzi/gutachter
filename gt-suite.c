@@ -20,21 +20,49 @@
 
 #include "gt-suite.h"
 
+struct _GtkTestSuitePrivate
+{
+  guint64  tests;
+};
+
+#define PRIV(i) (((GtkTestSuite*)(i))->_private)
+
 G_DEFINE_TYPE (GtkTestSuite, gtk_test_suite, G_TYPE_OBJECT);
 
 static void
-gtk_test_suite_init (GtkTestSuite* self G_GNUC_UNUSED)
-{}
+gtk_test_suite_init (GtkTestSuite* self)
+{
+  PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_SUITE, GtkTestSuitePrivate);
+}
 
 static void
-gtk_test_suite_class_init (GtkTestSuiteClass* self_class G_GNUC_UNUSED)
-{}
+gtk_test_suite_class_init (GtkTestSuiteClass* self_class)
+{
+  g_type_class_add_private (self_class, sizeof (GtkTestSuitePrivate));
+}
+
+guint64
+gtk_test_suite_get_tests (GtkTestSuite* self)
+{
+  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), G_GUINT64_CONSTANT (0));
+
+  return PRIV (self)->tests;
+}
 
 GtkTestSuite*
 gtk_test_suite_new (GFile* file G_GNUC_UNUSED)
 {
   return g_object_new (GTK_TEST_TYPE_SUITE,
                        NULL);
+}
+
+void
+gtk_test_suite_set_tests (GtkTestSuite* self,
+                          guint64       tests)
+{
+  g_return_if_fail (GTK_TEST_IS_SUITE (self));
+
+  PRIV (self)->tests = tests;
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

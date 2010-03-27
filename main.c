@@ -41,7 +41,6 @@ static GByteArray* buffer = NULL;
 static GHashTable* map = NULL;
 
 static guint64 executed = 0;
-static guint64 tests = 0;
 
 static gboolean
 io_func (GIOChannel  * channel,
@@ -170,7 +169,8 @@ child_watch_cb (GPid      pid,
             case G_TEST_LOG_LIST_CASE:
               path = g_strdup (msg->strings[0]);;
               create_iter_for_path (&iter, path);
-              tests++;
+              gtk_test_suite_set_tests (suite,
+                                        1 + gtk_test_suite_get_tests (suite));
               break;
             default:
               g_warning ("unexpected message type: %d", msg->log_type);
@@ -298,7 +298,7 @@ selection_changed_cb (GtkWindow* window)
       gtk_window_set_title (window, title);
       g_free (title);
 
-      tests = 0;
+      gtk_test_suite_set_tests (suite, 0);
       if (!run_or_warn (&pid, pipes[1], MODE_LIST))
         {
           gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), FALSE);
@@ -405,7 +405,8 @@ run_test_child_watch (GPid      pid,
               g_warning ("status %d; nforks %d; elapsed %Lf",
                          (int)msg->nums[0], (int)msg->nums[1], msg->nums[2]);
               executed++;
-              gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), 1.0 * executed / tests);
+              gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))),
+                                             1.0 * executed / gtk_test_suite_get_tests (suite));
               break;
             default:
               g_warning ("unexpected message type: %d", msg->log_type);

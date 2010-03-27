@@ -36,8 +36,11 @@ typedef struct _GtkTestSuitePrivate GtkTestSuitePrivate;
 #define GTK_TEST_IS_SUITE_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), GTK_TEST_TYPE_SUITE))
 #define GTK_TEST_SUITE_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), GTK_TEST_TYPE_SUITE, GtkTestSuiteClass))
 
-GType         gtk_test_suite_get_type (void);
-GtkTestSuite* gtk_test_suite_new      (GFile* file);
+GType         gtk_test_suite_get_type  (void);
+GtkTestSuite* gtk_test_suite_new       (GFile       * file);
+guint64       gtk_test_suite_get_tests (GtkTestSuite* self);
+void          gtk_test_suite_set_tests (GtkTestSuite* self,
+                                        guint64       tests);
 
 struct _GtkTestSuite
 {
