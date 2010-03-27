@@ -34,6 +34,8 @@ struct _GtkTestXvfbWrapperPrivate
 
 static gboolean setup_xvfb (gpointer  data);
 
+static GObject* instance = NULL;
+
 G_DEFINE_TYPE (GtkTestXvfbWrapper, gtk_test_xvfb_wrapper, G_TYPE_OBJECT);
 
 static void
@@ -99,8 +101,25 @@ static void
 gtk_test_xvfb_wrapper_init (GtkTestXvfbWrapper* self)
 {
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_XVFB_WRAPPER, GtkTestXvfbWrapperPrivate);
+}
 
-  g_idle_add (setup_xvfb, self);
+static GObject*
+constructor (GType                  type,
+             guint                  n_params,
+             GObjectConstructParam* params)
+{
+  if (G_UNLIKELY (!instance))
+    {
+      instance = G_OBJECT_CLASS (gtk_test_xvfb_wrapper_parent_class)->constructor (type, n_params, params);
+
+      g_idle_add (setup_xvfb, instance);
+    }
+  else
+    {
+      g_object_ref (instance);
+    }
+
+  return instance;
 }
 
 static void
@@ -124,6 +143,8 @@ finalize (GObject* object)
         }
     }
 
+  instance = NULL;
+
   G_OBJECT_CLASS (gtk_test_xvfb_wrapper_parent_class)->finalize (object);
 }
 
@@ -132,7 +153,8 @@ gtk_test_xvfb_wrapper_class_init (GtkTestXvfbWrapperClass* self_class)
 {
   GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
-  object_class->finalize = finalize;
+  object_class->constructor = constructor;
+  object_class->finalize    = finalize;
 
   g_type_class_add_private (self_class, sizeof (GtkTestXvfbWrapperPrivate));
 }
@@ -154,7 +176,7 @@ gtk_test_xvfb_wrapper_get_pid (GtkTestXvfbWrapper* self)
 }
 
 GtkTestXvfbWrapper*
-gtk_test_xvfb_wrapper_new (void)
+gtk_test_xvfb_wrapper_get_instance (void)
 {
   return g_object_new (GTK_TEST_TYPE_XVFB_WRAPPER,
                        NULL);

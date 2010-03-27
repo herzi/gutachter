@@ -503,7 +503,7 @@ main (int   argc,
 {
   gtk_init (&argc, &argv);
 
-  xvfb = gtk_test_xvfb_wrapper_new ();
+  xvfb = gtk_test_xvfb_wrapper_get_instance ();
 
   window = gtk_test_window_new ();
 

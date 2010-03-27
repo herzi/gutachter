@@ -36,14 +36,14 @@ typedef struct _GtkTestXvfbWrapperPrivate GtkTestXvfbWrapperPrivate;
 #define GTK_TEST_IS_XVFB_WRAPPER_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), GTK_TEST_TYPE_XVFB_WRAPPER))
 #define GTK_TEST_XVFB_WRAPPER_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), GTK_TEST_TYPE_XVFB_WRAPPER, GtkTestXvfbWrapperClass))
 
-GType               gtk_test_xvfb_wrapper_get_type    (void);
-GtkTestXvfbWrapper* gtk_test_xvfb_wrapper_new         (void);
-guint64             gtk_test_xvfb_wrapper_get_display (GtkTestXvfbWrapper* self);
-GPid                gtk_test_xvfb_wrapper_get_pid     (GtkTestXvfbWrapper* self);
-void                gtk_test_xvfb_wrapper_set_display (GtkTestXvfbWrapper* self,
-                                                       guint64             display);
-void                gtk_test_xvfb_wrapper_set_pid     (GtkTestXvfbWrapper* self,
-                                                       GPid                pid);
+GType               gtk_test_xvfb_wrapper_get_type     (void);
+GtkTestXvfbWrapper* gtk_test_xvfb_wrapper_get_instance (void);
+guint64             gtk_test_xvfb_wrapper_get_display  (GtkTestXvfbWrapper* self);
+GPid                gtk_test_xvfb_wrapper_get_pid      (GtkTestXvfbWrapper* self);
+void                gtk_test_xvfb_wrapper_set_display  (GtkTestXvfbWrapper* self,
+                                                        guint64             display);
+void                gtk_test_xvfb_wrapper_set_pid      (GtkTestXvfbWrapper* self,
+                                                        GPid                pid);
 
 struct _GtkTestXvfbWrapper
 {
