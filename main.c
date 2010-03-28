@@ -192,8 +192,6 @@ selection_changed_cb (GtkWindow* window)
 
   if (gtk_test_runner_get_file (GTK_TEST_RUNNER (window)))
     {
-      gchar* base;
-      gchar* title;
       GPid   pid = 0;
       int pipes[2];
 
@@ -202,12 +200,6 @@ selection_changed_cb (GtkWindow* window)
           perror ("pipe()");
           exit (2);
         }
-
-      base = g_file_get_basename (gtk_test_runner_get_file (GTK_TEST_RUNNER (window))); /* FIXME: use the display name */
-      title = g_strdup_printf (_("%s - GLib Unit Tests"), base);
-      g_free (base);
-      gtk_window_set_title (window, title);
-      g_free (title);
 
       gtk_test_suite_set_tests (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)), 0);
       if (!run_or_warn (&pid, pipes[1], MODE_LIST, gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))))
@@ -235,7 +227,6 @@ selection_changed_cb (GtkWindow* window)
     {
       GtkWidget* button = gtk_test_window_get_exec (GTK_TEST_WINDOW (window));
 
-      gtk_window_set_title (window, _("GLib Unit Tests"));
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("no test selected"));
 
       if (button)
@@ -243,24 +234,8 @@ selection_changed_cb (GtkWindow* window)
           gtk_widget_set_sensitive (button, FALSE);
         }
     }
-  else
-    {
-      GFileInfo* info;
-      GError   * error = NULL;
 
-      info = g_file_query_info (gtk_test_runner_get_file (GTK_TEST_RUNNER (window)),
-                                G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME, G_FILE_QUERY_INFO_NONE, NULL, &error);
-
-      if (error)
-        {
-          g_warning ("error reading display name from file: %s", error->message);
-          g_error_free (error);
-        }
-      else
-        {
-          g_object_unref (info);
-        }
-    }
+  gtk_test_window_update_title (GTK_TEST_WINDOW (window));
 
   gtk_widget_set_sensitive (gtk_test_widget_get_notebook (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window)))),
                             gtk_test_runner_get_file (GTK_TEST_RUNNER (window)) != NULL);

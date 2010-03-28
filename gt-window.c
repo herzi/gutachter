@@ -221,4 +221,46 @@ gtk_test_window_new (void)
                        NULL);
 }
 
+void
+gtk_test_window_update_title (GtkTestWindow* self)
+{
+  GFile* testcase;
+  gchar* title = NULL;
+
+  g_return_if_fail (GTK_TEST_IS_WINDOW (self));
+
+  testcase = gtk_test_runner_get_file (GTK_TEST_RUNNER (PRIV (self)->widget));
+  if (testcase)
+    {
+      GFileInfo* info;
+      GError   * error = NULL;
+
+      info = g_file_query_info (testcase,
+                                G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
+                                G_FILE_QUERY_INFO_NONE, NULL,
+                                &error);
+
+      if (error)
+        {
+          g_warning ("error reading display name from file: %s", error->message);
+          g_error_free (error);
+        }
+      else
+        {
+          title = g_strdup_printf (_("%s - GLib Unit Tests"), g_file_info_get_display_name (info));
+          g_object_unref (info);
+        }
+    }
+
+  if (title)
+    {
+      gtk_window_set_title (GTK_WINDOW (self), title);
+      g_free (title);
+    }
+  else
+    {
+      gtk_window_set_title (GTK_WINDOW (self), _("GLib Unit Tests"));
+    }
+}
+
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
