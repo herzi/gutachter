@@ -122,6 +122,46 @@ open_item_clicked (GtkButton* button G_GNUC_UNUSED,
 }
 
 static void
+button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
+                   gpointer   user_data)
+{
+  GtkTestWindow* window = user_data;
+  GPid           pid = 0;
+  int            pipes[2];
+
+  gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (window)))),
+                             _("Running tests..."));
+
+  if (pipe (pipes))
+    {
+      perror ("pipe()");
+      return;
+    }
+
+  gtk_test_suite_set_executed (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)), 0);
+  if (!run_or_warn (&pid, pipes[1], MODE_TEST, gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))))
+    {
+      close (pipes[0]);
+    }
+  else
+    {
+      GIOChannel* channel = g_io_channel_unix_new (pipes[0]);
+      g_io_channel_set_encoding (channel, NULL, NULL);
+      g_io_channel_set_buffered (channel, FALSE);
+      g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
+      g_io_add_watch (channel, G_IO_IN, io_func, gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))));
+      g_child_watch_add (pid, run_test_child_watch, channel);
+      gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), FALSE);
+
+      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), 0.0);
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))),
+                                 _("Starting Tests..."));
+    }
+
+  close (pipes[1]);
+}
+
+static void
 gtk_test_window_init (GtkTestWindow* self)
 {
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WINDOW, GtkTestWindowPrivate);
@@ -135,6 +175,9 @@ gtk_test_window_init (GtkTestWindow* self)
 
   g_signal_connect (PRIV (self)->open_button, "clicked",
                     G_CALLBACK (open_item_clicked), self);
+
+  g_signal_connect (PRIV (self)->execute_button, "clicked",
+                    G_CALLBACK (button_clicked_cb), self);
 
   gtk_toolbar_insert (GTK_TOOLBAR (PRIV (self)->toolbar), PRIV (self)->open_button, -1);
   gtk_toolbar_insert (GTK_TOOLBAR (PRIV (self)->toolbar), gtk_separator_tool_item_new (), -1);

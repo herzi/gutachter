@@ -267,46 +267,6 @@ run_test_child_watch (GPid      pid,
   gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), TRUE);
 }
 
-static void
-button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
-                   gpointer   user_data)
-{
-  GtkTestWindow* window = user_data;
-  GPid           pid = 0;
-  int            pipes[2];
-
-  gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (window)))),
-                             _("Running tests..."));
-
-  if (pipe (pipes))
-    {
-      perror ("pipe()");
-      return;
-    }
-
-  gtk_test_suite_set_executed (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)), 0);
-  if (!run_or_warn (&pid, pipes[1], MODE_TEST, gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))))
-    {
-      close (pipes[0]);
-    }
-  else
-    {
-      GIOChannel* channel = g_io_channel_unix_new (pipes[0]);
-      g_io_channel_set_encoding (channel, NULL, NULL);
-      g_io_channel_set_buffered (channel, FALSE);
-      g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
-      g_io_add_watch (channel, G_IO_IN, io_func, gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))));
-      g_child_watch_add (pid, run_test_child_watch, channel);
-      gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), FALSE);
-
-      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), 0.0);
-      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))),
-                                 _("Starting Tests..."));
-    }
-
-  close (pipes[1]);
-}
-
 int
 main (int   argc,
       char**argv)
@@ -321,9 +281,6 @@ main (int   argc,
 
   g_signal_connect (window, "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);
-
-  g_signal_connect (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), "clicked",
-                    G_CALLBACK (button_clicked_cb), window);
 
   gtk_widget_show (window);
 
