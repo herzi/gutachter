@@ -45,6 +45,13 @@ G_DEFINE_TYPE_WITH_CODE (GtkTestWidget, gtk_test_widget, GTK_TYPE_VBOX,
                          G_IMPLEMENT_INTERFACE (GTK_TEST_TYPE_RUNNER, implement_gtk_test_runner));
 
 static void
+update_sensitivity (GtkTestWidget* self)
+{
+  gtk_widget_set_sensitive (PRIV (self)->notebook,
+                            PRIV (self)->suite != NULL);
+}
+
+static void
 gtk_test_widget_init (GtkTestWidget* self)
 {
   GtkWidget* scrolled;
@@ -84,6 +91,8 @@ gtk_test_widget_init (GtkTestWidget* self)
                                      "tab-label", _("Failures"),
                                      NULL);
 #endif
+
+  update_sensitivity (self);
 }
 
 static void
@@ -231,6 +240,8 @@ gtk_test_widget_set_suite (GtkTestWidget* self,
     }
 
   g_object_notify (G_OBJECT (self), "test-suite");
+
+  update_sensitivity (self);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
