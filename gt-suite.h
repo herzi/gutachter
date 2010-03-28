@@ -53,6 +53,9 @@ GtkTreeModel* gtk_test_suite_get_tree     (GtkTestSuite* self);
 gboolean      io_func                     (GIOChannel  * channel,
                                            GIOCondition  condition,
                                            gpointer      data);
+void          run_test_child_watch        (GPid      pid,
+                                           gint      status,
+                                           gpointer  user_data);
 void          child_watch_cb              (GPid      pid,
                                            gint      status,
                                            gpointer  data);

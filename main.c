@@ -180,7 +180,7 @@ child_watch_cb (GPid      pid,
   g_spawn_close_pid (pid);
 }
 
-static void
+void
 run_test_child_watch (GPid      pid,
                       gint      status,
                       gpointer  user_data)
