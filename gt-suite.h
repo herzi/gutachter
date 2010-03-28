@@ -29,6 +29,12 @@ typedef struct _GtkTestSuite        GtkTestSuite;
 typedef struct _GtkTestSuiteClass   GtkTestSuiteClass;
 typedef struct _GtkTestSuitePrivate GtkTestSuitePrivate;
 
+typedef enum
+{
+  MODE_LIST,
+  MODE_TEST
+} GtkTestSuiteRunningMode;
+
 #define GTK_TEST_TYPE_SUITE         (gtk_test_suite_get_type ())
 #define GTK_TEST_SUITE(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), GTK_TEST_TYPE_SUITE, GtkTestSuite))
 #define GTK_TEST_SUITE_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c), GTK_TEST_TYPE_SUITE, GtkTestSuiteClass))

@@ -27,12 +27,6 @@
 
 #include <glib/gi18n.h>
 
-typedef enum
-{
-  MODE_LIST,
-  MODE_TEST
-} RunningMode;
-
 static GtkWidget* window = NULL;
 
 static gboolean
@@ -187,9 +181,9 @@ child_watch_cb (GPid      pid,
 }
 
 static gboolean
-run_or_warn (GPid       * pid,
-             guint        pipe_id,
-             RunningMode  mode)
+run_or_warn (GPid                   * pid,
+             guint                    pipe_id,
+             GtkTestSuiteRunningMode  mode)
 {
   GtkTestXvfbWrapper* xvfb = gtk_test_xvfb_wrapper_get_instance ();
   gboolean  result = FALSE;
@@ -421,6 +415,7 @@ run_test_child_watch (GPid      pid,
                                       gtk_test_suite_get_tests (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))));
               gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))),
                                         text);
+              g_print ("%s\n", text);
               g_free (text);
               gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))),
                                              1.0 * gtk_test_suite_get_executed (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))) / gtk_test_suite_get_tests (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))));
@@ -441,6 +436,7 @@ run_test_child_watch (GPid      pid,
     }
 
   g_io_channel_unref (channel);
+  gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), TRUE);
 }
 
 static void
@@ -471,7 +467,7 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
       g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
       g_io_add_watch (channel, G_IO_IN, io_func, gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))));
       g_child_watch_add (pid, run_test_child_watch, channel);
-      gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), TRUE);
+      gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), FALSE);
 
       gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), 0.0);
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("Starting Tests..."));
