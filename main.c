@@ -183,12 +183,12 @@ child_watch_cb (GPid      pid,
 static void
 selection_changed_cb (GtkWindow* window)
 {
-  if (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)))
+  GtkTestSuite* suite = gtk_test_runner_get_suite (GTK_TEST_RUNNER (window));
+  if (suite)
     {
-      g_hash_table_remove_all (gtk_test_suite_get_iter_map (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))));
+      g_hash_table_remove_all (gtk_test_suite_get_iter_map (suite));
+      gtk_tree_store_clear (GTK_TREE_STORE (gtk_test_suite_get_tree (suite)));
     }
-
-  gtk_tree_store_clear (GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))))));
 
   if (gtk_test_runner_get_file (GTK_TEST_RUNNER (window)))
     {

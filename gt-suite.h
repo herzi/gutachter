@@ -21,7 +21,7 @@
 #ifndef GT_SUITE_H
 #define GT_SUITE_H
 
-#include <gio/gio.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 
@@ -49,6 +49,7 @@ guint64       gtk_test_suite_get_executed (GtkTestSuite* self);
 GFile*        gtk_test_suite_get_file     (GtkTestSuite* self);
 GHashTable*   gtk_test_suite_get_iter_map (GtkTestSuite* self);
 guint64       gtk_test_suite_get_tests    (GtkTestSuite* self);
+GtkTreeModel* gtk_test_suite_get_tree     (GtkTestSuite* self);
 gboolean      run_or_warn                 (GPid                   * pid,
                                            guint                    pipe_id,
                                            GtkTestSuiteRunningMode  mode,

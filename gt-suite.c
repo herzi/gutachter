@@ -21,7 +21,7 @@
 #include "gt-suite.h"
 
 #include <gtk/gtk.h>
-#include <gt-xvfb-wrapper.h>
+#include <gtk-test.h>
 
 struct _GtkTestSuitePrivate
 {
@@ -31,6 +31,7 @@ struct _GtkTestSuitePrivate
   GFileMonitor* file_monitor;
   GHashTable  * iter_map;
   guint64       tests;
+  GtkTreeStore* tree_model;
 };
 
 enum
@@ -50,11 +51,13 @@ gtk_test_suite_init (GtkTestSuite* self)
 
   PRIV (self)->buffer = g_byte_array_new ();
   PRIV (self)->iter_map = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GFreeFunc)gtk_tree_row_reference_free);
+  PRIV (self)->tree_model = gtk_test_hierarchy_new ();
 }
 
 static void
 finalize (GObject* object)
 {
+  g_object_unref (PRIV (object)->tree_model);
   g_object_unref (PRIV (object)->file_monitor);
   g_object_unref (PRIV (object)->file);
   g_byte_array_free (PRIV (object)->buffer, TRUE);
@@ -164,6 +167,14 @@ gtk_test_suite_get_tests (GtkTestSuite* self)
   g_return_val_if_fail (GTK_TEST_IS_SUITE (self), G_GUINT64_CONSTANT (0));
 
   return PRIV (self)->tests;
+}
+
+GtkTreeModel*
+gtk_test_suite_get_tree (GtkTestSuite* self)
+{
+  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), G_GUINT64_CONSTANT (0));
+
+  return GTK_TREE_MODEL (PRIV (self)->tree_model);
 }
 
 GtkTestSuite*

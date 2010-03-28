@@ -47,7 +47,6 @@ G_DEFINE_TYPE_WITH_CODE (GtkTestWidget, gtk_test_widget, GTK_TYPE_VBOX,
 static void
 gtk_test_widget_init (GtkTestWidget* self)
 {
-  GtkTreeStore* store;
   GtkWidget* scrolled;
 
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WIDGET, GtkTestWidgetPrivate);
@@ -65,9 +64,6 @@ gtk_test_widget_init (GtkTestWidget* self)
                                               NULL);
 
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), FALSE);
-
-  store = gtk_test_hierarchy_new ();
-  gtk_tree_view_set_model (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), GTK_TREE_MODEL (store));
 
   scrolled = gtk_scrolled_window_new (NULL, NULL);
 
@@ -222,6 +218,7 @@ gtk_test_widget_set_suite (GtkTestWidget* self,
 
   if (PRIV (self)->suite)
     {
+      gtk_tree_view_set_model (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), NULL);
       g_object_unref (PRIV (self)->suite);
       PRIV (self)->suite = NULL;
     }
@@ -229,6 +226,8 @@ gtk_test_widget_set_suite (GtkTestWidget* self,
   if (suite)
     {
       PRIV (self)->suite = g_object_ref (suite);
+      gtk_tree_view_set_model (GTK_TREE_VIEW (PRIV (self)->hierarchy_view),
+                               gtk_test_suite_get_tree (suite));
     }
 
   g_object_notify (G_OBJECT (self), "test-suite");
