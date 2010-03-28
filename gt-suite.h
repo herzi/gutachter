@@ -50,6 +50,12 @@ GFile*        gtk_test_suite_get_file     (GtkTestSuite* self);
 GHashTable*   gtk_test_suite_get_iter_map (GtkTestSuite* self);
 guint64       gtk_test_suite_get_tests    (GtkTestSuite* self);
 GtkTreeModel* gtk_test_suite_get_tree     (GtkTestSuite* self);
+gboolean      io_func                     (GIOChannel  * channel,
+                                           GIOCondition  condition,
+                                           gpointer      data);
+void          child_watch_cb              (GPid      pid,
+                                           gint      status,
+                                           gpointer  data);
 gboolean      run_or_warn                 (GPid                   * pid,
                                            guint                    pipe_id,
                                            GtkTestSuiteRunningMode  mode,

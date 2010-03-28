@@ -29,7 +29,7 @@
 
 static GtkWidget* window = NULL;
 
-static gboolean
+gboolean
 io_func (GIOChannel  * channel,
          GIOCondition  condition G_GNUC_UNUSED,
          gpointer      data      G_GNUC_UNUSED)
@@ -107,7 +107,7 @@ create_iter_for_path (GtkTreeIter* iter,
   gtk_tree_path_free (tree_path);
 }
 
-static void
+void
 child_watch_cb (GPid      pid,
                 gint      status,
                 gpointer  data)
@@ -178,43 +178,6 @@ child_watch_cb (GPid      pid,
     }
 
   g_spawn_close_pid (pid);
-}
-
-static void
-selection_changed_cb (GtkWindow* window)
-{
-  GtkTestSuite* suite = gtk_test_runner_get_suite (GTK_TEST_RUNNER (window));
-
-  if (suite)
-    {
-      GPid   pid = 0;
-      int pipes[2];
-
-      gtk_test_suite_reset (suite);
-
-      if (pipe (pipes) < 0)
-        {
-          perror ("pipe()");
-          exit (2);
-        }
-
-      if (!run_or_warn (&pid, pipes[1], MODE_LIST, suite))
-        {
-          gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), FALSE);
-          close (pipes[0]);
-        }
-      else
-        {
-          GIOChannel* channel = g_io_channel_unix_new (pipes[0]);
-          g_io_channel_set_encoding (channel, NULL, NULL);
-          g_io_channel_set_buffered (channel, FALSE);
-          g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
-          g_io_add_watch (channel, G_IO_IN, io_func, gtk_test_suite_get_buffer (suite));
-          g_child_watch_add (pid, child_watch_cb, channel);
-          gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), TRUE);
-        }
-      close (pipes[1]);
-    }
 }
 
 static void
@@ -358,10 +321,6 @@ main (int   argc,
 
   g_signal_connect (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), "clicked",
                     G_CALLBACK (button_clicked_cb), NULL);
-
-  g_signal_connect (window, "notify::test-suite",
-                    G_CALLBACK (selection_changed_cb), NULL);
-  selection_changed_cb (GTK_WINDOW (window));
 
   gtk_widget_show (window);
 

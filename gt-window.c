@@ -20,6 +20,8 @@
 
 #include "gt-window.h"
 
+#include <stdlib.h>   /* exit() */
+#include <unistd.h>   /* pipe() */
 #include <gtk-test.h>
 
 #include <glib/gi18n.h>
@@ -46,12 +48,53 @@ static void implement_gtk_test_runner (GtkTestRunnerIface* iface);
 G_DEFINE_TYPE_WITH_CODE (GtkTestWindow, gtk_test_window, GTK_TYPE_WINDOW,
                          G_IMPLEMENT_INTERFACE (GTK_TEST_TYPE_RUNNER, implement_gtk_test_runner));
 
+/* FIXME: continue moving until this ends up in the GtkTestSuite */
+static void
+selection_changed_cb (GtkWindow* window)
+{
+  GtkTestSuite* suite = gtk_test_runner_get_suite (GTK_TEST_RUNNER (window));
+
+  if (suite)
+    {
+      GPid   pid = 0;
+      int pipes[2];
+
+      gtk_test_suite_reset (suite);
+
+      if (pipe (pipes) < 0)
+        {
+          perror ("pipe()");
+          exit (2);
+        }
+
+      if (!run_or_warn (&pid, pipes[1], MODE_LIST, suite))
+        {
+          gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), FALSE);
+          close (pipes[0]);
+        }
+      else
+        {
+          GIOChannel* channel = g_io_channel_unix_new (pipes[0]);
+          g_io_channel_set_encoding (channel, NULL, NULL);
+          g_io_channel_set_buffered (channel, FALSE);
+          g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
+          g_io_add_watch (channel, G_IO_IN, io_func, gtk_test_suite_get_buffer (suite));
+          g_child_watch_add (pid, child_watch_cb, channel);
+          gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), TRUE);
+        }
+      close (pipes[1]);
+    }
+}
+
 static void
 forward_notify (GObject   * object G_GNUC_UNUSED,
                 GParamSpec* pspec,
                 gpointer    user_data)
 {
   gtk_test_window_update_title (user_data);
+
+  selection_changed_cb (GTK_WINDOW (user_data));
+
   g_object_notify (user_data, pspec->name);
 }
 
