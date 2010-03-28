@@ -235,8 +235,6 @@ selection_changed_cb (GtkWindow* window)
         }
     }
 
-  gtk_test_window_update_title (GTK_TEST_WINDOW (window));
-
   gtk_widget_set_sensitive (gtk_test_widget_get_notebook (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window)))),
                             gtk_test_runner_get_file (GTK_TEST_RUNNER (window)) != NULL);
 }

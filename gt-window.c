@@ -51,6 +51,7 @@ forward_notify (GObject   * object G_GNUC_UNUSED,
                 GParamSpec* pspec,
                 gpointer    user_data)
 {
+  gtk_test_window_update_title (user_data);
   g_object_notify (user_data, pspec->name);
 }
 
@@ -105,6 +106,8 @@ gtk_test_window_init (GtkTestWindow* self)
 
   g_signal_connect (PRIV (self)->widget, "notify::test-suite",
                     G_CALLBACK (forward_notify), self);
+
+  gtk_test_window_update_title (self);
 }
 
 static void
