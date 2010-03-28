@@ -272,6 +272,17 @@ run_or_warn (GPid                   * pid,
   return result;
 }
 
+
+void
+gtk_test_suite_reset (GtkTestSuite* self)
+{
+  g_return_if_fail (GTK_TEST_IS_SUITE (self));
+
+  PRIV (self)->tests = G_GUINT64_CONSTANT (0);
+  g_hash_table_remove_all (PRIV (self)->iter_map);
+  gtk_tree_store_clear (PRIV (self)->tree_model);
+}
+
 void
 gtk_test_suite_set_executed (GtkTestSuite* self,
                              guint64       executed)

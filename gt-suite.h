@@ -54,6 +54,7 @@ gboolean      run_or_warn                 (GPid                   * pid,
                                            guint                    pipe_id,
                                            GtkTestSuiteRunningMode  mode,
                                            GtkTestSuite           * self);
+void          gtk_test_suite_reset        (GtkTestSuite* self);
 void          gtk_test_suite_set_executed (GtkTestSuite* self,
                                            guint64       executed);
 void          gtk_test_suite_set_tests    (GtkTestSuite* self,

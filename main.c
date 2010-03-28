@@ -184,16 +184,13 @@ static void
 selection_changed_cb (GtkWindow* window)
 {
   GtkTestSuite* suite = gtk_test_runner_get_suite (GTK_TEST_RUNNER (window));
-  if (suite)
-    {
-      g_hash_table_remove_all (gtk_test_suite_get_iter_map (suite));
-      gtk_tree_store_clear (GTK_TREE_STORE (gtk_test_suite_get_tree (suite)));
-    }
 
-  if (gtk_test_runner_get_file (GTK_TEST_RUNNER (window)))
+  if (suite)
     {
       GPid   pid = 0;
       int pipes[2];
+
+      gtk_test_suite_reset (suite);
 
       if (pipe (pipes) < 0)
         {
@@ -201,8 +198,7 @@ selection_changed_cb (GtkWindow* window)
           exit (2);
         }
 
-      gtk_test_suite_set_tests (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)), 0);
-      if (!run_or_warn (&pid, pipes[1], MODE_LIST, gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))))
+      if (!run_or_warn (&pid, pipes[1], MODE_LIST, suite))
         {
           gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), FALSE);
           close (pipes[0]);
@@ -213,7 +209,7 @@ selection_changed_cb (GtkWindow* window)
           g_io_channel_set_encoding (channel, NULL, NULL);
           g_io_channel_set_buffered (channel, FALSE);
           g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
-          g_io_add_watch (channel, G_IO_IN, io_func, gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))));
+          g_io_add_watch (channel, G_IO_IN, io_func, gtk_test_suite_get_buffer (suite));
           g_child_watch_add (pid, child_watch_cb, channel);
           gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), TRUE);
         }
