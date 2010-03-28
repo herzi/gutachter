@@ -47,8 +47,21 @@ G_DEFINE_TYPE_WITH_CODE (GtkTestWidget, gtk_test_widget, GTK_TYPE_VBOX,
 static void
 update_sensitivity (GtkTestWidget* self)
 {
+  GtkProgressBar* progress = GTK_PROGRESS_BAR (PRIV (self)->progress);
+
   gtk_widget_set_sensitive (PRIV (self)->notebook,
                             PRIV (self)->suite != NULL);
+
+  if (PRIV (self)->suite)
+    {
+      gtk_progress_bar_pulse (progress);
+      gtk_progress_bar_set_text (progress, _("Loading Test Paths..."));
+    }
+  else
+    {
+      gtk_progress_bar_set_fraction (progress, 0.0);
+      gtk_progress_bar_set_text (progress, _("no test selected"));
+    }
 }
 
 static void

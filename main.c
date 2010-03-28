@@ -216,9 +216,6 @@ selection_changed_cb (GtkWindow* window)
           g_io_add_watch (channel, G_IO_IN, io_func, gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))));
           g_child_watch_add (pid, child_watch_cb, channel);
           gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), TRUE);
-
-          gtk_progress_bar_pulse (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))));
-          gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("Loading Test Paths..."));
         }
       close (pipes[1]);
     }
@@ -226,8 +223,6 @@ selection_changed_cb (GtkWindow* window)
   if (!gtk_test_runner_get_file (GTK_TEST_RUNNER (window)))
     {
       GtkWidget* button = gtk_test_window_get_exec (GTK_TEST_WINDOW (window));
-
-      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("no test selected"));
 
       if (button)
         {
