@@ -219,16 +219,6 @@ selection_changed_cb (GtkWindow* window)
         }
       close (pipes[1]);
     }
-
-  if (!gtk_test_runner_get_file (GTK_TEST_RUNNER (window)))
-    {
-      GtkWidget* button = gtk_test_window_get_exec (GTK_TEST_WINDOW (window));
-
-      if (button)
-        {
-          gtk_widget_set_sensitive (button, FALSE);
-        }
-    }
 }
 
 static void

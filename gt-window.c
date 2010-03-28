@@ -255,6 +255,12 @@ gtk_test_window_update_title (GtkTestWindow* self)
         }
     }
 
+  if (G_LIKELY (PRIV (self)->execute_button))
+    {
+      /* don't run this after destroy() */
+      gtk_widget_set_sensitive (GTK_WIDGET (PRIV (self)->execute_button), testcase != NULL);
+    }
+
   if (title)
     {
       gtk_window_set_title (GTK_WINDOW (self), title);
