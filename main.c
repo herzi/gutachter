@@ -269,12 +269,14 @@ run_test_child_watch (GPid      pid,
 
 static void
 button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
-                   gpointer   user_data G_GNUC_UNUSED)
+                   gpointer   user_data)
 {
-  GPid   pid = 0;
-  int    pipes[2];
+  GtkTestWindow* window = user_data;
+  GPid           pid = 0;
+  int            pipes[2];
 
-  gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("Running tests..."));
+  gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (window)))),
+                             _("Running tests..."));
 
   if (pipe (pipes))
     {
@@ -298,7 +300,8 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
       gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), FALSE);
 
       gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), 0.0);
-      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("Starting Tests..."));
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))),
+                                 _("Starting Tests..."));
     }
 
   close (pipes[1]);
@@ -320,7 +323,7 @@ main (int   argc,
                     G_CALLBACK (gtk_main_quit), NULL);
 
   g_signal_connect (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), "clicked",
-                    G_CALLBACK (button_clicked_cb), NULL);
+                    G_CALLBACK (button_clicked_cb), window);
 
   gtk_widget_show (window);
 
