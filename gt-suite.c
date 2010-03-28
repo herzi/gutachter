@@ -21,6 +21,7 @@
 #include "gt-suite.h"
 
 #include <gtk/gtk.h>
+#include <gt-xvfb-wrapper.h>
 
 struct _GtkTestSuitePrivate
 {
@@ -171,6 +172,93 @@ gtk_test_suite_new (GFile* file)
   return g_object_new (GTK_TEST_TYPE_SUITE,
                        "file", file,
                        NULL);
+}
+
+gboolean
+run_or_warn (GPid                   * pid,
+             guint                    pipe_id,
+             GtkTestSuiteRunningMode  mode,
+             GtkTestSuite           * self)
+{
+  GtkTestXvfbWrapper* xvfb = gtk_test_xvfb_wrapper_get_instance ();
+  gboolean  result = FALSE;
+  GError  * error  = NULL;
+  GFile   * parent = g_file_get_parent (PRIV (self)->file);
+  gchar   * base;
+  gchar   * folder = g_file_get_path (parent);
+  gchar   * argv[] = {
+          NULL,
+          NULL,
+          "-q",
+          NULL,
+          NULL
+  };
+  gchar** env = g_listenv ();
+  gchar** iter;
+  gboolean found_display = FALSE;
+
+  base = g_file_get_basename (PRIV (self)->file);
+
+  /* FIXME: this is X11 specific */
+  for (iter = env; iter && *iter; iter++)
+    {
+      if (!g_str_has_prefix (*iter, "DISPLAY="))
+        {
+          g_free (*iter);
+          *iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT,
+                                   gtk_test_xvfb_wrapper_get_display (xvfb));
+          found_display = TRUE;
+          break;
+        }
+    }
+
+  if (!found_display)
+    {
+      gchar** new_env = g_new (gchar*, g_strv_length (env) + 2);
+      gchar** new_iter = new_env;
+
+      *new_iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT, gtk_test_xvfb_wrapper_get_display (xvfb));
+      for (new_iter++, iter = env; iter && *iter; iter++, new_iter++)
+        {
+          *new_iter = *iter;
+        }
+      *new_iter = NULL;
+
+      g_free (env);
+      env = new_env;
+    }
+
+  switch (mode)
+    {
+    case MODE_TEST:
+      break;
+    case MODE_LIST:
+      argv[3] = "-l";
+      break;
+    }
+
+  /* FIXME: should only be necessary on UNIX */
+  argv[0] = g_strdup_printf ("./%s", base);
+  argv[1] = g_strdup_printf ("--GTestLogFD=%u", pipe_id);
+
+  result = g_spawn_async (folder, argv, env,
+                          G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_LEAVE_DESCRIPTORS_OPEN ,//| G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
+                          NULL, NULL, pid, &error);
+
+  if (!result)
+    {
+      g_warning ("error executing \"%s\": %s",
+                 base, error->message); /* FIXME: use display name */
+      g_error_free (error);
+    }
+
+  g_free (argv[1]);
+  g_free (argv[0]);
+  g_free (folder);
+  g_object_unref (parent);
+  g_object_unref (xvfb);
+
+  return result;
 }
 
 void

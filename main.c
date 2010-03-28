@@ -180,92 +180,6 @@ child_watch_cb (GPid      pid,
   g_spawn_close_pid (pid);
 }
 
-static gboolean
-run_or_warn (GPid                   * pid,
-             guint                    pipe_id,
-             GtkTestSuiteRunningMode  mode)
-{
-  GtkTestXvfbWrapper* xvfb = gtk_test_xvfb_wrapper_get_instance ();
-  gboolean  result = FALSE;
-  GError  * error  = NULL;
-  GFile   * parent = g_file_get_parent (gtk_test_runner_get_file (GTK_TEST_RUNNER (window)));
-  gchar   * base;
-  gchar   * folder = g_file_get_path (parent);
-  gchar   * argv[] = {
-          NULL,
-          NULL,
-          "-q",
-          NULL,
-          NULL
-  };
-  gchar** env = g_listenv ();
-  gchar** iter;
-  gboolean found_display = FALSE;
-
-  base = g_file_get_basename (gtk_test_runner_get_file (GTK_TEST_RUNNER (window)));
-
-  /* FIXME: this is X11 specific */
-  for (iter = env; iter && *iter; iter++)
-    {
-      if (!g_str_has_prefix (*iter, "DISPLAY="))
-        {
-          g_free (*iter);
-          *iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT,
-                                   gtk_test_xvfb_wrapper_get_display (xvfb));
-          found_display = TRUE;
-          break;
-        }
-    }
-
-  if (!found_display)
-    {
-      gchar** new_env = g_new (gchar*, g_strv_length (env) + 2);
-      gchar** new_iter = new_env;
-
-      *new_iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT, gtk_test_xvfb_wrapper_get_display (xvfb));
-      for (new_iter++, iter = env; iter && *iter; iter++, new_iter++)
-        {
-          *new_iter = *iter;
-        }
-      *new_iter = NULL;
-
-      g_free (env);
-      env = new_env;
-    }
-
-  switch (mode)
-    {
-    case MODE_TEST:
-      break;
-    case MODE_LIST:
-      argv[3] = "-l";
-      break;
-    }
-
-  /* FIXME: should only be necessary on UNIX */
-  argv[0] = g_strdup_printf ("./%s", base);
-  argv[1] = g_strdup_printf ("--GTestLogFD=%u", pipe_id);
-
-  result = g_spawn_async (folder, argv, env,
-                          G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_LEAVE_DESCRIPTORS_OPEN ,//| G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
-                          NULL, NULL, pid, &error);
-
-  if (!result)
-    {
-      g_warning ("error executing \"%s\": %s",
-                 base, error->message); /* FIXME: use display name */
-      g_error_free (error);
-    }
-
-  g_free (argv[1]);
-  g_free (argv[0]);
-  g_free (folder);
-  g_object_unref (parent);
-  g_object_unref (xvfb);
-
-  return result;
-}
-
 static void
 selection_changed_cb (GtkWindow* window)
 {
@@ -296,7 +210,7 @@ selection_changed_cb (GtkWindow* window)
       g_free (title);
 
       gtk_test_suite_set_tests (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)), 0);
-      if (!run_or_warn (&pid, pipes[1], MODE_LIST))
+      if (!run_or_warn (&pid, pipes[1], MODE_LIST, gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))))
         {
           gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), FALSE);
           close (pipes[0]);
@@ -455,7 +369,7 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
     }
 
   gtk_test_suite_set_executed (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)), 0);
-  if (!run_or_warn (&pid, pipes[1], MODE_TEST))
+  if (!run_or_warn (&pid, pipes[1], MODE_TEST, gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))))
     {
       close (pipes[0]);
     }

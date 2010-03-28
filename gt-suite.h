@@ -49,6 +49,10 @@ guint64       gtk_test_suite_get_executed (GtkTestSuite* self);
 GFile*        gtk_test_suite_get_file     (GtkTestSuite* self);
 GHashTable*   gtk_test_suite_get_iter_map (GtkTestSuite* self);
 guint64       gtk_test_suite_get_tests    (GtkTestSuite* self);
+gboolean      run_or_warn                 (GPid                   * pid,
+                                           guint                    pipe_id,
+                                           GtkTestSuiteRunningMode  mode,
+                                           GtkTestSuite           * self);
 void          gtk_test_suite_set_executed (GtkTestSuite* self,
                                            guint64       executed);
 void          gtk_test_suite_set_tests    (GtkTestSuite* self,
