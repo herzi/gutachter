@@ -33,20 +33,41 @@ void
 gtk_test_suite_read_available (GtkTestSuite* self)
 {
   GutachterSuiteStatus  status;
+  GTestLogBuffer      * tlb;
+  GTestLogMsg         * msg;
+  GtkTreeIter           iter;
 
   g_return_if_fail (GTK_TEST_IS_SUITE (self));
   status = gtk_test_suite_get_status (self);
   g_return_if_fail (status == GUTACHTER_SUITE_LOADING || status == GUTACHTER_SUITE_RUNNING);
 
+  tlb = gtk_test_suite_get_buffer (self);
   if (status == GUTACHTER_SUITE_LOADING)
     {
+      for (msg = g_test_log_buffer_pop (tlb); msg; msg = g_test_log_buffer_pop (tlb))
+        {
+          gchar      * path;
+
+          switch (msg->log_type)
+            {
+            case G_TEST_LOG_START_BINARY:
+              break;
+            case G_TEST_LOG_LIST_CASE:
+              path = g_strdup (msg->strings[0]);
+              create_iter_for_path (self, &iter, path);
+              gtk_test_suite_set_tests (self,
+                                        1 + gtk_test_suite_get_tests (self));
+              break;
+            default:
+              g_warning ("unexpected message type: %d", msg->log_type);
+            }
+
+          g_test_log_msg_free (msg);
+        }
     }
   else /* GUTACHTER_SUITE_RUNNING */
     {
-      GTestLogBuffer* tlb = gtk_test_suite_get_buffer (self);
       GtkTreeStore  * store = GTK_TREE_STORE (gtk_test_suite_get_tree (self));
-      GTestLogMsg   * msg;
-      GtkTreeIter     iter;
       for (msg = g_test_log_buffer_pop (tlb); msg; msg = g_test_log_buffer_pop (tlb))
         {
           switch (msg->log_type)
@@ -140,7 +161,6 @@ child_watch_cb (GPid      pid,
     }
   else
     {
-      GTestLogMsg *msg;
       GTestLogBuffer* tlb = gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)));
       GIOChannel* channel = data;
       GError* error = NULL;
@@ -148,32 +168,13 @@ child_watch_cb (GPid      pid,
       gchar* data = NULL;
       GIOStatus  status;
 
+      /* FIXME: try calling into io_func() */
       while (G_IO_STATUS_NORMAL == (status = g_io_channel_read_to_end (channel, &data, &length, &error)))
         {
           g_test_log_buffer_push (tlb, length, (guchar*)data);
         }
 
-      for (msg = g_test_log_buffer_pop (tlb); msg; msg = g_test_log_buffer_pop (tlb))
-        {
-          GtkTreeIter  iter;
-          gchar      * path;
-
-          switch (msg->log_type)
-            {
-            case G_TEST_LOG_START_BINARY:
-              break;
-            case G_TEST_LOG_LIST_CASE:
-              path = g_strdup (msg->strings[0]);;
-              create_iter_for_path (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)), &iter, path);
-              gtk_test_suite_set_tests (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)),
-                                        1 + gtk_test_suite_get_tests (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))));
-              break;
-            default:
-              g_warning ("unexpected message type: %d", msg->log_type);
-            }
-
-          g_test_log_msg_free (msg);
-        }
+      gtk_test_suite_read_available (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)));
       /* FIXME: warn if there's unparsed data */
       g_string_set_size (tlb->data, 0);
 
@@ -218,6 +219,7 @@ run_test_child_watch (GPid      pid,
       gchar* data = NULL;
       GIOStatus  status;
 
+      /* FIXME: try calling into io_func() */
       while (G_IO_STATUS_NORMAL == (status = g_io_channel_read_to_end (channel, &data, &length, &error)))
         {
           g_test_log_buffer_push (tlb, length, (guchar*)data);
