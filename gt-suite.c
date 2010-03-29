@@ -130,16 +130,16 @@ gtk_test_suite_class_init (GtkTestSuiteClass* self_class)
 }
 
 void
-create_iter_for_path (GtkTestSuite* suite,
+create_iter_for_path (GtkTestSuite* self,
                       GtkTreeIter * iter,
                       gchar       * path)
 {
   GtkTreeRowReference* reference;
-  GtkTreeStore       * store = GTK_TREE_STORE (gtk_test_suite_get_tree (suite));
+  GtkTreeStore       * store = GTK_TREE_STORE (gtk_test_suite_get_tree (self));
   GtkTreePath        * tree_path;
   gchar              * last_slash;
 
-  if (lookup_iter_for_path (iter, path))
+  if (lookup_iter_for_path (self, iter, path))
     {
       g_free (path);
       return;
@@ -155,7 +155,7 @@ create_iter_for_path (GtkTestSuite* suite,
       GtkTreeIter  parent;
 
       *last_slash = '\0';
-      create_iter_for_path (suite, &parent, g_strdup (path));
+      create_iter_for_path (self, &parent, g_strdup (path));
       *last_slash = '/';
 
       last_slash++;
@@ -170,7 +170,7 @@ create_iter_for_path (GtkTestSuite* suite,
 
   tree_path = gtk_tree_model_get_path (GTK_TREE_MODEL (store), iter);
   reference = gtk_tree_row_reference_new (GTK_TREE_MODEL (store), tree_path);
-  g_hash_table_insert (gtk_test_suite_get_iter_map (suite), path, reference);
+  g_hash_table_insert (gtk_test_suite_get_iter_map (self), path, reference);
   gtk_tree_path_free (tree_path);
 }
 

@@ -47,13 +47,14 @@ io_func (GIOChannel  * channel,
 }
 
 gboolean
-lookup_iter_for_path (GtkTreeIter* iter,
-                      gchar      * path)
+lookup_iter_for_path (GtkTestSuite* suite,
+                      GtkTreeIter * iter,
+                      gchar       * path)
 {
-  GtkTreeRowReference* reference = g_hash_table_lookup (gtk_test_suite_get_iter_map (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))), path);
+  GtkTreeRowReference* reference = g_hash_table_lookup (gtk_test_suite_get_iter_map (suite), path);
   if (reference)
     {
-      GtkTreeStore* store = GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window)))))));
+      GtkTreeStore* store = GTK_TREE_STORE (gtk_test_suite_get_tree (suite));
       GtkTreePath* tree_path = gtk_tree_row_reference_get_path (reference);
       g_assert (gtk_tree_model_get_iter (GTK_TREE_MODEL (store), iter, tree_path));
       gtk_tree_path_free (tree_path);
@@ -184,7 +185,8 @@ run_test_child_watch (GPid      pid,
             case G_TEST_LOG_START_BINARY:
               break;
             case G_TEST_LOG_START_CASE:
-              lookup_iter_for_path (&iter, msg->strings[0]);
+              lookup_iter_for_path (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)),
+                                    &iter, msg->strings[0]);
               break;
             case G_TEST_LOG_STOP_CASE:
               gtk_tree_store_set (store, &iter,
