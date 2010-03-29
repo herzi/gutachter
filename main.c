@@ -46,24 +46,6 @@ io_func (GIOChannel  * channel,
   return TRUE;
 }
 
-gboolean
-lookup_iter_for_path (GtkTestSuite* suite,
-                      GtkTreeIter * iter,
-                      gchar       * path)
-{
-  GtkTreeRowReference* reference = g_hash_table_lookup (gtk_test_suite_get_iter_map (suite), path);
-  if (reference)
-    {
-      GtkTreeStore* store = GTK_TREE_STORE (gtk_test_suite_get_tree (suite));
-      GtkTreePath* tree_path = gtk_tree_row_reference_get_path (reference);
-      g_assert (gtk_tree_model_get_iter (GTK_TREE_MODEL (store), iter, tree_path));
-      gtk_tree_path_free (tree_path);
-      return TRUE;
-    }
-
-  return FALSE;
-}
-
 void
 child_watch_cb (GPid      pid,
                 gint      status,
