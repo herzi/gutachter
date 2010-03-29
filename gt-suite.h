@@ -53,6 +53,11 @@ GtkTreeModel* gtk_test_suite_get_tree     (GtkTestSuite* self);
 gboolean      io_func                     (GIOChannel  * channel,
                                            GIOCondition  condition,
                                            gpointer      data);
+gboolean      lookup_iter_for_path        (GtkTreeIter* iter,
+                                           gchar      * path);
+void          create_iter_for_path        (GtkTestSuite* suite,
+                                           GtkTreeIter * iter,
+                                           gchar       * path);
 void          run_test_child_watch        (GPid      pid,
                                            gint      status,
                                            gpointer  user_data);

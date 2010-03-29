@@ -46,7 +46,7 @@ io_func (GIOChannel  * channel,
   return TRUE;
 }
 
-static gboolean
+gboolean
 lookup_iter_for_path (GtkTreeIter* iter,
                       gchar      * path)
 {
@@ -63,7 +63,7 @@ lookup_iter_for_path (GtkTreeIter* iter,
   return FALSE;
 }
 
-static void
+void
 create_iter_for_path (GtkTestSuite* suite,
                       GtkTreeIter * iter,
                       gchar       * path)
