@@ -29,24 +29,6 @@
 
 static GtkWidget* window = NULL;
 
-gboolean
-io_func (GIOChannel  * channel,
-         GIOCondition  condition G_GNUC_UNUSED,
-         gpointer      data      G_GNUC_UNUSED)
-{
-  GtkTestSuite* suite = gtk_test_runner_get_suite (GTK_TEST_RUNNER (window));
-  guchar  buf[512];
-  gsize read_bytes = 0;
-
-  while (G_IO_STATUS_NORMAL == g_io_channel_read_chars (channel, (gchar*)buf, sizeof (buf), &read_bytes, NULL))
-    {
-      g_test_log_buffer_push (gtk_test_suite_get_buffer (suite), read_bytes, buf);
-    }
-
-  gtk_test_suite_read_available (suite);
-  return TRUE;
-}
-
 void
 child_watch_cb (GPid      pid,
                 gint      status,

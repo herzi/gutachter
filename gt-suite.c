@@ -368,6 +368,24 @@ run_or_warn (GPid                   * pid,
   return result;
 }
 
+gboolean
+io_func (GIOChannel  * channel,
+         GIOCondition  condition G_GNUC_UNUSED,
+         gpointer      user_data)
+{
+  GtkTestSuite* suite = user_data;
+  guchar  buf[512];
+  gsize read_bytes = 0;
+
+  while (G_IO_STATUS_NORMAL == g_io_channel_read_chars (channel, (gchar*)buf, sizeof (buf), &read_bytes, NULL))
+    {
+      g_test_log_buffer_push (gtk_test_suite_get_buffer (suite), read_bytes, buf);
+    }
+
+  gtk_test_suite_read_available (suite);
+  return TRUE;
+}
+
 void
 gtk_test_suite_read_available (GtkTestSuite* self)
 {
@@ -420,13 +438,13 @@ gtk_test_suite_read_available (GtkTestSuite* self)
               break;
             case G_TEST_LOG_STOP_CASE:
               g_print ("stop\n");
+              gtk_test_suite_set_executed (self,
+                                           1 + gtk_test_suite_get_executed (self));
               gtk_tree_store_set (store, &PRIV (self)->iter,
                                   GTK_TEST_HIERARCHY_COLUMN_PASSED, msg->nums[0] == 0,
                                   -1);
               g_message ("status %d; nforks %d; elapsed %Lf",
                          (int)msg->nums[0], (int)msg->nums[1], msg->nums[2]);
-              gtk_test_suite_set_executed (self,
-                                           1 + gtk_test_suite_get_executed (self));
               break;
             default:
               g_warning ("%s(%s): unexpected message type: %d",

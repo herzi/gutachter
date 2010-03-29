@@ -79,7 +79,7 @@ selection_changed_cb (GtkWindow* window)
           g_io_channel_set_encoding (channel, NULL, NULL);
           g_io_channel_set_buffered (channel, FALSE);
           g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
-          g_io_add_watch (channel, G_IO_IN, io_func, gtk_test_suite_get_buffer (suite));
+          g_io_add_watch (channel, G_IO_IN, io_func, suite);
           g_child_watch_add_full (G_PRIORITY_DEFAULT, pid, child_watch_cb, channel, NULL);
           gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), TRUE);
           gtk_test_suite_set_status (suite, GUTACHTER_SUITE_LOADING);
@@ -151,7 +151,7 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
       g_io_channel_set_encoding (channel, NULL, NULL);
       g_io_channel_set_buffered (channel, FALSE);
       g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
-      g_io_add_watch (channel, G_IO_IN, io_func, gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))));
+      g_io_add_watch (channel, G_IO_IN, io_func, gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)));
       g_child_watch_add_full (G_PRIORITY_DEFAULT, pid, run_test_child_watch, channel, NULL);
       gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), FALSE);
 
