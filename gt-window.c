@@ -71,6 +71,7 @@ selection_changed_cb (GtkWindow* window)
         {
           gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), FALSE);
           close (pipes[0]);
+          gtk_test_suite_set_status (suite, GUTACHTER_SUITE_INDETERMINED);
         }
       else
         {
@@ -81,6 +82,7 @@ selection_changed_cb (GtkWindow* window)
           g_io_add_watch (channel, G_IO_IN, io_func, gtk_test_suite_get_buffer (suite));
           g_child_watch_add (pid, child_watch_cb, channel);
           gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), TRUE);
+          gtk_test_suite_set_status (suite, GUTACHTER_SUITE_LOADING);
         }
       close (pipes[1]);
     }
@@ -108,15 +110,15 @@ open_item_clicked (GtkButton* button G_GNUC_UNUSED,
                                                    GTK_STOCK_CLOSE, GTK_RESPONSE_REJECT,
                                                    GTK_STOCK_OPEN,  GTK_RESPONSE_ACCEPT,
                                                    NULL);
-  GFile* file;
 
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_ACCEPT);
 
-  gtk_dialog_run (GTK_DIALOG (dialog));
-
-  file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
-  gtk_test_runner_set_file (GTK_TEST_RUNNER (window), file);
-  g_object_unref (file);
+  if (GTK_RESPONSE_ACCEPT == gtk_dialog_run (GTK_DIALOG (dialog)))
+    {
+      GFile* file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
+      gtk_test_runner_set_file (GTK_TEST_RUNNER (window), file);
+      g_object_unref (file);
+    }
 
   gtk_widget_destroy (dialog);
 }
@@ -156,6 +158,8 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
       gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), 0.0);
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))),
                                  _("Starting Tests..."));
+      gtk_test_suite_set_status (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)),
+                                 GUTACHTER_SUITE_RUNNING);
     }
 
   close (pipes[1]);

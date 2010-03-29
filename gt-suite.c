@@ -400,6 +400,28 @@ gtk_test_suite_set_status (GtkTestSuite      * self,
       return;
     }
 
+  /* cannot switch from any status to any other */
+  switch (status)
+    {
+    case GUTACHTER_SUITE_LOADING:
+      g_return_if_fail (PRIV (self)->status == GUTACHTER_SUITE_INDETERMINED);
+      break;
+    case GUTACHTER_SUITE_LOADED:
+      g_return_if_fail (PRIV (self)->status == GUTACHTER_SUITE_LOADING);
+      break;
+    case GUTACHTER_SUITE_RUNNING:
+      g_return_if_fail (PRIV (self)->status >= GUTACHTER_SUITE_LOADED);
+      break;
+    case GUTACHTER_SUITE_FINISHED:
+      g_return_if_fail (PRIV (self)->status == GUTACHTER_SUITE_RUNNING);
+      break;
+    default:
+      g_warning ("%s(%s): unexpected status: %d",
+                 G_STRFUNC, G_STRLOC, status);
+      g_return_if_reached ();
+      break;
+    }
+
   PRIV (self)->status = status;
   g_object_notify (G_OBJECT (self), "status");
 }

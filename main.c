@@ -54,6 +54,8 @@ child_watch_cb (GPid      pid,
   if (WIFEXITED (status) && WEXITSTATUS (status) != 0)
     {
       g_warning ("child exited with error code: %d", WEXITSTATUS (status));
+      gtk_test_suite_set_status (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)),
+                                 GUTACHTER_SUITE_INDETERMINED);
     }
   else if (!WIFEXITED (status))
     {
@@ -65,6 +67,8 @@ child_watch_cb (GPid      pid,
         {
           g_warning ("child didn't exit normally: %d", status);
         }
+      gtk_test_suite_set_status (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)),
+                                 GUTACHTER_SUITE_INDETERMINED);
     }
   else
     {
@@ -114,6 +118,8 @@ child_watch_cb (GPid      pid,
       g_io_channel_unref (channel);
       gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), 0.0);
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("not tested yet"));
+      gtk_test_suite_set_status (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)),
+                                 GUTACHTER_SUITE_LOADED);
     }
 
   g_spawn_close_pid (pid);
@@ -127,6 +133,8 @@ run_test_child_watch (GPid      pid,
   GIOChannel* channel = user_data;
 
   g_spawn_close_pid (pid);
+  gtk_test_suite_set_status (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)),
+                             GUTACHTER_SUITE_FINISHED);
 
   if (WIFEXITED (status) && WEXITSTATUS (status))
     {
