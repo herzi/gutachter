@@ -129,6 +129,51 @@ gtk_test_suite_class_init (GtkTestSuiteClass* self_class)
   g_type_class_add_private (self_class, sizeof (GtkTestSuitePrivate));
 }
 
+void
+create_iter_for_path (GtkTestSuite* suite,
+                      GtkTreeIter * iter,
+                      gchar       * path)
+{
+  GtkTreeRowReference* reference;
+  GtkTreeStore       * store = GTK_TREE_STORE (gtk_test_suite_get_tree (suite));
+  GtkTreePath        * tree_path;
+  gchar              * last_slash;
+
+  if (lookup_iter_for_path (iter, path))
+    {
+      g_free (path);
+      return;
+    }
+
+  last_slash = g_strrstr (path, "/");
+  if (!last_slash || last_slash == path || *(last_slash + 1) == '\0')
+    {
+      gtk_tree_store_append (store, iter, NULL);
+    }
+  else
+    {
+      GtkTreeIter  parent;
+
+      *last_slash = '\0';
+      create_iter_for_path (suite, &parent, g_strdup (path));
+      *last_slash = '/';
+
+      last_slash++;
+
+      gtk_tree_store_append (store, iter, &parent);
+    }
+
+  gtk_tree_store_set (store, iter,
+                      GTK_TEST_HIERARCHY_COLUMN_PASSED, FALSE,
+                      GTK_TEST_HIERARCHY_COLUMN_NAME, last_slash,
+                      -1);
+
+  tree_path = gtk_tree_model_get_path (GTK_TREE_MODEL (store), iter);
+  reference = gtk_tree_row_reference_new (GTK_TREE_MODEL (store), tree_path);
+  g_hash_table_insert (gtk_test_suite_get_iter_map (suite), path, reference);
+  gtk_tree_path_free (tree_path);
+}
+
 GByteArray*
 gtk_test_suite_get_buffer (GtkTestSuite* self)
 {
