@@ -44,27 +44,6 @@ io_func (GIOChannel  * channel,
     }
 
   gtk_test_suite_read_available (suite);
-  switch (gtk_test_suite_get_status (suite))
-    {
-      gchar* text;
-    case GUTACHTER_SUITE_LOADING:
-      gtk_progress_bar_pulse (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))));
-      break;
-    case GUTACHTER_SUITE_RUNNING:
-      text = g_strdup_printf (_("%" G_GUINT64_FORMAT "/%" G_GUINT64_FORMAT),
-                              gtk_test_suite_get_executed (suite),
-                              gtk_test_suite_get_tests (suite));
-      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))),
-                                 text);
-      g_print ("%s\n", text);
-      g_free (text);
-      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))),
-                                             1.0 * gtk_test_suite_get_executed (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))) / gtk_test_suite_get_tests (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))));
-      break;
-    default:
-      g_return_val_if_reached (TRUE);
-      break;
-    }
   return TRUE;
 }
 

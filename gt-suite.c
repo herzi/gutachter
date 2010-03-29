@@ -29,6 +29,7 @@ struct _GtkTestSuitePrivate
   guint64               executed;
   GFile               * file;
   GFileMonitor        * file_monitor;
+  GtkTreeIter           iter;
   GHashTable          * iter_map;
   GutachterSuiteStatus  status;
   guint64               tests;
@@ -373,15 +374,16 @@ gtk_test_suite_read_available (GtkTestSuite* self)
   GutachterSuiteStatus  status;
   GTestLogBuffer      * tlb;
   GTestLogMsg         * msg;
-  GtkTreeIter           iter;
+  GtkTreeStore        * store;
 
   g_return_if_fail (GTK_TEST_IS_SUITE (self));
   status = gtk_test_suite_get_status (self);
-  g_return_if_fail (status == GUTACHTER_SUITE_LOADING || status == GUTACHTER_SUITE_RUNNING);
 
   tlb = gtk_test_suite_get_buffer (self);
-  if (status == GUTACHTER_SUITE_LOADING)
+  switch (status)
     {
+    case GUTACHTER_SUITE_LOADING:
+    case GUTACHTER_SUITE_LOADED: /* FIXME: finish the process only after regular EOF */
       for (msg = g_test_log_buffer_pop (tlb); msg; msg = g_test_log_buffer_pop (tlb))
         {
           gchar      * path;
@@ -392,7 +394,7 @@ gtk_test_suite_read_available (GtkTestSuite* self)
               break;
             case G_TEST_LOG_LIST_CASE:
               path = g_strdup (msg->strings[0]);
-              create_iter_for_path (self, &iter, path);
+              create_iter_for_path (self, &PRIV (self)->iter, path);
               gtk_test_suite_set_tests (self,
                                         1 + gtk_test_suite_get_tests (self));
               break;
@@ -402,10 +404,10 @@ gtk_test_suite_read_available (GtkTestSuite* self)
 
           g_test_log_msg_free (msg);
         }
-    }
-  else /* GUTACHTER_SUITE_RUNNING */
-    {
-      GtkTreeStore  * store = GTK_TREE_STORE (gtk_test_suite_get_tree (self));
+      break;
+    case GUTACHTER_SUITE_RUNNING:
+    case GUTACHTER_SUITE_FINISHED: /* FIXME: finish the process only after regular EOF */
+      store = GTK_TREE_STORE (gtk_test_suite_get_tree (self));
       for (msg = g_test_log_buffer_pop (tlb); msg; msg = g_test_log_buffer_pop (tlb))
         {
           switch (msg->log_type)
@@ -413,10 +415,12 @@ gtk_test_suite_read_available (GtkTestSuite* self)
             case G_TEST_LOG_START_BINARY:
               break;
             case G_TEST_LOG_START_CASE:
-              lookup_iter_for_path (self, &iter, msg->strings[0]);
+              g_print ("start %s\n", msg->strings[0]);
+              lookup_iter_for_path (self, &PRIV (self)->iter, msg->strings[0]);
               break;
             case G_TEST_LOG_STOP_CASE:
-              gtk_tree_store_set (store, &iter,
+              g_print ("stop\n");
+              gtk_tree_store_set (store, &PRIV (self)->iter,
                                   GTK_TEST_HIERARCHY_COLUMN_PASSED, msg->nums[0] == 0,
                                   -1);
               g_message ("status %d; nforks %d; elapsed %Lf",
@@ -432,6 +436,9 @@ gtk_test_suite_read_available (GtkTestSuite* self)
 
           g_test_log_msg_free (msg);
         }
+      break;
+    default:
+      break;
     }
 }
 

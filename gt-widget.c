@@ -226,6 +226,69 @@ gtk_test_widget_new (void)
                        NULL);
 }
 
+static void
+model_changed (GtkTestWidget* self)
+{
+  switch (gtk_test_suite_get_status (PRIV (self)->suite))
+    {
+      gchar* text;
+    case GUTACHTER_SUITE_LOADING:
+    case GUTACHTER_SUITE_LOADED: /* FIXME: finish the process only after regular EOF */
+      gtk_progress_bar_pulse (GTK_PROGRESS_BAR (PRIV (self)->progress));
+      break;
+    case GUTACHTER_SUITE_RUNNING:
+    case GUTACHTER_SUITE_FINISHED: /* FIXME: finish the process only after regular EOF */
+      text = g_strdup_printf (_("%" G_GUINT64_FORMAT "/%" G_GUINT64_FORMAT),
+                              gtk_test_suite_get_executed (PRIV (self)->suite),
+                              gtk_test_suite_get_tests (PRIV (self)->suite));
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (PRIV (self)->progress),
+                                 text);
+      g_free (text);
+      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (PRIV (self)->progress),
+                                     1.0 * gtk_test_suite_get_executed (PRIV (self)->suite) / gtk_test_suite_get_tests (PRIV (self)->suite));
+      break;
+    default:
+      g_return_if_reached ();
+      break;
+    }
+}
+
+static void
+row_changed_cb (GtkTreeModel* model     G_GNUC_UNUSED,
+                GtkTreePath * path      G_GNUC_UNUSED,
+                GtkTreeIter * iter      G_GNUC_UNUSED,
+                gpointer      user_data)
+{
+  model_changed (user_data);
+}
+
+static void
+row_deleted_cb (GtkTreeModel* model     G_GNUC_UNUSED,
+                GtkTreePath * path      G_GNUC_UNUSED,
+                gpointer      user_data)
+{
+  model_changed (user_data);
+}
+
+static void
+row_inserted_cb (GtkTreeModel* model     G_GNUC_UNUSED,
+                 GtkTreePath * path      G_GNUC_UNUSED,
+                 GtkTreeIter * iter      G_GNUC_UNUSED,
+                 gpointer      user_data)
+{
+  model_changed (user_data);
+}
+
+static void
+rows_reordered_cb (GtkTreeModel* model     G_GNUC_UNUSED,
+                   GtkTreePath * path      G_GNUC_UNUSED,
+                   GtkTreeIter * iter      G_GNUC_UNUSED,
+                   guint       * new_order G_GNUC_UNUSED,
+                   gpointer      user_data)
+{
+  model_changed (user_data);
+}
+
 void
 gtk_test_widget_set_suite (GtkTestWidget* self,
                            GtkTestSuite * suite)
@@ -247,9 +310,20 @@ gtk_test_widget_set_suite (GtkTestWidget* self,
 
   if (suite)
     {
+      GtkTreeModel* model = gtk_test_suite_get_tree (suite);
+
       PRIV (self)->suite = g_object_ref (suite);
       gtk_tree_view_set_model (GTK_TREE_VIEW (PRIV (self)->hierarchy_view),
-                               gtk_test_suite_get_tree (suite));
+                               model);
+
+      g_signal_connect (model, "row-changed",
+                        G_CALLBACK (row_changed_cb), self);
+      g_signal_connect (model, "row-deleted",
+                        G_CALLBACK (row_deleted_cb), self);
+      g_signal_connect (model, "row-inserted",
+                        G_CALLBACK (row_inserted_cb), self);
+      g_signal_connect (model, "rows-reordered",
+                        G_CALLBACK (rows_reordered_cb), self);
     }
 
   g_object_notify (G_OBJECT (self), "test-suite");
