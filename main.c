@@ -43,16 +43,17 @@ io_func (GIOChannel  * channel,
       g_test_log_buffer_push (gtk_test_suite_get_buffer (suite), read_bytes, buf);
     }
 
+  gtk_test_suite_read_available (suite);
   switch (gtk_test_suite_get_status (suite))
     {
+      gchar* text;
     case GUTACHTER_SUITE_LOADING:
       gtk_progress_bar_pulse (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))));
       break;
     case GUTACHTER_SUITE_RUNNING:
-      gtk_test_suite_read_available (suite);
-      gchar* text = g_strdup_printf (_("%" G_GUINT64_FORMAT "/%" G_GUINT64_FORMAT),
-                                     gtk_test_suite_get_executed (suite),
-                                     gtk_test_suite_get_tests (suite));
+      text = g_strdup_printf (_("%" G_GUINT64_FORMAT "/%" G_GUINT64_FORMAT),
+                              gtk_test_suite_get_executed (suite),
+                              gtk_test_suite_get_tests (suite));
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))),
                                  text);
       g_print ("%s\n", text);
