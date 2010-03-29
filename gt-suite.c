@@ -25,11 +25,11 @@
 
 struct _GtkTestSuitePrivate
 {
-  GByteArray        * buffer;
-  guint64             executed;
-  GFile             * file;
-  GFileMonitor      * file_monitor;
-  GHashTable        * iter_map;
+  GTestLogBuffer      * buffer;
+  guint64               executed;
+  GFile               * file;
+  GFileMonitor        * file_monitor;
+  GHashTable          * iter_map;
   GutachterSuiteStatus  status;
   guint64               tests;
   GtkTreeStore        * tree_model;
@@ -51,7 +51,7 @@ gtk_test_suite_init (GtkTestSuite* self)
 {
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_SUITE, GtkTestSuitePrivate);
 
-  PRIV (self)->buffer = g_byte_array_new ();
+  PRIV (self)->buffer = g_test_log_buffer_new ();
   PRIV (self)->iter_map = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GFreeFunc)gtk_tree_row_reference_free);
   PRIV (self)->tree_model = gtk_test_hierarchy_new ();
 }
@@ -62,7 +62,7 @@ finalize (GObject* object)
   g_object_unref (PRIV (object)->tree_model);
   g_object_unref (PRIV (object)->file_monitor);
   g_object_unref (PRIV (object)->file);
-  g_byte_array_free (PRIV (object)->buffer, TRUE);
+  g_test_log_buffer_free (PRIV (object)->buffer);
   g_hash_table_destroy (PRIV (object)->iter_map);
 
   G_OBJECT_CLASS (gtk_test_suite_parent_class)->finalize (object);
@@ -216,7 +216,7 @@ create_iter_for_path (GtkTestSuite* self,
   gtk_tree_path_free (tree_path);
 }
 
-GByteArray*
+GTestLogBuffer*
 gtk_test_suite_get_buffer (GtkTestSuite* self)
 {
   g_return_val_if_fail (GTK_TEST_IS_SUITE (self), NULL);

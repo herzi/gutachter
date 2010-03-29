@@ -40,7 +40,7 @@ io_func (GIOChannel  * channel,
 
   while (G_IO_STATUS_NORMAL == g_io_channel_read_chars (channel, (gchar*)buf, sizeof (buf), &read_bytes, NULL))
     {
-      g_byte_array_append (gtk_test_suite_get_buffer (suite), buf, read_bytes);
+      g_test_log_buffer_push (gtk_test_suite_get_buffer (suite), read_bytes, buf);
     }
 
   switch (gtk_test_suite_get_status (suite))
@@ -85,7 +85,7 @@ child_watch_cb (GPid      pid,
   else
     {
       GTestLogMsg *msg;
-      GTestLogBuffer* tlb;
+      GTestLogBuffer* tlb = gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)));
       GIOChannel* channel = data;
       GError* error = NULL;
       gsize length = 0;
@@ -94,13 +94,9 @@ child_watch_cb (GPid      pid,
 
       while (G_IO_STATUS_NORMAL == (status = g_io_channel_read_to_end (channel, &data, &length, &error)))
         {
-          g_byte_array_append (gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))), (guchar*)data, length);
+          g_test_log_buffer_push (tlb, length, (guchar*)data);
         }
 
-      tlb = g_test_log_buffer_new ();
-      g_test_log_buffer_push (tlb,
-                              gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)))->len,
-                              gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)))->data);
       for (msg = g_test_log_buffer_pop (tlb); msg; msg = g_test_log_buffer_pop (tlb))
         {
           GtkTreeIter  iter;
@@ -122,8 +118,8 @@ child_watch_cb (GPid      pid,
 
           g_test_log_msg_free (msg);
         }
-      g_test_log_buffer_free (tlb);
-      g_byte_array_set_size (gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))), 0);
+      /* FIXME: warn if there's unparsed data */
+      g_string_set_size (tlb->data, 0);
 
       gtk_tree_view_expand_all (GTK_TREE_VIEW (gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))));
 
@@ -164,7 +160,7 @@ run_test_child_watch (GPid      pid,
     {
       GtkTreeStore* store = GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window)))))));
       GTestLogMsg *msg;
-      GTestLogBuffer* tlb;
+      GTestLogBuffer* tlb = gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)));
       GError* error = NULL;
       gsize length = 0;
       gchar* data = NULL;
@@ -173,13 +169,9 @@ run_test_child_watch (GPid      pid,
 
       while (G_IO_STATUS_NORMAL == (status = g_io_channel_read_to_end (channel, &data, &length, &error)))
         {
-          g_byte_array_append (gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))), (guchar*)data, length);
+          g_test_log_buffer_push (tlb, length, (guchar*)data);
         }
 
-      tlb = g_test_log_buffer_new ();
-      g_test_log_buffer_push (tlb,
-                              gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)))->len,
-                              gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)))->data);
       for (msg = g_test_log_buffer_pop (tlb); msg; msg = g_test_log_buffer_pop (tlb))
         {
           switch (msg->log_type)
@@ -216,8 +208,8 @@ run_test_child_watch (GPid      pid,
 
           g_test_log_msg_free (msg);
         }
-      g_test_log_buffer_free (tlb);
-      g_byte_array_set_size (gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))), 0);
+      /* FIXME: warn if there's unparsed data */
+      g_string_set_size (tlb->data, 0);
 
       gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), 1.0);
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("exited cleanly"));
