@@ -29,6 +29,53 @@
 
 static GtkWidget* window = NULL;
 
+void
+gtk_test_suite_read_available (GtkTestSuite* self)
+{
+  GutachterSuiteStatus  status;
+
+  g_return_if_fail (GTK_TEST_IS_SUITE (self));
+  status = gtk_test_suite_get_status (self);
+  g_return_if_fail (status == GUTACHTER_SUITE_LOADING || status == GUTACHTER_SUITE_RUNNING);
+
+  if (status == GUTACHTER_SUITE_LOADING)
+    {
+    }
+  else /* GUTACHTER_SUITE_RUNNING */
+    {
+      GTestLogBuffer* tlb = gtk_test_suite_get_buffer (self);
+      GtkTreeStore  * store = GTK_TREE_STORE (gtk_test_suite_get_tree (self));
+      GTestLogMsg   * msg;
+      GtkTreeIter     iter;
+      for (msg = g_test_log_buffer_pop (tlb); msg; msg = g_test_log_buffer_pop (tlb))
+        {
+          switch (msg->log_type)
+            {
+            case G_TEST_LOG_START_BINARY:
+              break;
+            case G_TEST_LOG_START_CASE:
+              lookup_iter_for_path (self, &iter, msg->strings[0]);
+              break;
+            case G_TEST_LOG_STOP_CASE:
+              gtk_tree_store_set (store, &iter,
+                                  GTK_TEST_HIERARCHY_COLUMN_PASSED, msg->nums[0] == 0,
+                                  -1);
+              g_message ("status %d; nforks %d; elapsed %Lf",
+                         (int)msg->nums[0], (int)msg->nums[1], msg->nums[2]);
+              gtk_test_suite_set_executed (self,
+                                           1 + gtk_test_suite_get_executed (self));
+              break;
+            default:
+              g_warning ("%s(%s): unexpected message type: %d",
+                         G_STRFUNC, G_STRLOC,
+                         msg->log_type);
+            }
+
+          g_test_log_msg_free (msg);
+        }
+    }
+}
+
 gboolean
 io_func (GIOChannel  * channel,
          GIOCondition  condition G_GNUC_UNUSED,
@@ -49,7 +96,16 @@ io_func (GIOChannel  * channel,
       gtk_progress_bar_pulse (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))));
       break;
     case GUTACHTER_SUITE_RUNNING:
-      /* FIXME: update the progress properly */
+      gtk_test_suite_read_available (suite);
+      gchar* text = g_strdup_printf (_("%" G_GUINT64_FORMAT "/%" G_GUINT64_FORMAT),
+                                     gtk_test_suite_get_executed (suite),
+                                     gtk_test_suite_get_tests (suite));
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))),
+                                 text);
+      g_print ("%s\n", text);
+      g_free (text);
+      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))),
+                                             1.0 * gtk_test_suite_get_executed (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))) / gtk_test_suite_get_tests (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))));
       break;
     default:
       g_return_val_if_reached (TRUE);
@@ -141,8 +197,6 @@ run_test_child_watch (GPid      pid,
   GIOChannel* channel = user_data;
 
   g_spawn_close_pid (pid);
-  gtk_test_suite_set_status (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)),
-                             GUTACHTER_SUITE_FINISHED);
 
   if (WIFEXITED (status) && WEXITSTATUS (status))
     {
@@ -158,63 +212,24 @@ run_test_child_watch (GPid      pid,
     }
   else if (WIFEXITED (status))
     {
-      GtkTreeStore* store = GTK_TREE_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window)))))));
-      GTestLogMsg *msg;
       GTestLogBuffer* tlb = gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)));
       GError* error = NULL;
       gsize length = 0;
       gchar* data = NULL;
       GIOStatus  status;
-      GtkTreeIter  iter;
 
       while (G_IO_STATUS_NORMAL == (status = g_io_channel_read_to_end (channel, &data, &length, &error)))
         {
           g_test_log_buffer_push (tlb, length, (guchar*)data);
         }
 
-      for (msg = g_test_log_buffer_pop (tlb); msg; msg = g_test_log_buffer_pop (tlb))
-        {
-          switch (msg->log_type)
-            {
-            case G_TEST_LOG_START_BINARY:
-              break;
-            case G_TEST_LOG_START_CASE:
-              lookup_iter_for_path (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)),
-                                    &iter, msg->strings[0]);
-              break;
-            case G_TEST_LOG_STOP_CASE:
-              gtk_tree_store_set (store, &iter,
-                                  GTK_TEST_HIERARCHY_COLUMN_PASSED, msg->nums[0] == 0,
-                                  -1);
-              g_message ("status %d; nforks %d; elapsed %Lf",
-                         (int)msg->nums[0], (int)msg->nums[1], msg->nums[2]);
-              gtk_test_suite_set_executed (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)),
-                                           1 + gtk_test_suite_get_executed (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))));
-              gchar* text = g_strdup_printf (_("%" G_GUINT64_FORMAT "/%" G_GUINT64_FORMAT),
-                                      gtk_test_suite_get_executed (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))),
-                                      gtk_test_suite_get_tests (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))));
-              gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))),
-                                        text);
-              g_print ("%s\n", text);
-              g_free (text);
-              gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))),
-                                             1.0 * gtk_test_suite_get_executed (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))) / gtk_test_suite_get_tests (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))));
-              break;
-            default:
-              g_warning ("%s(%s): unexpected message type: %d",
-                         G_STRFUNC, G_STRLOC,
-                         msg->log_type);
-            }
-
-          g_test_log_msg_free (msg);
-        }
+      gtk_test_suite_read_available (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)));
       /* FIXME: warn if there's unparsed data */
       g_string_set_size (tlb->data, 0);
-
-      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), 1.0);
-      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("exited cleanly"));
     }
 
+  gtk_test_suite_set_status (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)),
+                             GUTACHTER_SUITE_FINISHED);
   g_io_channel_unref (channel);
   gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), TRUE);
 }
