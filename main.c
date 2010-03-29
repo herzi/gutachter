@@ -34,15 +34,27 @@ io_func (GIOChannel  * channel,
          GIOCondition  condition G_GNUC_UNUSED,
          gpointer      data      G_GNUC_UNUSED)
 {
+  GtkTestSuite* suite = gtk_test_runner_get_suite (GTK_TEST_RUNNER (window));
   guchar  buf[512];
   gsize read_bytes = 0;
 
   while (G_IO_STATUS_NORMAL == g_io_channel_read_chars (channel, (gchar*)buf, sizeof (buf), &read_bytes, NULL))
     {
-      g_byte_array_append (gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))), buf, read_bytes);
+      g_byte_array_append (gtk_test_suite_get_buffer (suite), buf, read_bytes);
     }
 
-  gtk_progress_bar_pulse (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))));
+  switch (gtk_test_suite_get_status (suite))
+    {
+    case GUTACHTER_SUITE_LOADING:
+      gtk_progress_bar_pulse (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))));
+      break;
+    case GUTACHTER_SUITE_RUNNING:
+      /* FIXME: update the progress properly */
+      break;
+    default:
+      g_return_val_if_reached (TRUE);
+      break;
+    }
   return TRUE;
 }
 
