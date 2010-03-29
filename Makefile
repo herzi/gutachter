@@ -10,9 +10,27 @@ clean:
 gtk-tester: main.o libgtk-tester.a
 	$(LINK)
 
+gt-types.h: gt-suite.h Makefile
+	@echo "  GEN   " $@; glib-mkenums \
+		--fhead "#ifndef GUTACHTER_TYPES_H\n#define GUTACHTER_TYPES_H\n\n#include <glib-object.h>" \
+		--ftail "\n#endif /* GUTACHTER_TYPES_H */" \
+		--eprod "#define GUTACHTER_TYPE_@ENUMSHORT@ (@enum_name@_get_type ())\nGType @enum_name@_get_type (void);" \
+		$< > $@
+gt-types.c: gt-suite.h Makefile
+	@echo "  GEN   " $@; glib-mkenums \
+		--fhead "#include <gt-types.h>" \
+		--fprod "#include <@filename@>" \
+		--eprod "GType @enum_name@_get_type (void)" \
+		--vhead "{static GType  stored = 0; if (g_once_init_enter (&stored)) {static G@Type@Value values[] = {" \
+		--vprod "{@VALUENAME@, \"@VALUENAME@\", \"@valuenick@\"}," \
+		--vtail "{0, NULL, NULL}}; GType registered = g_@type@_register_static(\"@EnumName@\", values); g_once_init_leave (&stored, registered);} return stored;}" \
+		$< > $@
+gt-types.o: gt-types.c gt-types.h
+
 libgtk-tester.a: \
 	gt-hierarchy.o \
 	gt-runner.o \
+	gt-types.o \
 	gt-suite.o \
 	gt-widget.o \
 	gt-window.o \

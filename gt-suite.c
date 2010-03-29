@@ -25,19 +25,21 @@
 
 struct _GtkTestSuitePrivate
 {
-  GByteArray  * buffer;
-  guint64       executed;
-  GFile       * file;
-  GFileMonitor* file_monitor;
-  GHashTable  * iter_map;
-  guint64       tests;
-  GtkTreeStore* tree_model;
+  GByteArray        * buffer;
+  guint64             executed;
+  GFile             * file;
+  GFileMonitor      * file_monitor;
+  GHashTable        * iter_map;
+  GutachterSuiteStatus  status;
+  guint64               tests;
+  GtkTreeStore        * tree_model;
 };
 
 enum
 {
   PROP_0,
-  PROP_FILE
+  PROP_FILE,
+  PROP_STATUS
 };
 
 #define PRIV(i) (((GtkTestSuite*)(i))->_private)
@@ -89,6 +91,23 @@ file_changed_cb (GFileMonitor     * monitor    G_GNUC_UNUSED,
 }
 
 static void
+get_property (GObject   * object,
+              guint       prop_id,
+              GValue    * value,
+              GParamSpec* pspec)
+{
+  switch (prop_id)
+    {
+    case PROP_STATUS:
+      g_value_set_enum (value, PRIV (object)->status);
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+static void
 set_property (GObject     * object,
               guint         prop_id,
               GValue const* value,
@@ -106,7 +125,6 @@ set_property (GObject     * object,
       PRIV (object)->file_monitor = g_file_monitor (PRIV (object)->file, G_FILE_MONITOR_NONE, NULL, &error);
       g_signal_connect (PRIV (object)->file_monitor, "changed",
                         G_CALLBACK (file_changed_cb), object);
-
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -120,11 +138,17 @@ gtk_test_suite_class_init (GtkTestSuiteClass* self_class)
   GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
   object_class->finalize     = finalize;
+  object_class->get_property = get_property;
   object_class->set_property = set_property;
 
   g_object_class_install_property (object_class, PROP_FILE,
                                    g_param_spec_object ("file", NULL, NULL,
                                                         G_TYPE_FILE, G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
+  g_object_class_install_property (object_class, PROP_STATUS,
+                                   g_param_spec_enum ("status", NULL, NULL,
+                                                      GUTACHTER_TYPE_SUITE_STATUS,
+                                                      GUTACHTER_SUITE_INDETERMINED,
+                                                      G_PARAM_READABLE));
 
   g_type_class_add_private (self_class, sizeof (GtkTestSuitePrivate));
 }
@@ -222,6 +246,14 @@ gtk_test_suite_get_iter_map (GtkTestSuite* self)
   g_return_val_if_fail (GTK_TEST_IS_SUITE (self), NULL);
 
   return PRIV (self)->iter_map;
+}
+
+GutachterSuiteStatus
+gtk_test_suite_get_status (GtkTestSuite* self)
+{
+  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), GUTACHTER_SUITE_INDETERMINED);
+
+  return PRIV (self)->status;
 }
 
 guint64
@@ -353,6 +385,23 @@ gtk_test_suite_set_executed (GtkTestSuite* self,
   g_return_if_fail (GTK_TEST_IS_SUITE (self));
 
   PRIV (self)->executed = executed;
+}
+
+void
+gtk_test_suite_set_status (GtkTestSuite      * self,
+                           GutachterSuiteStatus  status)
+{
+  g_return_if_fail (GTK_TEST_IS_SUITE (self));
+  /* comparison of unsigned int with 0 is always true; FIXME: is there a way to glue this into a test case? */
+  g_return_if_fail (/*GTK_TEST_SUITE_INDETERMINED <= status && */ status <= GUTACHTER_SUITE_FINISHED);
+
+  if (PRIV (self)->status == status)
+    {
+      return;
+    }
+
+  PRIV (self)->status = status;
+  g_object_notify (G_OBJECT (self), "status");
 }
 
 void

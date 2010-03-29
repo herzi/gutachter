@@ -1,5 +1,6 @@
 *~
 *.a
 gtk-tester
+gt-types.*
 *.o
 test-dummy

@@ -29,11 +29,20 @@ typedef struct _GtkTestSuite        GtkTestSuite;
 typedef struct _GtkTestSuiteClass   GtkTestSuiteClass;
 typedef struct _GtkTestSuitePrivate GtkTestSuitePrivate;
 
-typedef enum
+typedef enum /*< skip >*/
 {
   MODE_LIST,
   MODE_TEST
 } GtkTestSuiteRunningMode;
+
+typedef enum
+{
+  GUTACHTER_SUITE_INDETERMINED,
+  GUTACHTER_SUITE_LOADING,
+  GUTACHTER_SUITE_LOADED,
+  GUTACHTER_SUITE_RUNNING,
+  GUTACHTER_SUITE_FINISHED
+} GutachterSuiteStatus;
 
 #define GTK_TEST_TYPE_SUITE         (gtk_test_suite_get_type ())
 #define GTK_TEST_SUITE(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), GTK_TEST_TYPE_SUITE, GtkTestSuite))
@@ -42,38 +51,41 @@ typedef enum
 #define GTK_TEST_IS_SUITE_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), GTK_TEST_TYPE_SUITE))
 #define GTK_TEST_SUITE_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), GTK_TEST_TYPE_SUITE, GtkTestSuiteClass))
 
-GType         gtk_test_suite_get_type     (void);
-GtkTestSuite* gtk_test_suite_new          (GFile       * file);
-GByteArray*   gtk_test_suite_get_buffer   (GtkTestSuite* self);
-guint64       gtk_test_suite_get_executed (GtkTestSuite* self);
-GFile*        gtk_test_suite_get_file     (GtkTestSuite* self);
-GHashTable*   gtk_test_suite_get_iter_map (GtkTestSuite* self);
-guint64       gtk_test_suite_get_tests    (GtkTestSuite* self);
-GtkTreeModel* gtk_test_suite_get_tree     (GtkTestSuite* self);
-gboolean      io_func                     (GIOChannel  * channel,
-                                           GIOCondition  condition,
-                                           gpointer      data);
-gboolean      lookup_iter_for_path        (GtkTestSuite* self,
-                                           GtkTreeIter * iter,
-                                           gchar       * path);
-void          create_iter_for_path        (GtkTestSuite* suite,
-                                           GtkTreeIter * iter,
-                                           gchar       * path);
-void          run_test_child_watch        (GPid      pid,
-                                           gint      status,
-                                           gpointer  user_data);
-void          child_watch_cb              (GPid      pid,
-                                           gint      status,
-                                           gpointer  data);
-gboolean      run_or_warn                 (GPid                   * pid,
-                                           guint                    pipe_id,
-                                           GtkTestSuiteRunningMode  mode,
-                                           GtkTestSuite           * self);
-void          gtk_test_suite_reset        (GtkTestSuite* self);
-void          gtk_test_suite_set_executed (GtkTestSuite* self,
-                                           guint64       executed);
-void          gtk_test_suite_set_tests    (GtkTestSuite* self,
-                                           guint64       tests);
+GType               gtk_test_suite_get_type     (void);
+GtkTestSuite*       gtk_test_suite_new          (GFile       * file);
+GByteArray*         gtk_test_suite_get_buffer   (GtkTestSuite* self);
+guint64             gtk_test_suite_get_executed (GtkTestSuite* self);
+GFile*              gtk_test_suite_get_file     (GtkTestSuite* self);
+GHashTable*         gtk_test_suite_get_iter_map (GtkTestSuite* self);
+GutachterSuiteStatus  gtk_test_suite_get_status   (GtkTestSuite* self);
+guint64             gtk_test_suite_get_tests    (GtkTestSuite* self);
+GtkTreeModel*       gtk_test_suite_get_tree     (GtkTestSuite* self);
+gboolean            io_func                     (GIOChannel  * channel,
+                                                 GIOCondition  condition,
+                                                 gpointer      data);
+gboolean            lookup_iter_for_path        (GtkTestSuite* self,
+                                                 GtkTreeIter * iter,
+                                                 gchar       * path);
+void                create_iter_for_path        (GtkTestSuite* suite,
+                                                 GtkTreeIter * iter,
+                                                 gchar       * path);
+void                run_test_child_watch        (GPid      pid,
+                                                 gint      status,
+                                                 gpointer  user_data);
+void                child_watch_cb              (GPid      pid,
+                                                 gint      status,
+                                                 gpointer  data);
+gboolean            run_or_warn                 (GPid                   * pid,
+                                                 guint                    pipe_id,
+                                                 GtkTestSuiteRunningMode  mode,
+                                                 GtkTestSuite           * self);
+void                gtk_test_suite_reset        (GtkTestSuite      * self);
+void                gtk_test_suite_set_executed (GtkTestSuite      * self,
+                                                 guint64             executed);
+void                gtk_test_suite_set_status   (GtkTestSuite        * self,
+                                                 GutachterSuiteStatus  status);
+void                gtk_test_suite_set_tests    (GtkTestSuite      * self,
+                                                 guint64             tests);
 
 struct _GtkTestSuite
 {

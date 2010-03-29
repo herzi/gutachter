@@ -24,6 +24,7 @@
 #include <gt-hierarchy.h>
 #include <gt-runner.h>
 #include <gt-suite.h>
+#include <gt-types.h>
 #include <gt-widget.h>
 #include <gt-window.h>
 #include <gt-xvfb-wrapper.h>
