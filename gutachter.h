@@ -23,7 +23,7 @@
 
 #include <gt-hierarchy.h>
 #include <gt-runner.h>
-#include <gt-suite.h>
+#include <gutachter-suite.h>
 #include <gutachter-types.h>
 #include <gutachter-widget.h>
 #include <gutachter-window.h>

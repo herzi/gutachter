@@ -22,7 +22,7 @@
 #define GT_RUNNER_H
 
 #include <gio/gio.h>
-#include <gt-suite.h>
+#include <gutachter-suite.h>
 
 G_BEGIN_DECLS
 

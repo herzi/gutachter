@@ -10,13 +10,13 @@ clean:
 gutachter: main.o libgutachter.a
 	$(LINK)
 
-gutachter-types.h: gt-suite.h Makefile
+gutachter-types.h: gutachter-suite.h Makefile
 	@echo "  GEN   " $@; glib-mkenums \
 		--fhead "#ifndef GUTACHTER_TYPES_H\n#define GUTACHTER_TYPES_H\n\n#include <glib-object.h>" \
 		--ftail "\n#endif /* GUTACHTER_TYPES_H */" \
 		--eprod "#define GUTACHTER_TYPE_@ENUMSHORT@ (@enum_name@_get_type ())\nGType @enum_name@_get_type (void);" \
 		$< > $@
-gutachter-types.c: gt-suite.h Makefile
+gutachter-types.c: gutachter-suite.h Makefile
 	@echo "  GEN   " $@; glib-mkenums \
 		--fhead "#include <gutachter-types.h>" \
 		--fprod "#include <@filename@>" \
@@ -30,7 +30,7 @@ gutachter-types.o: gutachter-types.c gutachter-types.h
 libgutachter.a: \
 	gt-hierarchy.o \
 	gt-runner.o \
-	gt-suite.o \
+	gutachter-suite.o \
 	gutachter-types.o \
 	gutachter-widget.o \
 	gutachter-window.o \

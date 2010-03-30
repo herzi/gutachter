@@ -22,7 +22,7 @@
 #define GT_WIDGET_H
 
 #include <gtk/gtk.h>
-#include <gt-suite.h>
+#include <gutachter-suite.h>
 
 G_BEGIN_DECLS
 

@@ -18,7 +18,7 @@
  * USA
  */
 
-#include "gt-suite.h"
+#include "gutachter-suite.h"
 
 #include <sys/wait.h> /* WIFEXITED() */
 #include <gtk/gtk.h>
