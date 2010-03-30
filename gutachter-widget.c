@@ -18,7 +18,7 @@
  * USA
  */
 
-#include "gt-widget.h"
+#include "gutachter-widget.h"
 
 #include <gutachter.h>
 #include <glib/gi18n.h>

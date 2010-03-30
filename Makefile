@@ -32,7 +32,7 @@ libgutachter.a: \
 	gt-runner.o \
 	gt-types.o \
 	gt-suite.o \
-	gt-widget.o \
+	gutachter-widget.o \
 	gutachter-window.o \
 	gutachter-xvfb.o
 	$(AR)
