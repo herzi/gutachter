@@ -20,6 +20,7 @@
 
 #include "gt-suite.h"
 
+#include <sys/wait.h> /* WIFEXITED() */
 #include <gtk/gtk.h>
 #include <gtk-test.h>
 
@@ -393,6 +394,56 @@ io_func (GIOChannel  * channel,
 
   gtk_test_suite_read_available (suite);
   return TRUE;
+}
+
+void
+child_watch_cb (GPid      pid,
+                gint      status,
+                gpointer  data)
+{
+  GtkTestSuite* suite = data;
+
+  g_spawn_close_pid (pid);
+
+  if (WIFEXITED (status) && WEXITSTATUS (status) != 0)
+    {
+      g_warning ("child exited with error code: %d", WEXITSTATUS (status));
+      gtk_test_suite_set_status (suite, GUTACHTER_SUITE_INDETERMINED);
+    }
+  else if (!WIFEXITED (status))
+    {
+      if (WIFSIGNALED (status))
+        {
+          g_warning ("child exited with signal %d", WTERMSIG (status));
+        }
+      else
+        {
+          g_warning ("child didn't exit normally: %d", status);
+        }
+      gtk_test_suite_set_status (suite, GUTACHTER_SUITE_INDETERMINED);
+    }
+  else
+    {
+      GTestLogBuffer* tlb = gtk_test_suite_get_buffer (suite);
+      GIOChannel* channel = gtk_test_suite_get_channel (suite);
+      GError* error = NULL;
+      gsize length = 0;
+      gchar* data = NULL;
+      GIOStatus  status;
+
+      /* FIXME: try calling into io_func() */
+      while (G_IO_STATUS_NORMAL == (status = g_io_channel_read_to_end (channel, &data, &length, &error)))
+        {
+          g_test_log_buffer_push (tlb, length, (guchar*)data);
+        }
+
+      gtk_test_suite_read_available (suite);
+      /* FIXME: warn if there's unparsed data */
+      g_string_set_size (tlb->data, 0);
+
+      gtk_test_suite_set_channel (suite, NULL);
+      gtk_test_suite_set_status (suite, GUTACHTER_SUITE_LOADED);
+    }
 }
 
 void
