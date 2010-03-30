@@ -87,7 +87,7 @@ file_changed_cb (GFileMonitor     * monitor    G_GNUC_UNUSED,
       g_warning ("FIXME: re-scan the file");
       break;
     case G_FILE_MONITOR_EVENT_DELETED:
-      g_warning ("FIXME: disable the UI bits for now");
+      gtk_test_suite_set_status (user_data, GUTACHTER_SUITE_INDETERMINED);
       break;
     default:
       g_print ("file changed: %d\n", event);
