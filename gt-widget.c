@@ -28,6 +28,7 @@ struct _GtkTestWidgetPrivate
   GtkWidget   * hierarchy_view;
   GtkWidget   * notebook;
   GtkWidget   * progress;
+  gulong        status_handler;
   GtkTestSuite* suite;
 };
 
@@ -289,6 +290,22 @@ rows_reordered_cb (GtkTreeModel* model     G_GNUC_UNUSED,
   model_changed (user_data);
 }
 
+static void
+status_changed_cb (GObject   * suite     G_GNUC_UNUSED,
+                   GParamSpec* pspec     G_GNUC_UNUSED,
+                   gpointer    user_data)
+{
+  GtkTestWidget* self = user_data;
+
+  if (gtk_test_suite_get_status (PRIV (self)->suite) == GUTACHTER_SUITE_LOADED)
+    {
+      gtk_tree_view_expand_all (GTK_TREE_VIEW (PRIV (self)->hierarchy_view));
+
+      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (PRIV (self)->progress), 0.0);
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (PRIV (self)->progress), _("not tested yet"));
+    }
+}
+
 void
 gtk_test_widget_set_suite (GtkTestWidget* self,
                            GtkTestSuite * suite)
@@ -303,6 +320,7 @@ gtk_test_widget_set_suite (GtkTestWidget* self,
 
   if (PRIV (self)->suite)
     {
+      g_signal_handler_disconnect (PRIV (self)->suite, PRIV (self)->status_handler);
       gtk_tree_view_set_model (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), NULL);
       g_object_unref (PRIV (self)->suite);
       PRIV (self)->suite = NULL;
@@ -324,6 +342,10 @@ gtk_test_widget_set_suite (GtkTestWidget* self,
                         G_CALLBACK (row_inserted_cb), self);
       g_signal_connect (model, "rows-reordered",
                         G_CALLBACK (rows_reordered_cb), self);
+
+      PRIV (self)->status_handler = g_signal_connect (PRIV (self)->suite, "notify::status",
+                                                      G_CALLBACK (status_changed_cb), self);
+      status_changed_cb (G_OBJECT (PRIV (self)->suite), NULL, self);
     }
 
   g_object_notify (G_OBJECT (self), "test-suite");
