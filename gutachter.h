@@ -24,7 +24,7 @@
 #include <gt-hierarchy.h>
 #include <gt-runner.h>
 #include <gt-suite.h>
-#include <gt-types.h>
+#include <gutachter-types.h>
 #include <gutachter-widget.h>
 #include <gutachter-window.h>
 #include <gutachter-xvfb.h>

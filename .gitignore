@@ -1,6 +1,6 @@
 *~
 *.a
-gt-types.*
 gutachter
+gutachter-types.*
 *.o
 test-dummy
