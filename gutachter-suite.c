@@ -506,6 +506,42 @@ run_test_child_watch (GPid      pid,
   gtk_test_suite_set_status (suite, GUTACHTER_SUITE_FINISHED);
 }
 
+static void
+update_parent (GtkTreeStore* store,
+               GtkTreeIter * child)
+{
+  GtkTreeIter  iter;
+  GtkTreeIter  children;
+  gboolean     valid;
+
+  if (!gtk_tree_model_iter_parent (GTK_TREE_MODEL (store), &iter, child))
+    {
+      return;
+    }
+
+  for (valid = gtk_tree_model_iter_children (GTK_TREE_MODEL (store), &children, &iter);
+       valid;
+       valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &children))
+    {
+      gboolean passed = FALSE;
+
+      gtk_tree_model_get (GTK_TREE_MODEL (store), &children,
+                          GTK_TEST_HIERARCHY_COLUMN_PASSED, &passed,
+                          -1);
+
+      if (!passed)
+        {
+          return;
+        }
+    }
+
+  gtk_tree_store_set (store, &iter,
+                      GTK_TEST_HIERARCHY_COLUMN_PASSED, TRUE,
+                      -1);
+
+  update_parent (store, &iter);
+}
+
 void
 gtk_test_suite_read_available (GtkTestSuite* self)
 {
@@ -563,6 +599,7 @@ gtk_test_suite_read_available (GtkTestSuite* self)
               gtk_tree_store_set (store, &PRIV (self)->iter,
                                   GTK_TEST_HIERARCHY_COLUMN_PASSED, msg->nums[0] == 0,
                                   -1);
+              update_parent (store, &PRIV (self)->iter);
               g_message ("status %d; nforks %d; elapsed %Lf",
                          (int)msg->nums[0], (int)msg->nums[1], msg->nums[2]);
               break;
