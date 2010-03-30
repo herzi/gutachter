@@ -18,8 +18,7 @@
  * USA
  */
 
-#include "gt-hierarchy.h"
-
+#include "gutachter-hierarchy.h"
 
 GtkTreeStore*
 gtk_test_hierarchy_new (void)

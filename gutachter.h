@@ -21,7 +21,7 @@
 #ifndef GUTACHTER_H
 #define GUTACHTER_H
 
-#include <gt-hierarchy.h>
+#include <gutachter-hierarchy.h>
 #include <gutachter-runner.h>
 #include <gutachter-suite.h>
 #include <gutachter-types.h>
