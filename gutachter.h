@@ -26,7 +26,7 @@
 #include <gt-suite.h>
 #include <gt-types.h>
 #include <gt-widget.h>
-#include <gt-window.h>
+#include <gutachter-window.h>
 #include <gt-xvfb-wrapper.h>
 
 #endif /* !GUTACHTER_H */

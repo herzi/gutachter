@@ -18,8 +18,8 @@
  * USA
  */
 
-#ifndef GG_WINDOW_H
-#define GG_WINDOW_H
+#ifndef GUTACHTER_WINDOW_H
+#define GUTACHTER_WINDOW_H
 
 #include <gtk/gtk.h>
 
@@ -60,6 +60,6 @@ struct _GtkTestWindowClass
 
 G_END_DECLS
 
-#endif /* !GG_WINDOW_H */
+#endif /* !GUTACHTER_WINDOW_H */
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

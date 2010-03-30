@@ -18,7 +18,7 @@
  * USA
  */
 
-#include "gt-window.h"
+#include "gutachter-window.h"
 
 #include <stdlib.h>   /* exit() */
 #include <unistd.h>   /* pipe() */
