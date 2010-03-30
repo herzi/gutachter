@@ -21,6 +21,7 @@
 #include "gutachter-suite.h"
 
 #include <sys/wait.h> /* WIFEXITED() */
+#include <unistd.h>   /* pipe() */
 #include <gtk/gtk.h>
 #include <gutachter.h>
 
@@ -445,6 +446,45 @@ child_watch_cb (GPid      pid,
 
       gtk_test_suite_set_channel (suite, NULL);
       gtk_test_suite_set_status (suite, GUTACHTER_SUITE_LOADED);
+    }
+}
+
+void
+gtk_test_suite_load (GtkTestSuite* self)
+{
+  GtkTestSuite* suite = self;
+
+  if (suite)
+    {
+      GPid   pid = 0;
+      int pipes[2];
+
+      gtk_test_suite_reset (suite);
+
+      if (pipe (pipes) < 0)
+        {
+          perror ("pipe()");
+          return;
+        }
+
+      if (!run_or_warn (&pid, pipes[1], MODE_LIST, suite))
+        {
+          close (pipes[0]);
+          gtk_test_suite_set_status (suite, GUTACHTER_SUITE_INDETERMINED);
+        }
+      else
+        {
+          GIOChannel* channel = g_io_channel_unix_new (pipes[0]);
+          g_io_channel_set_encoding (channel, NULL, NULL);
+          g_io_channel_set_buffered (channel, FALSE);
+          g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
+          g_io_add_watch (channel, G_IO_IN, io_func, suite);
+          g_child_watch_add_full (G_PRIORITY_DEFAULT, pid, child_watch_cb, suite, NULL);
+          gtk_test_suite_set_status (suite, GUTACHTER_SUITE_LOADING);
+          gtk_test_suite_set_channel (suite, channel);
+          g_io_channel_unref (channel);
+        }
+      close (pipes[1]);
     }
 }
 
