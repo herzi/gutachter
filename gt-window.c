@@ -31,6 +31,7 @@ struct _GtkTestWindowPrivate
   GtkWidget  * box;
   GtkToolItem* execute_button;
   GtkToolItem* open_button;
+  gulong       status_handler;
   GtkWidget  * toolbar;
   GtkWidget  * widget;
 };
@@ -257,10 +258,44 @@ get_suite (GtkTestRunner* runner)
 }
 
 static void
+status_changed_cb (GObject   * suite_object,
+                   GParamSpec* pspec        G_GNUC_UNUSED,
+                   gpointer    user_data)
+{
+  switch (gtk_test_suite_get_status (GTK_TEST_SUITE (suite_object)))
+    {
+    case GUTACHTER_SUITE_LOADED:
+    case GUTACHTER_SUITE_FINISHED:
+      gtk_widget_set_sensitive (GTK_WIDGET (PRIV (user_data)->execute_button), TRUE);
+      break;
+    default:
+      gtk_widget_set_sensitive (GTK_WIDGET (PRIV (user_data)->execute_button), FALSE);
+      break;
+    }
+}
+
+static void
 set_file (GtkTestRunner* runner,
           GFile        * file)
 {
+  GtkTestSuite* suite;
+
+  if (PRIV (runner)->status_handler)
+    {
+      g_signal_handler_disconnect (gtk_test_runner_get_suite (GTK_TEST_RUNNER (PRIV (runner)->widget)),
+                                   PRIV (runner)->status_handler);
+      PRIV (runner)->status_handler = 0;
+    }
+
   gtk_test_runner_set_file (GTK_TEST_RUNNER (PRIV (runner)->widget), file);
+
+  suite = gtk_test_runner_get_suite (GTK_TEST_RUNNER (PRIV (runner)->widget));
+  if (suite)
+    {
+      PRIV (runner)->status_handler = g_signal_connect (suite, "notify::status",
+                                                        G_CALLBACK (status_changed_cb), runner);
+      status_changed_cb (G_OBJECT (suite), NULL, runner);
+    }
 }
 
 static void

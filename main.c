@@ -41,15 +41,11 @@ run_test_child_watch (GPid      pid,
 
   if (WIFEXITED (status) && WEXITSTATUS (status))
     {
-      gchar* text = g_strdup_printf (_("exited with exit code %d"), WEXITSTATUS (status));
-      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), text);
-      g_free (text);
+      g_warning (_("exited with exit code %d"), WEXITSTATUS (status));
     }
   else if (WIFSIGNALED (status))
     {
-      gchar* text = g_strdup_printf (_("exited with signal %d"), WTERMSIG (status));
-      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), text);
-      g_free (text);
+      g_warning (_("exited with signal %d"), WTERMSIG (status));
     }
   else if (WIFEXITED (status))
     {
@@ -71,7 +67,6 @@ run_test_child_watch (GPid      pid,
     }
 
   gtk_test_suite_set_status (suite, GUTACHTER_SUITE_FINISHED);
-  gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), TRUE);
 }
 
 int
