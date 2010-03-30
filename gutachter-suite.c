@@ -79,13 +79,13 @@ file_changed_cb (GFileMonitor     * monitor    G_GNUC_UNUSED,
                  GFile            * file       G_GNUC_UNUSED,
                  GFile            * other_file G_GNUC_UNUSED,
                  GFileMonitorEvent  event,
-                 gpointer           user_data  G_GNUC_UNUSED)
+                 gpointer           user_data)
 {
   switch (event)
     {
     case G_FILE_MONITOR_EVENT_CHANGED:
     case G_FILE_MONITOR_EVENT_CREATED:
-      g_warning ("FIXME: re-scan the file");
+      gtk_test_suite_load (user_data);
       break;
     case G_FILE_MONITOR_EVENT_DELETED:
       gtk_test_suite_set_status (user_data, GUTACHTER_SUITE_INDETERMINED);
