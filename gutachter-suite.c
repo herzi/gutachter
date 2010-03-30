@@ -368,7 +368,8 @@ run_or_warn (GPid                   * pid,
   argv[1] = g_strdup_printf ("--GTestLogFD=%u", pipe_id);
 
   result = g_spawn_async (folder, argv, env,
-                          G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_LEAVE_DESCRIPTORS_OPEN ,//| G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
+                          G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_LEAVE_DESCRIPTORS_OPEN |
+                          G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
                           NULL, NULL, pid, &error);
 
   if (!result)
@@ -589,19 +590,19 @@ gtk_test_suite_read_available (GtkTestSuite* self)
             case G_TEST_LOG_START_BINARY:
               break;
             case G_TEST_LOG_START_CASE:
-              g_print ("start %s\n", msg->strings[0]);
               lookup_iter_for_path (self, &PRIV (self)->iter, msg->strings[0]);
               break;
             case G_TEST_LOG_STOP_CASE:
-              g_print ("stop\n");
               gtk_test_suite_set_executed (self,
                                            1 + gtk_test_suite_get_executed (self));
               gtk_tree_store_set (store, &PRIV (self)->iter,
                                   GTK_TEST_HIERARCHY_COLUMN_PASSED, msg->nums[0] == 0,
                                   -1);
               update_parent (store, &PRIV (self)->iter);
+#if 0
               g_message ("status %d; nforks %d; elapsed %Lf",
                          (int)msg->nums[0], (int)msg->nums[1], msg->nums[2]);
+#endif
               break;
             default:
               g_warning ("%s(%s): unexpected message type: %d",
@@ -625,10 +626,6 @@ gtk_test_suite_reset (GtkTestSuite* self)
   PRIV (self)->tests = G_GUINT64_CONSTANT (0);
   g_hash_table_remove_all (PRIV (self)->iter_map);
   gtk_tree_store_clear (PRIV (self)->tree_model);
-
-  g_print ("%s(%s): %" G_GUINT64_FORMAT "tests\n",
-           G_STRFUNC, G_STRLOC,
-           PRIV (self)->tests);
 }
 
 void

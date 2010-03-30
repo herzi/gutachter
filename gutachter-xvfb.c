@@ -49,7 +49,6 @@ xvfb_child_watch (GPid      pid,
     {
       if (WEXITSTATUS (status))
         {
-          g_message ("xvfb exit code: %d", WEXITSTATUS (status));
           g_idle_add (setup_xvfb, user_data);
         }
     }
