@@ -18,22 +18,14 @@
  * USA
  */
 
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/wait.h> /* WIFEXITED() */
-#include <unistd.h>
-
-#include <gtk-test.h>
-
-#include <glib/gi18n.h>
-
-static GtkWidget* window = NULL;
+#include <gutachter.h>
 
 int
 main (int   argc,
       char**argv)
 {
   GtkTestXvfbWrapper* xvfb;
+  GtkWidget* window;
 
   gtk_init (&argc, &argv);
 

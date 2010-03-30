@@ -22,7 +22,7 @@
 
 #include <sys/wait.h> /* WIFEXITED() */
 #include <gtk/gtk.h>
-#include <gtk-test.h>
+#include <gutachter.h>
 
 #include <glib/gi18n.h>
 

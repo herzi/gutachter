@@ -22,7 +22,7 @@
 
 #include <stdlib.h>   /* exit() */
 #include <unistd.h>   /* pipe() */
-#include <gtk-test.h>
+#include <gutachter.h>
 
 #include <glib/gi18n.h>
 

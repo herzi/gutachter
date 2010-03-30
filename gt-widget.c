@@ -20,7 +20,7 @@
 
 #include "gt-widget.h"
 
-#include <gtk-test.h>
+#include <gutachter.h>
 #include <glib/gi18n.h>
 
 struct _GtkTestWidgetPrivate
