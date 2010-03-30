@@ -107,6 +107,7 @@ static void
 open_item_clicked (GtkButton* button G_GNUC_UNUSED,
                    GtkWindow* window)
 {
+  GtkFileFilter* filter;
   GtkWidget* dialog = gtk_file_chooser_dialog_new (_("Choose Unit Tests"),
                                                    window,
                                                    GTK_FILE_CHOOSER_ACTION_OPEN,
@@ -115,6 +116,12 @@ open_item_clicked (GtkButton* button G_GNUC_UNUSED,
                                                    NULL);
 
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_ACCEPT);
+
+  filter = gtk_file_filter_new ();
+  gtk_file_filter_set_name (filter, _("Executable Programs"));
+  gtk_file_filter_add_mime_type (filter, "application/x-executable");
+  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (dialog),
+                               filter);
 
   if (GTK_RESPONSE_ACCEPT == gtk_dialog_run (GTK_DIALOG (dialog)))
     {
