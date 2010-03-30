@@ -55,8 +55,15 @@ update_sensitivity (GtkTestWidget* self)
 
   if (PRIV (self)->suite)
     {
-      gtk_progress_bar_pulse (progress);
-      gtk_progress_bar_set_text (progress, _("Loading Test Paths..."));
+      if (gtk_test_suite_get_status (PRIV (self)->suite) == GUTACHTER_SUITE_INDETERMINED)
+        {
+          gtk_progress_bar_set_fraction (progress, 0.0);
+        }
+      else
+        {
+          gtk_progress_bar_pulse (progress);
+          gtk_progress_bar_set_text (progress, _("Loading Test Paths..."));
+        }
     }
   else
     {
@@ -247,6 +254,9 @@ model_changed (GtkTestWidget* self)
       g_free (text);
       gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (PRIV (self)->progress),
                                      1.0 * gtk_test_suite_get_executed (PRIV (self)->suite) / gtk_test_suite_get_tests (PRIV (self)->suite));
+      break;
+    case GUTACHTER_SUITE_INDETERMINED:
+      update_sensitivity (self);
       break;
     default:
       g_return_if_reached ();

@@ -85,10 +85,16 @@ file_changed_cb (GFileMonitor     * monitor    G_GNUC_UNUSED,
     {
     case G_FILE_MONITOR_EVENT_CHANGED:
     case G_FILE_MONITOR_EVENT_CREATED:
-      gtk_test_suite_load (user_data);
+      if (PRIV (user_data)->status == GUTACHTER_SUITE_INDETERMINED)
+        {
+          gtk_test_suite_load (user_data);
+        }
       break;
     case G_FILE_MONITOR_EVENT_DELETED:
       gtk_test_suite_set_status (user_data, GUTACHTER_SUITE_INDETERMINED);
+      gtk_test_suite_reset (user_data);
+      break;
+    case G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
       break;
     default:
       g_print ("file changed: %d\n", event);
@@ -427,23 +433,7 @@ child_watch_cb (GPid      pid,
     }
   else
     {
-      GTestLogBuffer* tlb = gtk_test_suite_get_buffer (suite);
-      GIOChannel* channel = gtk_test_suite_get_channel (suite);
-      GError* error = NULL;
-      gsize length = 0;
-      gchar* data = NULL;
-      GIOStatus  status;
-
-      /* FIXME: try calling into io_func() */
-      while (G_IO_STATUS_NORMAL == (status = g_io_channel_read_to_end (channel, &data, &length, &error)))
-        {
-          g_test_log_buffer_push (tlb, length, (guchar*)data);
-        }
-
       gtk_test_suite_read_available (suite);
-      /* FIXME: warn if there's unparsed data */
-      g_string_set_size (tlb->data, 0);
-
       gtk_test_suite_set_channel (suite, NULL);
       gtk_test_suite_set_status (suite, GUTACHTER_SUITE_LOADED);
     }
@@ -455,6 +445,7 @@ gtk_test_suite_load (GtkTestSuite* self)
   GtkTestSuite* suite = self;
 
   g_return_if_fail (GTK_TEST_IS_SUITE (self));
+  g_return_if_fail (PRIV (self)->status == GUTACHTER_SUITE_INDETERMINED);
 
   if (suite)
     {
@@ -496,7 +487,6 @@ run_test_child_watch (GPid      pid,
                       gpointer  user_data)
 {
   GtkTestSuite* suite = user_data;
-  GIOChannel  * channel = gtk_test_suite_get_channel (suite);
 
   g_spawn_close_pid (pid);
 
@@ -510,21 +500,7 @@ run_test_child_watch (GPid      pid,
     }
   else if (WIFEXITED (status))
     {
-      GTestLogBuffer* tlb = gtk_test_suite_get_buffer (suite);
-      GError* error = NULL;
-      gsize length = 0;
-      gchar* data = NULL;
-      GIOStatus  status;
-
-      /* FIXME: try calling into io_func() */
-      while (G_IO_STATUS_NORMAL == (status = g_io_channel_read_to_end (channel, &data, &length, &error)))
-        {
-          g_test_log_buffer_push (tlb, length, (guchar*)data);
-        }
-
       gtk_test_suite_read_available (suite);
-      /* FIXME: warn if there's unparsed data */
-      g_string_set_size (tlb->data, 0);
     }
 
   gtk_test_suite_set_status (suite, GUTACHTER_SUITE_FINISHED);
@@ -612,6 +588,10 @@ gtk_test_suite_reset (GtkTestSuite* self)
   PRIV (self)->tests = G_GUINT64_CONSTANT (0);
   g_hash_table_remove_all (PRIV (self)->iter_map);
   gtk_tree_store_clear (PRIV (self)->tree_model);
+
+  g_print ("%s(%s): %" G_GUINT64_FORMAT "tests\n",
+           G_STRFUNC, G_STRLOC,
+           PRIV (self)->tests);
 }
 
 void
@@ -662,6 +642,9 @@ gtk_test_suite_set_status (GtkTestSuite      * self,
   /* cannot switch from any status to any other */
   switch (status)
     {
+    case GUTACHTER_SUITE_INDETERMINED:
+      /* we can fall into this state from every other */
+      break;
     case GUTACHTER_SUITE_LOADING:
       g_return_if_fail (PRIV (self)->status == GUTACHTER_SUITE_INDETERMINED);
       break;
