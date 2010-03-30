@@ -18,7 +18,7 @@
  * USA
  */
 
-#include "gt-xvfb-wrapper.h"
+#include "gutachter-xvfb.h"
 
 #include <errno.h>    /* errno */
 #include <string.h>   /* strerror() */

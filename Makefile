@@ -34,7 +34,7 @@ libgutachter.a: \
 	gt-suite.o \
 	gt-widget.o \
 	gutachter-window.o \
-	gt-xvfb-wrapper.o
+	gutachter-xvfb.o
 	$(AR)
 
 %.o: %.c $(wildcard *.h)
