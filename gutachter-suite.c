@@ -454,6 +454,8 @@ gtk_test_suite_load (GtkTestSuite* self)
 {
   GtkTestSuite* suite = self;
 
+  g_return_if_fail (GTK_TEST_IS_SUITE (self));
+
   if (suite)
     {
       GPid   pid = 0;

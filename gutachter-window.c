@@ -54,9 +54,15 @@ forward_notify (GObject   * object G_GNUC_UNUSED,
                 GParamSpec* pspec,
                 gpointer    user_data)
 {
+  GtkTestSuite* suite;
+
   gtk_test_window_update_title (user_data);
 
-  gtk_test_suite_load (gtk_test_runner_get_suite (GTK_TEST_RUNNER (PRIV (user_data)->widget)));
+  suite = gtk_test_runner_get_suite (GTK_TEST_RUNNER (PRIV (user_data)->widget));
+  if (suite)
+    {
+      gtk_test_suite_load (suite);
+    }
 
   g_object_notify (user_data, pspec->name);
 }
