@@ -51,9 +51,9 @@ G_DEFINE_TYPE_WITH_CODE (GtkTestWindow, gtk_test_window, GTK_TYPE_WINDOW,
 
 /* FIXME: continue moving until this ends up in the GtkTestSuite */
 static void
-selection_changed_cb (GtkWindow* window)
+gtk_test_suite_load (GtkTestSuite* self)
 {
-  GtkTestSuite* suite = gtk_test_runner_get_suite (GTK_TEST_RUNNER (window));
+  GtkTestSuite* suite = self;
 
   if (suite)
     {
@@ -96,7 +96,7 @@ forward_notify (GObject   * object G_GNUC_UNUSED,
 {
   gtk_test_window_update_title (user_data);
 
-  selection_changed_cb (GTK_WINDOW (user_data));
+  gtk_test_suite_load (gtk_test_runner_get_suite (GTK_TEST_RUNNER (PRIV (user_data)->widget)));
 
   g_object_notify (user_data, pspec->name);
 }
