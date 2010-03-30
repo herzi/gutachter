@@ -1,10 +1,10 @@
-README for gtk-tester
-=====================
+README for Gutachter
+====================
 
-Gtk-tester is a graphical user interface to unit test execution. You can
+Gutachter is a graphical user interface to unit test execution. You can
 compare it to the JUnit runner if you are familiar with that one.
 
-Gtk-tester makes it easy for you to use it. Just open a testcase binary and
+Gutachter makes it easy for you to use it. Just open a testcase binary and
 see how the tester loads the information about the tests. Click "Execute" and
 see how the tests are being executed.
 
