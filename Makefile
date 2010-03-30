@@ -2,12 +2,12 @@ AR=@echo "  AR    " $@; ar qcs $@ $^
 COMPILE=@echo "  CC    " $@; gcc -c -o $@ $< -g -O2 -Wall -Wextra -I. $(shell pkg-config --cflags gtk+-2.0) -DGETTEXT_PACKAGE=NULL
 LINK=@echo "  CCLD  " $@; gcc -o $@ $^ -g -O2 -Wall -Wextra $(shell pkg-config --libs gtk+-2.0)
 
-all: libgtk-tester.a gtk-tester test-dummy
+all: libgutachter.a gutachter test-dummy
 
 clean:
-	rm -rf libgtk-tester.a gtk-tester test-dummy *.o
+	rm -rf libgutachter.a gutachter test-dummy *.o
 
-gtk-tester: main.o libgtk-tester.a
+gutachter: main.o libgutachter.a
 	$(LINK)
 
 gt-types.h: gt-suite.h Makefile
@@ -27,7 +27,7 @@ gt-types.c: gt-suite.h Makefile
 		$< > $@
 gt-types.o: gt-types.c gt-types.h
 
-libgtk-tester.a: \
+libgutachter.a: \
 	gt-hierarchy.o \
 	gt-runner.o \
 	gt-types.o \
