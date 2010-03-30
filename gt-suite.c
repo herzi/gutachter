@@ -26,6 +26,7 @@
 struct _GtkTestSuitePrivate
 {
   GTestLogBuffer      * buffer;
+  GIOChannel          * channel;
   guint64               executed;
   GFile               * file;
   GFileMonitor        * file_monitor;
@@ -223,6 +224,14 @@ gtk_test_suite_get_buffer (GtkTestSuite* self)
   g_return_val_if_fail (GTK_TEST_IS_SUITE (self), NULL);
 
   return PRIV (self)->buffer;
+}
+
+GIOChannel*
+gtk_test_suite_get_channel (GtkTestSuite* self)
+{
+  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), NULL);
+
+  return PRIV (self)->channel;
 }
 
 guint64
@@ -468,6 +477,29 @@ gtk_test_suite_reset (GtkTestSuite* self)
   PRIV (self)->tests = G_GUINT64_CONSTANT (0);
   g_hash_table_remove_all (PRIV (self)->iter_map);
   gtk_tree_store_clear (PRIV (self)->tree_model);
+}
+
+void
+gtk_test_suite_set_channel (GtkTestSuite* self,
+                            GIOChannel  * channel)
+{
+  g_return_if_fail (GTK_TEST_IS_SUITE (self));
+
+  if (PRIV (self)->channel == channel)
+    {
+      return;
+    }
+
+  if (PRIV (self)->channel)
+    {
+      g_io_channel_unref (PRIV (self)->channel);
+      PRIV (self)->channel = NULL;
+    }
+
+  if (channel)
+    {
+      PRIV (self)->channel = g_io_channel_ref (channel);
+    }
 }
 
 void

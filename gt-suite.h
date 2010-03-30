@@ -52,10 +52,11 @@ typedef enum
 #define GTK_TEST_SUITE_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), GTK_TEST_TYPE_SUITE, GtkTestSuiteClass))
 
 GType               gtk_test_suite_get_type     (void);
-GtkTestSuite*       gtk_test_suite_new          (GFile       * file);
-GTestLogBuffer*     gtk_test_suite_get_buffer   (GtkTestSuite* self);
-guint64             gtk_test_suite_get_executed (GtkTestSuite* self);
-GFile*              gtk_test_suite_get_file     (GtkTestSuite* self);
+GtkTestSuite*       gtk_test_suite_new            (GFile       * file);
+GTestLogBuffer*     gtk_test_suite_get_buffer     (GtkTestSuite* self);
+GIOChannel*         gtk_test_suite_get_channel    (GtkTestSuite* self);
+guint64             gtk_test_suite_get_executed   (GtkTestSuite* self);
+GFile*              gtk_test_suite_get_file       (GtkTestSuite* self);
 GHashTable*         gtk_test_suite_get_iter_map (GtkTestSuite* self);
 GutachterSuiteStatus  gtk_test_suite_get_status   (GtkTestSuite* self);
 guint64             gtk_test_suite_get_tests      (GtkTestSuite* self);
@@ -80,11 +81,13 @@ gboolean            run_or_warn                   (GPid                   * pid,
                                                    GtkTestSuiteRunningMode  mode,
                                                    GtkTestSuite           * self);
 void                gtk_test_suite_read_available (GtkTestSuite           * self);
-void                gtk_test_suite_reset        (GtkTestSuite      * self);
-void                gtk_test_suite_set_executed (GtkTestSuite      * self,
-                                                 guint64             executed);
-void                gtk_test_suite_set_status   (GtkTestSuite        * self,
-                                                 GutachterSuiteStatus  status);
+void                gtk_test_suite_reset          (GtkTestSuite           * self);
+void                gtk_test_suite_set_channel    (GtkTestSuite           * self,
+                                                   GIOChannel             * channel);
+void                gtk_test_suite_set_executed   (GtkTestSuite           * self,
+                                                   guint64                  executed);
+void                gtk_test_suite_set_status     (GtkTestSuite           * self,
+                                                   GutachterSuiteStatus     status);
 void                gtk_test_suite_set_tests    (GtkTestSuite      * self,
                                                  guint64             tests);
 

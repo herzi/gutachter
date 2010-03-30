@@ -34,11 +34,14 @@ child_watch_cb (GPid      pid,
                 gint      status,
                 gpointer  data)
 {
+  GtkTestSuite* suite = data;
+
+  g_spawn_close_pid (pid);
+
   if (WIFEXITED (status) && WEXITSTATUS (status) != 0)
     {
       g_warning ("child exited with error code: %d", WEXITSTATUS (status));
-      gtk_test_suite_set_status (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)),
-                                 GUTACHTER_SUITE_INDETERMINED);
+      gtk_test_suite_set_status (suite, GUTACHTER_SUITE_INDETERMINED);
     }
   else if (!WIFEXITED (status))
     {
@@ -50,13 +53,12 @@ child_watch_cb (GPid      pid,
         {
           g_warning ("child didn't exit normally: %d", status);
         }
-      gtk_test_suite_set_status (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)),
-                                 GUTACHTER_SUITE_INDETERMINED);
+      gtk_test_suite_set_status (suite, GUTACHTER_SUITE_INDETERMINED);
     }
   else
     {
-      GTestLogBuffer* tlb = gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)));
-      GIOChannel* channel = data;
+      GTestLogBuffer* tlb = gtk_test_suite_get_buffer (suite);
+      GIOChannel* channel = gtk_test_suite_get_channel (suite);
       GError* error = NULL;
       gsize length = 0;
       gchar* data = NULL;
@@ -68,20 +70,17 @@ child_watch_cb (GPid      pid,
           g_test_log_buffer_push (tlb, length, (guchar*)data);
         }
 
-      gtk_test_suite_read_available (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)));
+      gtk_test_suite_read_available (suite);
       /* FIXME: warn if there's unparsed data */
       g_string_set_size (tlb->data, 0);
 
       gtk_tree_view_expand_all (GTK_TREE_VIEW (gtk_test_widget_get_hierarchy (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))));
 
-      g_io_channel_unref (channel);
+      gtk_test_suite_set_channel (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)), NULL);
       gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), 0.0);
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), _("not tested yet"));
-      gtk_test_suite_set_status (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)),
-                                 GUTACHTER_SUITE_LOADED);
+      gtk_test_suite_set_status (suite, GUTACHTER_SUITE_LOADED);
     }
-
-  g_spawn_close_pid (pid);
 }
 
 void
@@ -89,7 +88,8 @@ run_test_child_watch (GPid      pid,
                       gint      status,
                       gpointer  user_data)
 {
-  GIOChannel* channel = user_data;
+  GtkTestSuite* suite = user_data;
+  GIOChannel  * channel = gtk_test_suite_get_channel (suite);
 
   g_spawn_close_pid (pid);
 
@@ -107,7 +107,7 @@ run_test_child_watch (GPid      pid,
     }
   else if (WIFEXITED (status))
     {
-      GTestLogBuffer* tlb = gtk_test_suite_get_buffer (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)));
+      GTestLogBuffer* tlb = gtk_test_suite_get_buffer (suite);
       GError* error = NULL;
       gsize length = 0;
       gchar* data = NULL;
@@ -119,14 +119,12 @@ run_test_child_watch (GPid      pid,
           g_test_log_buffer_push (tlb, length, (guchar*)data);
         }
 
-      gtk_test_suite_read_available (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)));
+      gtk_test_suite_read_available (suite);
       /* FIXME: warn if there's unparsed data */
       g_string_set_size (tlb->data, 0);
     }
 
-  gtk_test_suite_set_status (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)),
-                             GUTACHTER_SUITE_FINISHED);
-  g_io_channel_unref (channel);
+  gtk_test_suite_set_status (suite, GUTACHTER_SUITE_FINISHED);
   gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), TRUE);
 }
 
