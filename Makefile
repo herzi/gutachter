@@ -29,7 +29,7 @@ gutachter-types.o: gutachter-types.c gutachter-types.h
 
 libgutachter.a: \
 	gt-hierarchy.o \
-	gt-runner.o \
+	gutachter-runner.o \
 	gutachter-suite.o \
 	gutachter-types.o \
 	gutachter-widget.o \

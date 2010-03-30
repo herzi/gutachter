@@ -22,7 +22,7 @@
 #define GUTACHTER_H
 
 #include <gt-hierarchy.h>
-#include <gt-runner.h>
+#include <gutachter-runner.h>
 #include <gutachter-suite.h>
 #include <gutachter-types.h>
 #include <gutachter-widget.h>

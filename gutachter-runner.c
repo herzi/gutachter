@@ -18,7 +18,7 @@
  * USA
  */
 
-#include "gt-runner.h"
+#include "gutachter-runner.h"
 
 static void
 gtk_test_runner_iface_init (GtkTestRunnerIface* iface)
