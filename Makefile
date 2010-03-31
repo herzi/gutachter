@@ -2,7 +2,7 @@ AR=@echo "  AR    " $@; ar qcs $@ $^
 COMPILE=@echo "  CC    " $@; gcc -c -o $@ $< -g -O2 -Wall -Wextra -I. $(shell pkg-config --cflags gtk+-2.0) -DGETTEXT_PACKAGE=NULL
 LINK=@echo "  CCLD  " $@; gcc -o $@ $^ -g -O2 -Wall -Wextra $(shell pkg-config --libs gtk+-2.0)
 
-all: libgutachter.a gutachter test-dummy
+all: libgutachter.a gutachter test-dummy test-gutachter
 
 clean:
 	rm -rf libgutachter.a gutachter test-dummy *.o gutachter-types.c gutachter-types.h
@@ -41,4 +41,7 @@ libgutachter.a: \
 	$(COMPILE)
 
 test-dummy: test-dummy.o
+	$(LINK)
+
+test-gutachter: test-main.o libgutachter.a
 	$(LINK)

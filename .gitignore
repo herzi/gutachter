@@ -4,3 +4,4 @@ gutachter
 gutachter-types.*
 *.o
 test-dummy
+test-gutachter
