@@ -26,11 +26,28 @@ static void
 test_bar_init (void)
 {
   GtkRequisition  req = {0, 0};
+  GtkAllocation   alloc;
   GtkWidget* subject = gtk_test_create_widget (GUTACHTER_TYPE_BAR, NULL);
+  GtkWidget* child = gtk_test_create_widget (GTK_TYPE_LABEL, "label", "TEST", NULL);
 
   gtk_widget_size_request (subject, &req);
   g_assert_cmpint (0, <, req.width);
   g_assert_cmpint (0, <, req.height);
+
+  gtk_container_add (GTK_CONTAINER (subject), child);
+  gtk_widget_size_request (subject, &req);
+
+  alloc.x = 0;
+  alloc.y = 0;
+  alloc.width = req.width;
+  alloc.height = req.height;
+  gtk_widget_size_allocate (subject, &alloc);
+
+  gtk_widget_get_allocation (child, &alloc);
+  g_assert_cmpint (0, ==, alloc.x);
+  g_assert_cmpint (0, ==, alloc.y);
+  g_assert_cmpint (0, <, alloc.width);
+  g_assert_cmpint (0, <, alloc.height);
 }
 
 int

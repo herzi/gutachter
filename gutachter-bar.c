@@ -27,6 +27,18 @@ gutachter_bar_init (GutachterBar* self G_GNUC_UNUSED)
 {}
 
 static void
+size_allocate (GtkWidget    * widget,
+               GtkAllocation* allocation)
+{
+  GtkWidget* child = gtk_bin_get_child (GTK_BIN (widget));
+
+  if (child)
+    {
+      gtk_widget_size_allocate (child, allocation);
+    }
+}
+
+static void
 size_request (GtkWidget     * widget,
               GtkRequisition* requisition)
 {
@@ -46,7 +58,8 @@ gutachter_bar_class_init (GutachterBarClass* self_class)
 {
   GtkWidgetClass* widget_class = GTK_WIDGET_CLASS (self_class);
 
-  widget_class->size_request = size_request;
+  widget_class->size_allocate = size_allocate;
+  widget_class->size_request  = size_request;
 }
 
 GtkWidget*
