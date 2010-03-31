@@ -44,8 +44,8 @@ test_bar_init (void)
   gtk_widget_size_allocate (subject, &alloc);
 
   gtk_widget_get_allocation (child, &alloc);
-  g_assert_cmpint (0, ==, alloc.x);
-  g_assert_cmpint (0, ==, alloc.y);
+  g_assert_cmpint (6, ==, alloc.x);
+  g_assert_cmpint (6, ==, alloc.y);
   g_assert_cmpint (0, <, alloc.width);
   g_assert_cmpint (0, <, alloc.height);
 }

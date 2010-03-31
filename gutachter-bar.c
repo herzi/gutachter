@@ -23,14 +23,30 @@
 G_DEFINE_TYPE (GutachterBar, gutachter_bar, GTK_TYPE_BIN);
 
 static void
-gutachter_bar_init (GutachterBar* self G_GNUC_UNUSED)
-{}
+gutachter_bar_init (GutachterBar* self)
+{
+  gtk_container_set_border_width (GTK_CONTAINER (self), 6);
+}
 
 static void
 size_allocate (GtkWidget    * widget,
                GtkAllocation* allocation)
 {
   GtkWidget* child = gtk_bin_get_child (GTK_BIN (widget));
+  guint      border = gtk_container_get_border_width (GTK_CONTAINER (widget));
+
+  gtk_widget_set_allocation (widget, allocation);
+
+  if ((allocation->width >= 0) && ((guint)allocation->width) > 2 * border)
+    {
+      allocation->x += border;
+      allocation->width -= 2 * border;
+    }
+  if ((allocation->height >= 0) && ((guint)allocation->height) > 2 * border)
+    {
+      allocation->y += border;
+      allocation->height -= 2 * border;
+    }
 
   if (child)
     {
@@ -50,6 +66,9 @@ size_request (GtkWidget     * widget,
   if (child)
     {
       gtk_widget_size_request (child, requisition);
+
+      requisition->width += 2 * gtk_container_get_border_width (GTK_CONTAINER (widget));
+      requisition->height += 2 * gtk_container_get_border_width (GTK_CONTAINER (widget));
     }
 }
 
