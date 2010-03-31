@@ -34,11 +34,11 @@ struct _GtkTestSuitePrivate
   guint64               executed;
   GFile               * file;
   GFileMonitor        * file_monitor;
+  GutachterHierarchy  * hierarchy;
   GtkTreeIter           iter;
   GHashTable          * iter_map;
   GutachterSuiteStatus  status;
   guint64               tests;
-  GtkTreeStore        * tree_model;
 };
 
 enum
@@ -59,17 +59,17 @@ gtk_test_suite_init (GtkTestSuite* self)
 
   PRIV (self)->buffer = g_test_log_buffer_new ();
   PRIV (self)->iter_map = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GFreeFunc)gtk_tree_row_reference_free);
-  PRIV (self)->tree_model = gtk_test_hierarchy_new ();
+  PRIV (self)->hierarchy = gutachter_hierarchy_new ();
 }
 
 static void
 finalize (GObject* object)
 {
-  g_object_unref (PRIV (object)->tree_model);
+  g_object_unref (PRIV (object)->hierarchy);
   g_object_unref (PRIV (object)->file_monitor);
   g_object_unref (PRIV (object)->file);
   g_test_log_buffer_free (PRIV (object)->buffer);
-  g_hash_table_destroy (PRIV (object)->iter_map);
+  g_hash_table_destroy (PRIV (object)->iter_map); /* FIXME: move into hierarchy */
 
   G_OBJECT_CLASS (gtk_test_suite_parent_class)->finalize (object);
 }
@@ -218,9 +218,9 @@ create_iter_for_path (GtkTestSuite* self,
     }
 
   gtk_tree_store_set (store, iter,
-                      GTK_TEST_HIERARCHY_COLUMN_PASSED, FALSE,
-                      GTK_TEST_HIERARCHY_COLUMN_UNSURE, TRUE,
-                      GTK_TEST_HIERARCHY_COLUMN_NAME, last_slash,
+                      GUTACHTER_HIERARCHY_COLUMN_PASSED, FALSE,
+                      GUTACHTER_HIERARCHY_COLUMN_UNSURE, TRUE,
+                      GUTACHTER_HIERARCHY_COLUMN_NAME, last_slash,
                       -1);
 
   tree_path = gtk_tree_model_get_path (GTK_TREE_MODEL (store), iter);
@@ -290,7 +290,7 @@ gtk_test_suite_get_tree (GtkTestSuite* self)
 {
   g_return_val_if_fail (GTK_TEST_IS_SUITE (self), G_GUINT64_CONSTANT (0));
 
-  return GTK_TREE_MODEL (PRIV (self)->tree_model);
+  return GTK_TREE_MODEL (PRIV (self)->hierarchy);
 }
 
 GtkTestSuite*
@@ -528,7 +528,7 @@ update_parent (GtkTreeStore* store,
       gboolean passed = FALSE;
 
       gtk_tree_model_get (GTK_TREE_MODEL (store), &children,
-                          GTK_TEST_HIERARCHY_COLUMN_PASSED, &passed,
+                          GUTACHTER_HIERARCHY_COLUMN_PASSED, &passed,
                           -1);
 
       if (!passed)
@@ -538,8 +538,8 @@ update_parent (GtkTreeStore* store,
     }
 
   gtk_tree_store_set (store, &iter,
-                      GTK_TEST_HIERARCHY_COLUMN_UNSURE, FALSE,
-                      GTK_TEST_HIERARCHY_COLUMN_PASSED, TRUE,
+                      GUTACHTER_HIERARCHY_COLUMN_UNSURE, FALSE,
+                      GUTACHTER_HIERARCHY_COLUMN_PASSED, TRUE,
                       -1);
 
   update_parent (store, &iter);
@@ -598,8 +598,8 @@ gtk_test_suite_read_available (GtkTestSuite* self)
               gtk_test_suite_set_executed (self,
                                            1 + gtk_test_suite_get_executed (self));
               gtk_tree_store_set (store, &PRIV (self)->iter,
-                                  GTK_TEST_HIERARCHY_COLUMN_UNSURE, FALSE,
-                                  GTK_TEST_HIERARCHY_COLUMN_PASSED, msg->nums[0] == 0,
+                                  GUTACHTER_HIERARCHY_COLUMN_UNSURE, FALSE,
+                                  GUTACHTER_HIERARCHY_COLUMN_PASSED, msg->nums[0] == 0,
                                   -1);
               update_parent (store, &PRIV (self)->iter);
 #if 0
@@ -628,7 +628,7 @@ gtk_test_suite_reset (GtkTestSuite* self)
 
   PRIV (self)->tests = G_GUINT64_CONSTANT (0);
   g_hash_table_remove_all (PRIV (self)->iter_map);
-  gtk_tree_store_clear (PRIV (self)->tree_model);
+  gtk_tree_store_clear (GTK_TREE_STORE (PRIV (self)->hierarchy)); /* FIXME: move into gutachter_hiararchy_clear() */
 }
 
 void

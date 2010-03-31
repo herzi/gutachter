@@ -18,25 +18,48 @@
  * USA
  */
 
-#ifndef GT_HIERARCHY_H
-#define GT_HIERARCHY_H
+#ifndef GUTACHTER_HIERARCHY_H
+#define GUTACHTER_HIERARCHY_H
 
 #include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 
+typedef struct _GutachterHierarchy        GutachterHierarchy;
+typedef struct _GutachterHierarchyClass   GutachterHierarchyClass;
+typedef struct _GutachterHierarchyPrivate GutachterHierarchyPrivate;
+
+#define GUTACHTER_TYPE_HIERARCHY         (gutachter_hierarchy_get_type ())
+#define GUTACHTER_HIERARCHY(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), GUTACHTER_TYPE_HIERARCHY, GutachterHierarchy))
+#define GUTACHTER_HIERARCHY_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c), GUTACHTER_TYPE_HIERARCHY, GutachterHierarchyClass))
+#define GUTACHTER_IS_HIERARCHY(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), GUTACHTER_TYPE_HIERARCHY))
+#define GUTACHTER_IS_HIERARCHY_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), GUTACHTER_TYPE_HIERARCHY))
+#define GUTACHTER_HIERARCHY_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), GUTACHTER_TYPE_HIERARCHY, GutachterHierarchyClass))
+
 enum
 {
-  GTK_TEST_HIERARCHY_COLUMN_NAME,
-  GTK_TEST_HIERARCHY_COLUMN_PASSED,
-  GTK_TEST_HIERARCHY_COLUMN_UNSURE,
-  GTK_TEST_HIERARCHY_N_COLUMNS
+  GUTACHTER_HIERARCHY_COLUMN_NAME,
+  GUTACHTER_HIERARCHY_COLUMN_PASSED,
+  GUTACHTER_HIERARCHY_COLUMN_UNSURE,
+  GUTACHTER_HIERARCHY_N_COLUMNS
 };
 
-GtkTreeStore* gtk_test_hierarchy_new (void);
+GType               gutachter_hierarchy_get_type (void);
+GutachterHierarchy* gutachter_hierarchy_new      (void);
+
+struct _GutachterHierarchy
+{
+  GtkTreeStore               base_instance;
+  GutachterHierarchyPrivate* _private;
+};
+
+struct _GutachterHierarchyClass
+{
+  GtkTreeStoreClass          base_class;
+};
 
 G_END_DECLS
 
-#endif /* !GT_HIERARCHY_H */
+#endif /* !GUTACHTER_HIERARCHY_H */
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

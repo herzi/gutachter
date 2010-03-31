@@ -104,7 +104,7 @@ set_unsure (GtkTreeModel* model,
             gpointer      user_data G_GNUC_UNUSED)
 {
   gtk_tree_store_set (GTK_TREE_STORE (model), iter,
-                      GTK_TEST_HIERARCHY_COLUMN_UNSURE, TRUE,
+                      GUTACHTER_HIERARCHY_COLUMN_UNSURE, TRUE,
                       -1);
   return FALSE;
 }

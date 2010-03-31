@@ -20,13 +20,28 @@
 
 #include "gutachter-hierarchy.h"
 
-GtkTreeStore*
-gtk_test_hierarchy_new (void)
+G_DEFINE_TYPE (GutachterHierarchy, gutachter_hierarchy, GTK_TYPE_TREE_STORE);
+
+static void
+gutachter_hierarchy_init (GutachterHierarchy* self)
 {
-  return gtk_tree_store_new (GTK_TEST_HIERARCHY_N_COLUMNS,
-                             G_TYPE_STRING,
-                             G_TYPE_BOOLEAN,
-                             G_TYPE_BOOLEAN);
+  GType types[GUTACHTER_HIERARCHY_N_COLUMNS] = {
+          G_TYPE_STRING,
+          G_TYPE_BOOLEAN,
+          G_TYPE_BOOLEAN
+  };
+  gtk_tree_store_set_column_types (GTK_TREE_STORE (self), GUTACHTER_HIERARCHY_N_COLUMNS, types);
+}
+
+static void
+gutachter_hierarchy_class_init (GutachterHierarchyClass* self_class G_GNUC_UNUSED)
+{}
+
+GutachterHierarchy*
+gutachter_hierarchy_new (void)
+{
+  return g_object_new (GUTACHTER_TYPE_HIERARCHY,
+                       NULL);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

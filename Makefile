@@ -37,7 +37,7 @@ libgutachter.a: \
 	gutachter-xvfb.o
 	$(AR)
 
-%.o: %.c $(wildcard *.h)
+%.o: %.c $(wildcard *.h) gutachter-types.h
 	$(COMPILE)
 
 test-dummy: test-dummy.o
