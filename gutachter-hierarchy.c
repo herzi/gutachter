@@ -126,16 +126,8 @@ gutachter_hierarchy_get_iter (GutachterHierarchy* self,
 
   tree_path = gtk_tree_model_get_path (GTK_TREE_MODEL (store), iter);
   reference = gtk_tree_row_reference_new (GTK_TREE_MODEL (store), tree_path);
-  g_hash_table_insert (gutachter_hierarchy_get_map (GUTACHTER_HIERARCHY (store)), g_strdup (path), reference);
+  g_hash_table_insert (PRIV (store)->path_to_reference, g_strdup (path), reference);
   gtk_tree_path_free (tree_path);
-}
-
-GHashTable*
-gutachter_hierarchy_get_map (GutachterHierarchy* self)
-{
-  g_return_val_if_fail (GUTACHTER_IS_HIERARCHY (self), NULL);
-
-  return PRIV (self)->path_to_reference;
 }
 
 gchar*
@@ -159,7 +151,7 @@ gutachter_hierarchy_lookup_iter (GutachterHierarchy* self,
                                  GtkTreeIter       * iter,
                                  gchar const       * path)
 {
-  GtkTreeRowReference* reference = g_hash_table_lookup (gutachter_hierarchy_get_map (self), path);
+  GtkTreeRowReference* reference = g_hash_table_lookup (PRIV (self)->path_to_reference, path);
   if (reference)
     {
       GtkTreeModel* model = GTK_TREE_MODEL (self);
