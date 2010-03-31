@@ -23,7 +23,13 @@
 #include <gtk/gtk.h>
 
 static void
-dummy_first (void)
+dummy_fail (void)
+{
+  g_assert (FALSE);
+}
+
+static void
+dummy_pass (void)
 {}
 
 int
@@ -32,7 +38,8 @@ main (int   argc,
 {
   gtk_test_init (&argc, &argv, NULL);
 
-  g_test_add_func ("/dummy/first", dummy_first);
+  g_test_add_func ("/com/guthub/herzi/gutachter/dummy/fail", dummy_fail);
+  g_test_add_func ("/com/guthub/herzi/gutachter/dummy/pass", dummy_pass);
 
   return g_test_run ();
 }

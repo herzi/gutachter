@@ -78,6 +78,26 @@ update_sensitivity (GtkTestWidget* self)
 }
 
 static void
+pixbuf_data_func (GtkTreeViewColumn* column    G_GNUC_UNUSED,
+                  GtkCellRenderer  * renderer,
+                  GtkTreeModel     * model,
+                  GtkTreeIter      * iter,
+                  gpointer           user_data G_GNUC_UNUSED)
+{
+  gboolean  unsure = TRUE;
+  gboolean  passed = TRUE;
+
+  gtk_tree_model_get (model, iter,
+                      GUTACHTER_HIERARCHY_COLUMN_PASSED, &passed,
+                      GUTACHTER_HIERARCHY_COLUMN_UNSURE, &unsure,
+                      -1);
+
+  g_object_set (renderer,
+                "stock-id", unsure ? GTK_STOCK_DIALOG_QUESTION : passed ? GTK_STOCK_APPLY : GTK_STOCK_CANCEL,
+                NULL);
+}
+
+static void
 gtk_test_widget_init (GtkTestWidget* self)
 {
   GtkTreeViewColumn* column;
@@ -102,6 +122,11 @@ gtk_test_widget_init (GtkTestWidget* self)
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "active", GUTACHTER_HIERARCHY_COLUMN_PASSED,
                                        NULL);
+  renderer = gtk_cell_renderer_pixbuf_new ();
+  gtk_tree_view_column_pack_start (column, renderer, FALSE);
+  gtk_tree_view_column_set_cell_data_func (column, renderer,
+                                           pixbuf_data_func, NULL,
+                                           NULL);
   renderer = gtk_cell_renderer_text_new ();
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
   gtk_tree_view_column_set_attributes (column, renderer,
@@ -274,7 +299,8 @@ model_changed (GtkTestWidget* self)
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (PRIV (self)->progress),
                                  text);
       g_free (text);
-      if (gtk_test_suite_get_executed (PRIV (self)->suite) >= gtk_test_suite_get_tests (PRIV (self)->suite))
+      if (!gtk_test_suite_get_passed (PRIV (self)->suite) ||
+          gtk_test_suite_get_executed (PRIV (self)->suite) >= gtk_test_suite_get_tests (PRIV (self)->suite))
         {
           gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (PRIV (self)->progress), 1.0);
         }

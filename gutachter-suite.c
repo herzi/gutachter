@@ -544,6 +544,8 @@ update_parent (GtkTreeStore* store,
   GtkTreeIter  iter;
   GtkTreeIter  children;
   gboolean     valid;
+  gboolean     passed = TRUE;
+  gboolean     unsure = FALSE;
 
   if (!gtk_tree_model_iter_parent (GTK_TREE_MODEL (store), &iter, child))
     {
@@ -554,21 +556,30 @@ update_parent (GtkTreeStore* store,
        valid;
        valid = gtk_tree_model_iter_next (GTK_TREE_MODEL (store), &children))
     {
-      gboolean passed = FALSE;
+      gboolean this_unsure = FALSE;
+      gboolean this_passed = FALSE;
 
       gtk_tree_model_get (GTK_TREE_MODEL (store), &children,
-                          GUTACHTER_HIERARCHY_COLUMN_PASSED, &passed,
+                          GUTACHTER_HIERARCHY_COLUMN_UNSURE, &this_unsure,
+                          GUTACHTER_HIERARCHY_COLUMN_PASSED, &this_passed,
                           -1);
 
-      if (!passed)
+      if (!this_passed)
         {
-          return;
+          unsure = FALSE;
+          passed = this_passed;
+          break;
+        }
+      else
+        {
+          unsure |= this_unsure;
+          /* passed stays TRUE */
         }
     }
 
   gtk_tree_store_set (store, &iter,
-                      GUTACHTER_HIERARCHY_COLUMN_UNSURE, FALSE,
-                      GUTACHTER_HIERARCHY_COLUMN_PASSED, TRUE,
+                      GUTACHTER_HIERARCHY_COLUMN_UNSURE, unsure,
+                      GUTACHTER_HIERARCHY_COLUMN_PASSED, passed,
                       -1);
 
   update_parent (store, &iter);
@@ -645,6 +656,7 @@ gtk_test_suite_read_available (GtkTestSuite* self)
                                   GUTACHTER_HIERARCHY_COLUMN_UNSURE, FALSE,
                                   GUTACHTER_HIERARCHY_COLUMN_PASSED, FALSE,
                                   -1);
+              update_parent (store, &PRIV (self)->iter);
               break;
             default:
               g_warning ("%s(%s): unexpected message type: %d",
