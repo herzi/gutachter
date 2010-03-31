@@ -20,7 +20,18 @@
  * if advised of the possibility of such damage.
  */
 
-#include <gtk/gtk.h>
+#include <gutachter.h>
+
+static void
+test_bar_init (void)
+{
+  GtkRequisition  req = {0, 0};
+  GtkWidget* subject = gtk_test_create_widget (GUTACHTER_TYPE_BAR, NULL);
+
+  gtk_widget_size_request (subject, &req);
+  g_assert_cmpint (0, <, req.width);
+  g_assert_cmpint (0, <, req.height);
+}
 
 int
 main (int   argc,
@@ -28,6 +39,7 @@ main (int   argc,
 {
   gtk_test_init (&argc, &argv, NULL);
 
+  g_test_add_func ("/com/github/herzi/gutachter/GutachterBar/init", test_bar_init);
   /* FIXME: test proper handling of this: "dummy/a", "/dummy/b" */
   /* FIXME: test proper handling of this: "/com/github/herzi/gutachter/a", "com.github.herzi.gutachter.a" */
   /* FIXME: test proper handling of this: "/dummy", "/dummy" */

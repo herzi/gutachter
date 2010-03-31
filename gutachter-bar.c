@@ -20,5 +20,40 @@
 
 #include "gutachter-bar.h"
 
+G_DEFINE_TYPE (GutachterBar, gutachter_bar, GTK_TYPE_BIN);
+
+static void
+gutachter_bar_init (GutachterBar* self G_GNUC_UNUSED)
+{}
+
+static void
+size_request (GtkWidget     * widget,
+              GtkRequisition* requisition)
+{
+  GtkWidget* child = gtk_bin_get_child (GTK_BIN (widget));
+
+  requisition->width = 1;
+  requisition->height = 1;
+
+  if (child)
+    {
+      gtk_widget_size_request (child, requisition);
+    }
+}
+
+static void
+gutachter_bar_class_init (GutachterBarClass* self_class)
+{
+  GtkWidgetClass* widget_class = GTK_WIDGET_CLASS (self_class);
+
+  widget_class->size_request = size_request;
+}
+
+GtkWidget*
+gutachter_bar_new (void)
+{
+  return g_object_new (GUTACHTER_TYPE_BAR,
+                       NULL);
+}
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
