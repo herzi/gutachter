@@ -68,10 +68,10 @@ gboolean              io_func                       (GIOChannel  * channel,
                                                      gpointer      data);
 gboolean              lookup_iter_for_path          (GtkTestSuite* self,
                                                      GtkTreeIter * iter,
-                                                     gchar       * path);
+                                                     gchar const * path);
 void                  create_iter_for_path          (GtkTestSuite* suite,
                                                      GtkTreeIter * iter,
-                                                     gchar       * path);
+                                                     gchar const * path);
 void                run_test_child_watch          (GPid      pid,
                                                    gint      status,
                                                    gpointer  user_data);
