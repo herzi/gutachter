@@ -97,6 +97,18 @@ open_item_clicked (GtkButton* button G_GNUC_UNUSED,
   gtk_widget_destroy (dialog);
 }
 
+static gboolean
+set_unsure (GtkTreeModel* model,
+            GtkTreePath * path      G_GNUC_UNUSED,
+            GtkTreeIter * iter,
+            gpointer      user_data G_GNUC_UNUSED)
+{
+  gtk_tree_store_set (GTK_TREE_STORE (model), iter,
+                      GTK_TEST_HIERARCHY_COLUMN_UNSURE, TRUE,
+                      -1);
+  return FALSE;
+}
+
 static void
 button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
                    gpointer   user_data)
@@ -104,9 +116,6 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
   GtkTestWindow* window = user_data;
   GPid           pid = 0;
   int            pipes[2];
-
-  gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (window)))),
-                             _("Running tests..."));
 
   if (pipe (pipes))
     {
@@ -121,6 +130,7 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
     }
   else
     {
+      GtkTestSuite* suite = gtk_test_runner_get_suite (GTK_TEST_RUNNER (window));
       GIOChannel* channel = g_io_channel_unix_new (pipes[0]);
       g_io_channel_set_encoding (channel, NULL, NULL);
       g_io_channel_set_buffered (channel, FALSE);
@@ -129,13 +139,12 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
       g_child_watch_add_full (G_PRIORITY_DEFAULT, pid, run_test_child_watch, gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)), NULL);
       gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), FALSE);
 
-      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))), 0.0);
-      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (gtk_test_widget_get_progress (GTK_TEST_WIDGET (gtk_test_window_get_widget (GTK_TEST_WINDOW (window))))),
-                                 _("Starting Tests..."));
       gtk_test_suite_set_status (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)),
                                  GUTACHTER_SUITE_RUNNING);
       gtk_test_suite_set_channel (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)), channel);
       g_io_channel_unref (channel);
+
+      gtk_tree_model_foreach (gtk_test_suite_get_tree (suite), set_unsure, NULL);
     }
 
   close (pipes[1]);

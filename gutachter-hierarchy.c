@@ -23,7 +23,10 @@
 GtkTreeStore*
 gtk_test_hierarchy_new (void)
 {
-  return gtk_tree_store_new (GTK_TEST_HIERARCHY_N_COLUMNS, G_TYPE_STRING, G_TYPE_BOOLEAN);
+  return gtk_tree_store_new (GTK_TEST_HIERARCHY_N_COLUMNS,
+                             G_TYPE_STRING,
+                             G_TYPE_BOOLEAN,
+                             G_TYPE_BOOLEAN);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

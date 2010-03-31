@@ -219,6 +219,7 @@ create_iter_for_path (GtkTestSuite* self,
 
   gtk_tree_store_set (store, iter,
                       GTK_TEST_HIERARCHY_COLUMN_PASSED, FALSE,
+                      GTK_TEST_HIERARCHY_COLUMN_UNSURE, TRUE,
                       GTK_TEST_HIERARCHY_COLUMN_NAME, last_slash,
                       -1);
 
@@ -537,6 +538,7 @@ update_parent (GtkTreeStore* store,
     }
 
   gtk_tree_store_set (store, &iter,
+                      GTK_TEST_HIERARCHY_COLUMN_UNSURE, FALSE,
                       GTK_TEST_HIERARCHY_COLUMN_PASSED, TRUE,
                       -1);
 
@@ -596,6 +598,7 @@ gtk_test_suite_read_available (GtkTestSuite* self)
               gtk_test_suite_set_executed (self,
                                            1 + gtk_test_suite_get_executed (self));
               gtk_tree_store_set (store, &PRIV (self)->iter,
+                                  GTK_TEST_HIERARCHY_COLUMN_UNSURE, FALSE,
                                   GTK_TEST_HIERARCHY_COLUMN_PASSED, msg->nums[0] == 0,
                                   -1);
               update_parent (store, &PRIV (self)->iter);
