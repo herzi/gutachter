@@ -1,7 +1,4 @@
-/* This file is part of ...
- *
- * AUTHORS
- *     Sven Herzberg  <set the EMAIL_ADDRESS environment variable>
+/* This file is part of herzi's playground
  *
  * Copyright (C) 2010  Sven Herzberg
  *
@@ -23,5 +20,21 @@
 
 #include "gutachter-tree-list.h"
 
+G_DEFINE_TYPE (GutachterTreeList, gutachter_tree_list, G_TYPE_OBJECT);
+
+static void
+gutachter_tree_list_init (GutachterTreeList* self G_GNUC_UNUSED)
+{}
+
+static void
+gutachter_tree_list_class_init (GutachterTreeListClass* self_class G_GNUC_UNUSED)
+{}
+
+GtkTreeModel*
+gutachter_tree_list_new (GtkTreeModel* real_tree G_GNUC_UNUSED)
+{
+  return g_object_new (GUTACHTER_TYPE_TREE_LIST,
+                       NULL);
+}
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
