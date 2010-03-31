@@ -31,12 +31,15 @@ struct _GtkTestSuitePrivate
 {
   GTestLogBuffer      * buffer;
   GIOChannel          * channel;
+  guint64               errors;
   guint64               executed;
+  guint64               failures;
   GFile               * file;
   GFileMonitor        * file_monitor;
   GutachterHierarchy  * hierarchy;
   GtkTreeIter           iter;
   GHashTable          * iter_map;
+  guint                 passed : 1;
   GutachterSuiteStatus  status;
   guint64               tests;
 };
@@ -60,6 +63,7 @@ gtk_test_suite_init (GtkTestSuite* self)
   PRIV (self)->buffer = g_test_log_buffer_new ();
   PRIV (self)->iter_map = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GFreeFunc)gtk_tree_row_reference_free);
   PRIV (self)->hierarchy = gutachter_hierarchy_new ();
+  PRIV (self)->passed = TRUE;
 }
 
 static void
@@ -247,11 +251,27 @@ gtk_test_suite_get_channel (GtkTestSuite* self)
 }
 
 guint64
+gtk_test_suite_get_errors (GtkTestSuite* self)
+{
+  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), G_GUINT64_CONSTANT (0));
+
+  return PRIV (self)->errors;
+}
+
+guint64
 gtk_test_suite_get_executed (GtkTestSuite* self)
 {
   g_return_val_if_fail (GTK_TEST_IS_SUITE (self), G_GUINT64_CONSTANT (0));
 
   return PRIV (self)->executed;
+}
+
+guint64
+gtk_test_suite_get_failures (GtkTestSuite* self)
+{
+  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), G_GUINT64_CONSTANT (0));
+
+  return PRIV (self)->failures;
 }
 
 GFile*
@@ -268,6 +288,14 @@ gtk_test_suite_get_iter_map (GtkTestSuite* self)
   g_return_val_if_fail (GTK_TEST_IS_SUITE (self), NULL);
 
   return PRIV (self)->iter_map;
+}
+
+gboolean
+gtk_test_suite_get_passed (GtkTestSuite* self)
+{
+  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), FALSE);
+
+  return PRIV (self)->passed;
 }
 
 GutachterSuiteStatus
@@ -691,6 +719,7 @@ gtk_test_suite_set_status (GtkTestSuite      * self,
       break;
     case GUTACHTER_SUITE_RUNNING:
       g_return_if_fail (PRIV (self)->status >= GUTACHTER_SUITE_LOADED);
+      PRIV (self)->passed = TRUE;
       break;
     case GUTACHTER_SUITE_FINISHED:
       g_return_if_fail (PRIV (self)->status == GUTACHTER_SUITE_RUNNING);

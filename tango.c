@@ -50,6 +50,8 @@ static guint16 fixed[TANGO_N_COLORS][TANGO_N_SHADES][3] =
       /* FIXME */
     },
     { /* Scarlet Red */
+      {0xefef, 0x2929, 0x2929},
+      {0xcccc, 0x0000, 0x0000},
       /* FIXME */
     },
     { /* Aluminium (bright) */

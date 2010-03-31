@@ -20,12 +20,17 @@
 
 #include "gutachter-widget.h"
 
+#define GETTEXT_DOMAIN NULL /* FIXME: enable proper i18n */
+
 #include <gutachter.h>
 #include <glib/gi18n.h>
 
 struct _GtkTestWidgetPrivate
 {
   GtkWidget   * hierarchy_view;
+  GtkWidget   * indicator_bar;
+  GtkWidget   * label_errors;
+  GtkWidget   * label_failures;
   GtkWidget   * notebook;
   GtkWidget   * progress;
   gulong        status_handler;
@@ -77,12 +82,18 @@ gtk_test_widget_init (GtkTestWidget* self)
 {
   GtkTreeViewColumn* column;
   GtkCellRenderer  * renderer;
+  GtkWidget        * hbox;
   GtkWidget        * scrolled;
 
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WIDGET, GtkTestWidgetPrivate);
   PRIV (self)->hierarchy_view = gtk_tree_view_new ();
+  PRIV (self)->indicator_bar = gutachter_bar_new ();
+  PRIV (self)->label_errors = gtk_label_new (NULL);
+  PRIV (self)->label_failures = gtk_label_new (NULL);
   PRIV (self)->notebook = gtk_notebook_new ();
   PRIV (self)->progress = gtk_progress_bar_new ();
+
+  hbox = gtk_hbox_new (TRUE, 12);
 
   column = gtk_tree_view_column_new ();
   gtk_tree_view_column_set_expand (column, TRUE);
@@ -104,7 +115,11 @@ gtk_test_widget_init (GtkTestWidget* self)
 
   gtk_widget_show (PRIV (self)->progress);
   gtk_box_pack_start (GTK_BOX (self), PRIV (self)->progress, FALSE, FALSE, 0);
-  /* FIXME: add state information: "Runs: 3/3" "Errors: 2" "Failures: 2" */
+  gtk_container_add (GTK_CONTAINER (hbox), PRIV (self)->label_errors);
+  gtk_container_add (GTK_CONTAINER (hbox), PRIV (self)->label_failures);
+  gtk_container_add (GTK_CONTAINER (PRIV (self)->indicator_bar), hbox);
+  gtk_widget_show_all (PRIV (self)->indicator_bar);
+  gtk_box_pack_start (GTK_BOX (self), PRIV (self)->indicator_bar, FALSE, FALSE, 0);
   gtk_widget_show (PRIV (self)->hierarchy_view);
   gtk_container_add (GTK_CONTAINER (scrolled), PRIV (self)->hierarchy_view);
   gtk_widget_show (scrolled);
@@ -268,6 +283,25 @@ model_changed (GtkTestWidget* self)
           gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (PRIV (self)->progress),
                                          1.0 * gtk_test_suite_get_executed (PRIV (self)->suite) / gtk_test_suite_get_tests (PRIV (self)->suite));
         }
+
+      text = g_strdup_printf (g_dngettext (GETTEXT_DOMAIN,
+                                           "%" G_GUINT64_FORMAT " error",
+                                           "%" G_GUINT64_FORMAT " errors",
+                                           gtk_test_suite_get_errors (PRIV (self)->suite)),
+                              gtk_test_suite_get_errors (PRIV (self)->suite));
+      gtk_label_set_text (GTK_LABEL (PRIV (self)->label_errors), text);
+      g_free (text);
+
+      text = g_strdup_printf (g_dngettext (GETTEXT_DOMAIN,
+                                           "%" G_GUINT64_FORMAT " failure",
+                                           "%" G_GUINT64_FORMAT " failures",
+                                           gtk_test_suite_get_failures (PRIV (self)->suite)),
+                              gtk_test_suite_get_failures (PRIV (self)->suite));
+      gtk_label_set_text (GTK_LABEL (PRIV (self)->label_failures), text);
+      g_free (text);
+
+      gutachter_bar_set_okay (GUTACHTER_BAR (PRIV (self)->indicator_bar),
+                              gtk_test_suite_get_passed (PRIV (self)->suite));
       break;
     case GUTACHTER_SUITE_INDETERMINED:
       update_sensitivity (self);
@@ -330,7 +364,9 @@ status_changed_cb (GObject   * suite     G_GNUC_UNUSED,
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (PRIV (self)->progress), _("not tested yet"));
       break;
     case GUTACHTER_SUITE_FINISHED:
-      /* FIXME: check the result and update the bar's color */
+      /* let the bar be green in the beginning */
+      gutachter_bar_set_okay (GUTACHTER_BAR (PRIV (self)->indicator_bar),
+                              gtk_test_suite_get_passed (PRIV (self)->suite));
       break;
     default:
       break;

@@ -38,6 +38,8 @@ typedef struct _GutachterBarPrivate GutachterBarPrivate;
 
 GType      gutachter_bar_get_type (void);
 GtkWidget* gutachter_bar_new      (void);
+void       gutachter_bar_set_okay (GutachterBar* self,
+                                   gboolean      okay);
 
 struct _GutachterBar
 {

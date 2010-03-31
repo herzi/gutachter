@@ -22,11 +22,21 @@
 
 #include "tango.h"
 
+struct _GutachterBarPrivate
+{
+  guint  status : 1;
+};
+
+#define PRIV(i) (((GutachterBar*)(i))->_private)
+
 G_DEFINE_TYPE (GutachterBar, gutachter_bar, GTK_TYPE_BIN);
 
 static void
 gutachter_bar_init (GutachterBar* self)
 {
+  PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GUTACHTER_TYPE_BAR, GutachterBarPrivate);
+  PRIV (self)->status = TRUE;
+
   gtk_container_set_border_width (GTK_CONTAINER (self), 6);
 }
 
@@ -41,9 +51,13 @@ expose_event (GtkWidget     * widget,
                    widget->allocation.y + 0.5,
                    widget->allocation.width - 1.0,
                    widget->allocation.height - 1.0);
-  tango_cairo_set_source_color_alpha (cr, TANGO_COLOR_CHAMELEON, TANGO_SHADE_BRIGHT, 0.5);
+  tango_cairo_set_source_color_alpha (cr,
+                                      PRIV (widget)->status ? TANGO_COLOR_CHAMELEON : TANGO_COLOR_SCARLET_RED,
+                                      TANGO_SHADE_BRIGHT, 0.5);
   cairo_fill_preserve (cr);
-  tango_cairo_set_source_color (cr, TANGO_COLOR_CHAMELEON, TANGO_SHADE_NORMAL);
+  tango_cairo_set_source_color (cr,
+                                PRIV (widget)->status ? TANGO_COLOR_CHAMELEON : TANGO_COLOR_SCARLET_RED,
+                                TANGO_SHADE_NORMAL);
   cairo_stroke (cr);
   cairo_destroy (cr);
 
@@ -102,6 +116,8 @@ gutachter_bar_class_init (GutachterBarClass* self_class)
   widget_class->expose_event  = expose_event;
   widget_class->size_allocate = size_allocate;
   widget_class->size_request  = size_request;
+
+  g_type_class_add_private (self_class, sizeof (GutachterBarPrivate));
 }
 
 GtkWidget*
@@ -109,6 +125,23 @@ gutachter_bar_new (void)
 {
   return g_object_new (GUTACHTER_TYPE_BAR,
                        NULL);
+}
+
+void
+gutachter_bar_set_okay (GutachterBar* self,
+                        gboolean      okay)
+{
+  g_return_if_fail (GUTACHTER_IS_BAR (self));
+  g_return_if_fail (okay == TRUE || okay == FALSE);
+
+  if (PRIV (self)->status == okay)
+    {
+      return;
+    }
+
+  PRIV (self)->status = okay;
+  gtk_widget_queue_draw (GTK_WIDGET (self));
+  //g_object_notify (G_OBJECT (self), "okay");
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
