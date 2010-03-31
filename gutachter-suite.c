@@ -37,7 +37,6 @@ struct _GtkTestSuitePrivate
   GFileMonitor        * file_monitor;
   GutachterHierarchy  * hierarchy;
   GtkTreeIter           iter;
-  GHashTable          * iter_map;
   guint                 passed : 1;
   GutachterSuiteStatus  status;
   guint64               tests;
@@ -60,7 +59,6 @@ gtk_test_suite_init (GtkTestSuite* self)
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_SUITE, GtkTestSuitePrivate);
 
   PRIV (self)->buffer = g_test_log_buffer_new ();
-  PRIV (self)->iter_map = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GFreeFunc)gtk_tree_row_reference_free);
   PRIV (self)->hierarchy = gutachter_hierarchy_new ();
   PRIV (self)->passed = TRUE;
 }
@@ -72,7 +70,6 @@ finalize (GObject* object)
   g_object_unref (PRIV (object)->file_monitor);
   g_object_unref (PRIV (object)->file);
   g_test_log_buffer_free (PRIV (object)->buffer);
-  g_hash_table_destroy (PRIV (object)->iter_map); /* FIXME: move into hierarchy */
 
   G_OBJECT_CLASS (gtk_test_suite_parent_class)->finalize (object);
 }
@@ -278,7 +275,7 @@ gtk_test_suite_get_iter_map (GtkTestSuite* self)
 {
   g_return_val_if_fail (GTK_TEST_IS_SUITE (self), NULL);
 
-  return PRIV (self)->iter_map;
+  return gutachter_hierarchy_get_map (PRIV (self)->hierarchy);
 }
 
 gboolean
@@ -682,7 +679,6 @@ gtk_test_suite_reset (GtkTestSuite* self)
   g_return_if_fail (GTK_TEST_IS_SUITE (self));
 
   PRIV (self)->tests = G_GUINT64_CONSTANT (0);
-  g_hash_table_remove_all (PRIV (self)->iter_map);
   gutachter_hierarchy_clear (PRIV (self)->hierarchy);
 }
 

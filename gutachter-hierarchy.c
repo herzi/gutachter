@@ -20,11 +20,18 @@
 
 #include "gutachter-hierarchy.h"
 
+struct _GutachterHierarchyPrivate
+{
+  GHashTable* path_to_reference;
+};
+
 enum
 {
   COL_MESSAGE = GUTACHTER_HIERARCHY_N_COLUMNS,
   N_COLUMNS
 };
+
+#define PRIV(i) (((GutachterHierarchy*)(i))->_private)
 
 G_DEFINE_TYPE (GutachterHierarchy, gutachter_hierarchy, GTK_TYPE_TREE_STORE);
 
@@ -37,19 +44,45 @@ gutachter_hierarchy_init (GutachterHierarchy* self)
           G_TYPE_BOOLEAN,
           G_TYPE_STRING
   };
+
   gtk_tree_store_set_column_types (GTK_TREE_STORE (self), N_COLUMNS, types);
+
+  PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GUTACHTER_TYPE_HIERARCHY, GutachterHierarchyPrivate);
+  PRIV (self)->path_to_reference = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GFreeFunc)gtk_tree_row_reference_free);
 }
 
 static void
-gutachter_hierarchy_class_init (GutachterHierarchyClass* self_class G_GNUC_UNUSED)
-{}
+finalize (GObject* object)
+{
+  g_hash_table_destroy (PRIV (object)->path_to_reference);
+
+  G_OBJECT_CLASS (gutachter_hierarchy_parent_class)->finalize (object);
+}
+static void
+gutachter_hierarchy_class_init (GutachterHierarchyClass* self_class)
+{
+  GObjectClass* object_class = G_OBJECT_CLASS (self_class);
+
+  object_class->finalize = finalize;
+
+  g_type_class_add_private (self_class, sizeof (GutachterHierarchyPrivate));
+}
 
 void
 gutachter_hierarchy_clear (GutachterHierarchy* self)
 {
   g_return_if_fail (GUTACHTER_IS_HIERARCHY (self));
 
+  g_hash_table_remove_all (PRIV (self)->path_to_reference);
   gtk_tree_store_clear (GTK_TREE_STORE (self));
+}
+
+GHashTable*
+gutachter_hierarchy_get_map (GutachterHierarchy* self)
+{
+  g_return_val_if_fail (GUTACHTER_IS_HIERARCHY (self), NULL);
+
+  return PRIV (self)->path_to_reference;
 }
 
 gchar*
