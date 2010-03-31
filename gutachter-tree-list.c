@@ -20,18 +20,71 @@
 
 #include "gutachter-tree-list.h"
 
+struct _GutachterTreeListPrivate
+{
+  GtkTreeModel* model;
+};
+
+#define PRIV(i) (((GutachterTreeList*)(i))->_private)
+
+enum
+{
+  PROP_0,
+  PROP_MODEL
+};
+
 static void implement_gtk_tree_model (GtkTreeModelIface* iface);
 
 G_DEFINE_TYPE_WITH_CODE (GutachterTreeList, gutachter_tree_list, G_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL, implement_gtk_tree_model));
 
 static void
-gutachter_tree_list_init (GutachterTreeList* self G_GNUC_UNUSED)
-{}
+gutachter_tree_list_init (GutachterTreeList* self)
+{
+  PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GUTACHTER_TYPE_TREE_LIST, GutachterTreeListPrivate);
+}
 
 static void
-gutachter_tree_list_class_init (GutachterTreeListClass* self_class G_GNUC_UNUSED)
-{}
+finalize (GObject* object)
+{
+  g_object_unref (PRIV (object)->model);
+
+  G_OBJECT_CLASS (gutachter_tree_list_parent_class)->finalize (object);
+}
+
+static void
+set_property (GObject     * object,
+              guint         prop_id,
+              GValue const* value,
+              GParamSpec  * pspec)
+{
+  switch (prop_id)
+    {
+    case PROP_MODEL:
+      g_return_if_fail (!PRIV (object)->model);
+      PRIV (object)->model = g_value_dup_object (value);
+      /* construct-only => no notification */
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+static void
+gutachter_tree_list_class_init (GutachterTreeListClass* self_class)
+{
+  GObjectClass* object_class = G_OBJECT_CLASS (self_class);
+
+  object_class->finalize     = finalize;
+  object_class->set_property = set_property;
+
+  g_object_class_install_property (object_class, PROP_MODEL,
+                                   g_param_spec_object ("model", NULL, NULL,
+                                                        GTK_TYPE_TREE_MODEL, G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
+
+  g_type_class_add_private (self_class, sizeof (GutachterTreeList));
+}
 
 GtkTreeModelFlags
 get_flags (GtkTreeModel* model G_GNUC_UNUSED)
@@ -46,9 +99,10 @@ implement_gtk_tree_model (GtkTreeModelIface* iface)
 }
 
 GtkTreeModel*
-gutachter_tree_list_new (GtkTreeModel* real_tree G_GNUC_UNUSED)
+gutachter_tree_list_new (GtkTreeModel* model)
 {
   return g_object_new (GUTACHTER_TYPE_TREE_LIST,
+                       "model", model,
                        NULL);
 }
 
