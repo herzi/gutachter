@@ -27,7 +27,8 @@ struct _GutachterHierarchyPrivate
 
 enum
 {
-  COL_MESSAGE = GUTACHTER_HIERARCHY_N_COLUMNS,
+  COL_FULL_PATH = GUTACHTER_HIERARCHY_N_COLUMNS,
+  COL_MESSAGE,
   N_COLUMNS
 };
 
@@ -42,6 +43,7 @@ gutachter_hierarchy_init (GutachterHierarchy* self)
           G_TYPE_STRING,
           G_TYPE_BOOLEAN,
           G_TYPE_BOOLEAN,
+          G_TYPE_STRING,
           G_TYPE_STRING
   };
 
@@ -122,6 +124,7 @@ gutachter_hierarchy_get_iter (GutachterHierarchy* self,
                       GUTACHTER_HIERARCHY_COLUMN_PASSED, FALSE,
                       GUTACHTER_HIERARCHY_COLUMN_UNSURE, TRUE,
                       GUTACHTER_HIERARCHY_COLUMN_NAME, last_slash,
+                      COL_FULL_PATH, path,
                       -1);
 
   tree_path = gtk_tree_model_get_path (GTK_TREE_MODEL (store), iter);
