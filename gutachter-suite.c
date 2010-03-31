@@ -527,7 +527,7 @@ run_test_child_watch (GPid      pid,
     }
   else if (WIFSIGNALED (status))
     {
-      g_warning (_("exited with signal %d"), WTERMSIG (status));
+      g_warning ("FIXME: exited with signal %d, trigger restart", WTERMSIG (status));
     }
   else if (WIFEXITED (status))
     {
@@ -635,6 +635,16 @@ gtk_test_suite_read_available (GtkTestSuite* self)
               g_message ("status %d; nforks %d; elapsed %Lf",
                          (int)msg->nums[0], (int)msg->nums[1], msg->nums[2]);
 #endif
+              break;
+            case G_TEST_LOG_ERROR:
+              gtk_test_suite_set_executed (self,
+                                           1 + gtk_test_suite_get_executed (self));
+              PRIV (self)->passed = FALSE;
+              PRIV (self)->errors++;
+              gtk_tree_store_set (store, &PRIV (self)->iter,
+                                  GUTACHTER_HIERARCHY_COLUMN_UNSURE, FALSE,
+                                  GUTACHTER_HIERARCHY_COLUMN_PASSED, FALSE,
+                                  -1);
               break;
             default:
               g_warning ("%s(%s): unexpected message type: %d",
