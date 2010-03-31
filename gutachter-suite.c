@@ -683,7 +683,7 @@ gtk_test_suite_reset (GtkTestSuite* self)
 
   PRIV (self)->tests = G_GUINT64_CONSTANT (0);
   g_hash_table_remove_all (PRIV (self)->iter_map);
-  gtk_tree_store_clear (GTK_TREE_STORE (PRIV (self)->hierarchy)); /* FIXME: move into gutachter_hiararchy_clear() */
+  gutachter_hierarchy_clear (PRIV (self)->hierarchy);
 }
 
 void

@@ -46,6 +46,7 @@ enum
 
 GType               gutachter_hierarchy_get_type    (void);
 GutachterHierarchy* gutachter_hierarchy_new         (void);
+void                gutachter_hierarchy_clear       (GutachterHierarchy* self);
 void                gutachter_hierarchy_set_unsure  (GutachterHierarchy* self);
 void                gutachter_hierarchy_set_message (GutachterHierarchy* self,
                                                      GtkTreeIter       * iter,

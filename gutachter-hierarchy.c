@@ -44,6 +44,14 @@ static void
 gutachter_hierarchy_class_init (GutachterHierarchyClass* self_class G_GNUC_UNUSED)
 {}
 
+void
+gutachter_hierarchy_clear (GutachterHierarchy* self)
+{
+  g_return_if_fail (GUTACHTER_IS_HIERARCHY (self));
+
+  gtk_tree_store_clear (GTK_TREE_STORE (self));
+}
+
 gchar*
 gutachter_hierarchy_get_message (GutachterHierarchy* self,
                                  GtkTreeIter       * iter)
