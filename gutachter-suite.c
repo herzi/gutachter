@@ -85,6 +85,7 @@ file_changed_cb (GFileMonitor     * monitor    G_GNUC_UNUSED,
     {
     case G_FILE_MONITOR_EVENT_CHANGED:
     case G_FILE_MONITOR_EVENT_CREATED:
+    case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
       if (PRIV (user_data)->status == GUTACHTER_SUITE_INDETERMINED)
         {
           gtk_test_suite_load (user_data);
