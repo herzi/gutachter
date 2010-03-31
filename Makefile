@@ -28,6 +28,7 @@ gutachter-types.c: gutachter-suite.h Makefile
 gutachter-types.o: gutachter-types.c gutachter-types.h
 
 libgutachter.a: \
+	gutachter-bar.o \
 	gutachter-hierarchy.o \
 	gutachter-runner.o \
 	gutachter-suite.o \
