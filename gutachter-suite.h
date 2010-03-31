@@ -22,6 +22,7 @@
 #define GT_SUITE_H
 
 #include <gtk/gtk.h>
+#include <gutachter-hierarchy.h>
 
 G_BEGIN_DECLS
 
@@ -66,9 +67,9 @@ GtkTreeModel*         gtk_test_suite_get_tree       (GtkTestSuite* self);
 gboolean              io_func                       (GIOChannel  * channel,
                                                      GIOCondition  condition,
                                                      gpointer      data);
-gboolean              lookup_iter_for_path          (GtkTestSuite* self,
-                                                     GtkTreeIter * iter,
-                                                     gchar const * path);
+gboolean              lookup_iter_for_path          (GutachterHierarchy* self,
+                                                     GtkTreeIter       * iter,
+                                                     gchar const       * path);
 void                  create_iter_for_path          (GtkTestSuite* suite,
                                                      GtkTreeIter * iter,
                                                      gchar const * path);

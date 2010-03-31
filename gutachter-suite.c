@@ -167,16 +167,17 @@ gtk_test_suite_class_init (GtkTestSuiteClass* self_class)
 }
 
 gboolean
-lookup_iter_for_path (GtkTestSuite* suite,
-                      GtkTreeIter * iter,
-                      gchar const * path)
+lookup_iter_for_path (GutachterHierarchy* self,
+                      GtkTreeIter       * iter,
+                      gchar const       * path)
 {
-  GtkTreeRowReference* reference = g_hash_table_lookup (gtk_test_suite_get_iter_map (suite), path);
+  GtkTreeRowReference* reference = g_hash_table_lookup (gutachter_hierarchy_get_map (self), path);
   if (reference)
     {
-      GtkTreeStore* store = GTK_TREE_STORE (gtk_test_suite_get_tree (suite));
-      GtkTreePath* tree_path = gtk_tree_row_reference_get_path (reference);
-      g_assert (gtk_tree_model_get_iter (GTK_TREE_MODEL (store), iter, tree_path));
+      GtkTreeModel* model = GTK_TREE_MODEL (self);
+      GtkTreePath * tree_path = gtk_tree_row_reference_get_path (reference);
+
+      g_assert (gtk_tree_model_get_iter (model, iter, tree_path));
       gtk_tree_path_free (tree_path);
       return TRUE;
     }
@@ -194,7 +195,7 @@ create_iter_for_path (GtkTestSuite* self,
   GtkTreePath        * tree_path;
   gchar              * last_slash;
 
-  if (lookup_iter_for_path (self, iter, path))
+  if (lookup_iter_for_path (PRIV (self)->hierarchy, iter, path))
     {
       return;
     }
@@ -635,7 +636,7 @@ gtk_test_suite_read_available (GtkTestSuite* self)
             case G_TEST_LOG_START_BINARY:
               break;
             case G_TEST_LOG_START_CASE:
-              lookup_iter_for_path (self, &PRIV (self)->iter, msg->strings[0]);
+              lookup_iter_for_path (PRIV (self)->hierarchy, &PRIV (self)->iter, msg->strings[0]);
               break;
             case G_TEST_LOG_STOP_CASE:
               gtk_test_suite_set_executed (self,
