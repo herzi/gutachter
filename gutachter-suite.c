@@ -166,59 +166,6 @@ gtk_test_suite_class_init (GtkTestSuiteClass* self_class)
   g_type_class_add_private (self_class, sizeof (GtkTestSuitePrivate));
 }
 
-void
-create_iter_for_path (GtkTestSuite* self,
-                      GtkTreeIter * iter,
-                      gchar const * path)
-{
-  GtkTreeRowReference* reference;
-  GtkTreeStore       * store = GTK_TREE_STORE (gtk_test_suite_get_tree (self));
-  GtkTreePath        * tree_path;
-  gchar              * last_slash;
-
-  if (gutachter_hierarchy_lookup_iter (PRIV (self)->hierarchy, iter, path))
-    {
-      return;
-    }
-
-  last_slash = g_strrstr (path, "/");
-  if (!last_slash || last_slash == path || *(last_slash + 1) == '\0')
-    {
-      if (last_slash == path)
-        {
-          /* drop initial slashes */
-          last_slash++;
-        }
-      gtk_tree_store_append (store, iter, NULL);
-    }
-  else
-    {
-      GtkTreeIter  parent;
-      gchar* parent_path = g_strdup (path);
-      gchar* last_slash_in_parent = parent_path + (last_slash - path);
-
-      *last_slash_in_parent = '\0';
-      create_iter_for_path (self, &parent, parent_path);
-      *last_slash_in_parent = '/';
-
-      last_slash++;
-
-      gtk_tree_store_append (store, iter, &parent);
-      g_free (parent_path);
-    }
-
-  gtk_tree_store_set (store, iter,
-                      GUTACHTER_HIERARCHY_COLUMN_PASSED, FALSE,
-                      GUTACHTER_HIERARCHY_COLUMN_UNSURE, TRUE,
-                      GUTACHTER_HIERARCHY_COLUMN_NAME, last_slash,
-                      -1);
-
-  tree_path = gtk_tree_model_get_path (GTK_TREE_MODEL (store), iter);
-  reference = gtk_tree_row_reference_new (GTK_TREE_MODEL (store), tree_path);
-  g_hash_table_insert (gutachter_hierarchy_get_map (GUTACHTER_HIERARCHY (store)), g_strdup (path), reference);
-  gtk_tree_path_free (tree_path);
-}
-
 GTestLogBuffer*
 gtk_test_suite_get_buffer (GtkTestSuite* self)
 {
@@ -595,7 +542,7 @@ gtk_test_suite_read_available (GtkTestSuite* self)
             case G_TEST_LOG_START_BINARY:
               break;
             case G_TEST_LOG_LIST_CASE:
-              create_iter_for_path (self, &PRIV (self)->iter, msg->strings[0]);
+              gutachter_hierarchy_get_iter (PRIV (self)->hierarchy, &PRIV (self)->iter, msg->strings[0]);
               PRIV (self)->tests++;
               break;
             default:

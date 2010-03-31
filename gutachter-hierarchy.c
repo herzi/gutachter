@@ -77,6 +77,59 @@ gutachter_hierarchy_clear (GutachterHierarchy* self)
   gtk_tree_store_clear (GTK_TREE_STORE (self));
 }
 
+void
+gutachter_hierarchy_get_iter (GutachterHierarchy* self,
+                              GtkTreeIter       * iter,
+                              gchar const       * path)
+{
+  GtkTreeRowReference* reference;
+  GtkTreeStore       * store = GTK_TREE_STORE (self);
+  GtkTreePath        * tree_path;
+  gchar              * last_slash;
+
+  if (gutachter_hierarchy_lookup_iter (self, iter, path))
+    {
+      return;
+    }
+
+  last_slash = g_strrstr (path, "/");
+  if (!last_slash || last_slash == path || *(last_slash + 1) == '\0')
+    {
+      if (last_slash == path)
+        {
+          /* drop initial slashes */
+          last_slash++;
+        }
+      gtk_tree_store_append (store, iter, NULL);
+    }
+  else
+    {
+      GtkTreeIter  parent;
+      gchar* parent_path = g_strdup (path);
+      gchar* last_slash_in_parent = parent_path + (last_slash - path);
+
+      *last_slash_in_parent = '\0';
+      gutachter_hierarchy_get_iter (self, &parent, parent_path);
+      *last_slash_in_parent = '/';
+
+      last_slash++;
+
+      gtk_tree_store_append (store, iter, &parent);
+      g_free (parent_path);
+    }
+
+  gtk_tree_store_set (store, iter,
+                      GUTACHTER_HIERARCHY_COLUMN_PASSED, FALSE,
+                      GUTACHTER_HIERARCHY_COLUMN_UNSURE, TRUE,
+                      GUTACHTER_HIERARCHY_COLUMN_NAME, last_slash,
+                      -1);
+
+  tree_path = gtk_tree_model_get_path (GTK_TREE_MODEL (store), iter);
+  reference = gtk_tree_row_reference_new (GTK_TREE_MODEL (store), tree_path);
+  g_hash_table_insert (gutachter_hierarchy_get_map (GUTACHTER_HIERARCHY (store)), g_strdup (path), reference);
+  gtk_tree_path_free (tree_path);
+}
+
 GHashTable*
 gutachter_hierarchy_get_map (GutachterHierarchy* self)
 {
