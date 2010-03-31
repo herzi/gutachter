@@ -86,17 +86,15 @@ gtk_test_widget_init (GtkTestWidget* self)
 
   column = gtk_tree_view_column_new ();
   gtk_tree_view_column_set_expand (column, TRUE);
-  renderer = gtk_cell_renderer_text_new ();
-  gtk_tree_view_column_pack_start (column, renderer, TRUE);
-  gtk_tree_view_column_set_attributes (column, renderer,
-                                       "text", GUTACHTER_HIERARCHY_COLUMN_NAME,
-                                       NULL);
-  gtk_tree_view_insert_column (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), column, -1);
-  column = gtk_tree_view_column_new ();
   renderer = gtk_cell_renderer_toggle_new ();
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "active", GUTACHTER_HIERARCHY_COLUMN_PASSED,
+                                       NULL);
+  renderer = gtk_cell_renderer_text_new ();
+  gtk_tree_view_column_pack_start (column, renderer, TRUE);
+  gtk_tree_view_column_set_attributes (column, renderer,
+                                       "text", GUTACHTER_HIERARCHY_COLUMN_NAME,
                                        NULL);
   gtk_tree_view_insert_column (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), column, -1);
 
