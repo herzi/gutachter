@@ -20,12 +20,34 @@
 
 #include "gutachter-bar.h"
 
+#include "tango.h"
+
 G_DEFINE_TYPE (GutachterBar, gutachter_bar, GTK_TYPE_BIN);
 
 static void
 gutachter_bar_init (GutachterBar* self)
 {
   gtk_container_set_border_width (GTK_CONTAINER (self), 6);
+}
+
+static gboolean
+expose_event (GtkWidget     * widget,
+              GdkEventExpose* event)
+{
+  cairo_t* cr = gdk_cairo_create (event->window);
+  cairo_set_line_width (cr, 1.0);
+  cairo_rectangle (cr,
+                   widget->allocation.x + 0.5,
+                   widget->allocation.y + 0.5,
+                   widget->allocation.width - 1.0,
+                   widget->allocation.height - 1.0);
+  tango_cairo_set_source_color_alpha (cr, TANGO_COLOR_CHAMELEON, TANGO_SHADE_BRIGHT, 0.5);
+  cairo_fill_preserve (cr);
+  tango_cairo_set_source_color (cr, TANGO_COLOR_CHAMELEON, TANGO_SHADE_NORMAL);
+  cairo_stroke (cr);
+  cairo_destroy (cr);
+
+  return GTK_WIDGET_CLASS (gutachter_bar_parent_class)->expose_event (widget, event);
 }
 
 static void
@@ -77,6 +99,7 @@ gutachter_bar_class_init (GutachterBarClass* self_class)
 {
   GtkWidgetClass* widget_class = GTK_WIDGET_CLASS (self_class);
 
+  widget_class->expose_event  = expose_event;
   widget_class->size_allocate = size_allocate;
   widget_class->size_request  = size_request;
 }

@@ -27,8 +27,8 @@ static guint16 fixed[TANGO_N_COLORS][TANGO_N_SHADES][3] =
   {
     { /* Butter */
       {0xfcfc, 0xe9e9, 0x4f4f},
-      {},
-      {}
+      /* FIXME */
+      /* FIXME */
     },
     { /* Orange */
       /* FIXME */
@@ -37,6 +37,8 @@ static guint16 fixed[TANGO_N_COLORS][TANGO_N_SHADES][3] =
       /* FIXME */
     },
     { /* Chameleon */
+      {0x8a8a, 0xe2e2, 0x3434},
+      {0x7373, 0xd2d2, 0x1616}
       /* FIXME */
     },
     { /* Sky Blue */
@@ -67,7 +69,10 @@ tango_cairo_set_source_color (cairo_t   * cr,
                               TangoColor  color,
                               TangoShade  shade)
 {
-  tango_cairo_set_source_color_alpha (cr, color, shade, 1.0);
+  GdkColor  gdkcolor;
+
+  tango_gdk_set_color (&gdkcolor, color, shade);
+  gdk_cairo_set_source_color (cr, &gdkcolor);
 }
 
 void
@@ -106,7 +111,9 @@ tango_cairo_set_source_color_alpha (cairo_t   * cr,
 
   if (G_UNLIKELY (fixed[color][shade][0] == 0 && fixed[color][shade][1] == 0 && fixed[color][shade][2] == 0))
     {
-      g_warning ("color %d and shade %d are not supported yet", color, shade);
+      g_warning ("%s(%s): color %d and shade %d are not supported yet",
+                 G_STRFUNC, G_STRLOC,
+                 color, shade);
     }
 
   cairo_set_source_rgba (cr,
@@ -130,6 +137,13 @@ tango_gdk_set_color (GdkColor  * target,
 
   g_return_if_fail (/* 0 <= source &&*/ source < TANGO_N_COLORS);
   g_return_if_fail (/* 0 <= shade &&*/ shade < TANGO_N_SHADES);
+
+  if (G_UNLIKELY (fixed[source][shade][0] == 0 && fixed[source][shade][1] == 0 && fixed[source][shade][2] == 0))
+    {
+      g_warning ("%s(%s): color %d and shade %d are not supported yet",
+                 G_STRFUNC, G_STRLOC,
+                 source, shade);
+    }
 
   target->red   = fixed[source][shade][0];
   target->green = fixed[source][shade][1];
