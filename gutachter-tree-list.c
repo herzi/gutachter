@@ -98,11 +98,18 @@ get_n_columns (GtkTreeModel* model)
   return gtk_tree_model_get_n_columns (PRIV (model)->model);
 }
 
+GType
+get_column_type (GtkTreeModel* model, gint index)
+{
+  return gtk_tree_model_get_column_type (PRIV (model)->model, index);
+}
+
 static void
 implement_gtk_tree_model (GtkTreeModelIface* iface)
 {
-  iface->get_flags     = get_flags;
-  iface->get_n_columns = get_n_columns;
+  iface->get_flags       = get_flags;
+  iface->get_n_columns   = get_n_columns;
+  iface->get_column_type = get_column_type;
 }
 
 GtkTreeModel*
