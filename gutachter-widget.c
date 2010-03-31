@@ -261,7 +261,7 @@ model_changed (GtkTestWidget* self)
       g_free (text);
       if (gtk_test_suite_get_executed (PRIV (self)->suite) >= gtk_test_suite_get_tests (PRIV (self)->suite))
         {
-          gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (PRIV (self)->progress), 0.0);
+          gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (PRIV (self)->progress), 1.0);
         }
       else
         {
