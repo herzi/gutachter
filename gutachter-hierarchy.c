@@ -20,22 +20,45 @@
 
 #include "gutachter-hierarchy.h"
 
+enum
+{
+  COL_MESSAGE = GUTACHTER_HIERARCHY_N_COLUMNS,
+  N_COLUMNS
+};
+
 G_DEFINE_TYPE (GutachterHierarchy, gutachter_hierarchy, GTK_TYPE_TREE_STORE);
 
 static void
 gutachter_hierarchy_init (GutachterHierarchy* self)
 {
-  GType types[GUTACHTER_HIERARCHY_N_COLUMNS] = {
+  GType types[N_COLUMNS] = {
           G_TYPE_STRING,
           G_TYPE_BOOLEAN,
-          G_TYPE_BOOLEAN
+          G_TYPE_BOOLEAN,
+          G_TYPE_STRING
   };
-  gtk_tree_store_set_column_types (GTK_TREE_STORE (self), GUTACHTER_HIERARCHY_N_COLUMNS, types);
+  gtk_tree_store_set_column_types (GTK_TREE_STORE (self), N_COLUMNS, types);
 }
 
 static void
 gutachter_hierarchy_class_init (GutachterHierarchyClass* self_class G_GNUC_UNUSED)
 {}
+
+gchar*
+gutachter_hierarchy_get_message (GutachterHierarchy* self,
+                                 GtkTreeIter       * iter)
+{
+  gchar* result = NULL;
+
+  g_return_val_if_fail (GUTACHTER_IS_HIERARCHY (self), NULL);
+  g_return_val_if_fail (gtk_tree_store_iter_is_valid (GTK_TREE_STORE (self), iter), NULL);
+
+  gtk_tree_model_get (GTK_TREE_MODEL (self), iter,
+                      COL_MESSAGE, &result,
+                      -1);
+
+  return result;
+}
 
 GutachterHierarchy*
 gutachter_hierarchy_new (void)
@@ -62,6 +85,19 @@ gutachter_hierarchy_set_unsure (GutachterHierarchy* self)
   g_return_if_fail (GUTACHTER_IS_HIERARCHY (self));
 
   gtk_tree_model_foreach (GTK_TREE_MODEL (self), set_unsure, NULL);
+}
+
+void
+gutachter_hierarchy_set_message (GutachterHierarchy* self,
+                                 GtkTreeIter       * iter,
+                                 gchar const       * message)
+{
+  g_return_if_fail (GUTACHTER_IS_HIERARCHY (self));
+  g_return_if_fail (gtk_tree_store_iter_is_valid (GTK_TREE_STORE (self), iter));
+
+  gtk_tree_store_set (GTK_TREE_STORE (self), iter,
+                      COL_MESSAGE, message,
+                      -1);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

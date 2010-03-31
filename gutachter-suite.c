@@ -659,6 +659,7 @@ gtk_test_suite_read_available (GtkTestSuite* self)
                                   GUTACHTER_HIERARCHY_COLUMN_UNSURE, FALSE,
                                   GUTACHTER_HIERARCHY_COLUMN_PASSED, FALSE,
                                   -1);
+              gutachter_hierarchy_set_message (PRIV (self)->hierarchy, &PRIV (self)->iter, msg->strings[0]);
               update_parent (store, &PRIV (self)->iter);
               break;
             default:
@@ -745,6 +746,7 @@ gtk_test_suite_set_status (GtkTestSuite      * self,
     case GUTACHTER_SUITE_RUNNING:
       g_return_if_fail (PRIV (self)->status >= GUTACHTER_SUITE_LOADED);
       PRIV (self)->passed = TRUE;
+      PRIV (self)->failures = 0;
       break;
     case GUTACHTER_SUITE_FINISHED:
       g_return_if_fail (PRIV (self)->status == GUTACHTER_SUITE_RUNNING);
