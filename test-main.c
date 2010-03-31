@@ -74,6 +74,18 @@ test_tree_list_model_type (void)
   g_object_unref (store);
 }
 
+static void
+test_tree_list_model_get_flags (void)
+{
+  GtkTreeStore* store = gtk_tree_store_new (1, G_TYPE_STRING);
+  GtkTreeModel* subject = gutachter_tree_list_new (GTK_TREE_MODEL (store));
+
+  g_assert_cmpint (GTK_TREE_MODEL_LIST_ONLY, ==, gtk_tree_model_get_flags (subject));
+
+  g_object_unref (subject);
+  g_object_unref (store);
+}
+
 int
 main (int   argc,
       char**argv)
@@ -83,6 +95,27 @@ main (int   argc,
   g_test_add_func ("/com/github/herzi/gutachter/GutachterBar/init", test_bar_init);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/init", test_tree_list_init);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/type", test_tree_list_model_type);
+  g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-flags", test_tree_list_model_get_flags);
+  /* API/get-flags */
+  /* API/get-n-columns */
+  /* API/get-column-type */
+  /* API/get-iter */
+  /* API/get-path */
+  /* API/get-value */
+  /* API/iter-next */
+  /* API/iter-children */
+  /* API/iter-has-child */
+  /* API/iter-n-children */
+  /* API/iter-nth-child */
+  /* API/iter-parent */
+  /* API/ref-node */
+  /* API/unref-node */
+  /* signals/row-changed */
+  /* signals/row-inserted */
+  /* signals/row-has-child-toggled */
+  /* signals/row-deleted */
+  /* signals/rows-reordered */
+
   /* FIXME: test proper handling of this: "dummy/a", "/dummy/b" */
   /* FIXME: test proper handling of this: "/com/github/herzi/gutachter/a", "com.github.herzi.gutachter.a" */
   /* FIXME: test proper handling of this: "/dummy", "/dummy" */

@@ -20,8 +20,10 @@
 
 #include "gutachter-tree-list.h"
 
+static void implement_gtk_tree_model (GtkTreeModelIface* iface);
+
 G_DEFINE_TYPE_WITH_CODE (GutachterTreeList, gutachter_tree_list, G_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL, NULL));
+                         G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL, implement_gtk_tree_model));
 
 static void
 gutachter_tree_list_init (GutachterTreeList* self G_GNUC_UNUSED)
@@ -30,6 +32,18 @@ gutachter_tree_list_init (GutachterTreeList* self G_GNUC_UNUSED)
 static void
 gutachter_tree_list_class_init (GutachterTreeListClass* self_class G_GNUC_UNUSED)
 {}
+
+GtkTreeModelFlags
+get_flags (GtkTreeModel* model G_GNUC_UNUSED)
+{
+  return GTK_TREE_MODEL_LIST_ONLY;
+}
+
+static void
+implement_gtk_tree_model (GtkTreeModelIface* iface)
+{
+  iface->get_flags = get_flags;
+}
 
 GtkTreeModel*
 gutachter_tree_list_new (GtkTreeModel* real_tree G_GNUC_UNUSED)
