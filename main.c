@@ -20,18 +20,39 @@
 
 #include <gutachter.h>
 
+#define GETTEXT_DOMAIN NULL /* FIXME: enable i18n */
+#include <glib/gi18n-lib.h>
+
 int
 main (int   argc,
       char**argv)
 {
   GtkTestXvfbWrapper* xvfb;
-  GtkWidget* window;
+  gchar             ** files = NULL;
+  GtkWidget         * window;
+  GError            * error = NULL;
+  GOptionEntry        entries[] = {
+            {G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &files, NULL, NULL},
+            {NULL, 0, 0, 0, NULL, NULL, NULL}
+  };
 
-  gtk_init (&argc, &argv);
+  if (!gtk_init_with_args (&argc, &argv, _("[TESTCASE]"),
+                           entries, GETTEXT_DOMAIN, &error))
+    {
+      g_warning ("error initializing application");
+      return 1;
+    }
 
   xvfb = gtk_test_xvfb_wrapper_get_instance ();
 
   window = gtk_test_window_new ();
+  if (files && *files)
+    {
+      GFile* file = g_file_new_for_commandline_arg (*files);
+      gtk_test_runner_set_file (GTK_TEST_RUNNER (window), file);
+      g_object_unref (file);
+    }
+  g_strfreev (files);
 
   g_signal_connect (window, "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);
