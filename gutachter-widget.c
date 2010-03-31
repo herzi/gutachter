@@ -75,21 +75,30 @@ update_sensitivity (GtkTestWidget* self)
 static void
 gtk_test_widget_init (GtkTestWidget* self)
 {
-  GtkWidget* scrolled;
+  GtkTreeViewColumn* column;
+  GtkCellRenderer  * renderer;
+  GtkWidget        * scrolled;
 
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WIDGET, GtkTestWidgetPrivate);
   PRIV (self)->hierarchy_view = gtk_tree_view_new ();
   PRIV (self)->notebook = gtk_notebook_new ();
   PRIV (self)->progress = gtk_progress_bar_new ();
 
-  gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), -1,
-                                              NULL, gtk_cell_renderer_text_new (),
-                                              "text", GTK_TEST_HIERARCHY_COLUMN_NAME,
-                                              NULL);
-  gtk_tree_view_insert_column_with_attributes (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), -1,
-                                              NULL, gtk_cell_renderer_toggle_new (),
-                                              "active", GTK_TEST_HIERARCHY_COLUMN_PASSED,
-                                              NULL);
+  column = gtk_tree_view_column_new ();
+  gtk_tree_view_column_set_expand (column, TRUE);
+  renderer = gtk_cell_renderer_text_new ();
+  gtk_tree_view_column_pack_start (column, renderer, TRUE);
+  gtk_tree_view_column_set_attributes (column, renderer,
+                                       "text", GTK_TEST_HIERARCHY_COLUMN_NAME,
+                                       NULL);
+  gtk_tree_view_insert_column (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), column, -1);
+  column = gtk_tree_view_column_new ();
+  renderer = gtk_cell_renderer_toggle_new ();
+  gtk_tree_view_column_pack_start (column, renderer, FALSE);
+  gtk_tree_view_column_set_attributes (column, renderer,
+                                       "active", GTK_TEST_HIERARCHY_COLUMN_PASSED,
+                                       NULL);
+  gtk_tree_view_insert_column (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), column, -1);
 
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), FALSE);
 
@@ -252,8 +261,15 @@ model_changed (GtkTestWidget* self)
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (PRIV (self)->progress),
                                  text);
       g_free (text);
-      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (PRIV (self)->progress),
-                                     1.0 * gtk_test_suite_get_executed (PRIV (self)->suite) / gtk_test_suite_get_tests (PRIV (self)->suite));
+      if (gtk_test_suite_get_executed (PRIV (self)->suite) >= gtk_test_suite_get_tests (PRIV (self)->suite))
+        {
+          gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (PRIV (self)->progress), 0.0);
+        }
+      else
+        {
+          gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (PRIV (self)->progress),
+                                         1.0 * gtk_test_suite_get_executed (PRIV (self)->suite) / gtk_test_suite_get_tests (PRIV (self)->suite));
+        }
       break;
     case GUTACHTER_SUITE_INDETERMINED:
       update_sensitivity (self);
@@ -307,12 +323,19 @@ status_changed_cb (GObject   * suite     G_GNUC_UNUSED,
 {
   GtkTestWidget* self = user_data;
 
-  if (gtk_test_suite_get_status (PRIV (self)->suite) == GUTACHTER_SUITE_LOADED)
+  switch (gtk_test_suite_get_status (PRIV (self)->suite))
     {
+    case GUTACHTER_SUITE_LOADED:
       gtk_tree_view_expand_all (GTK_TREE_VIEW (PRIV (self)->hierarchy_view));
 
       gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (PRIV (self)->progress), 0.0);
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (PRIV (self)->progress), _("not tested yet"));
+      break;
+    case GUTACHTER_SUITE_FINISHED:
+      /* FIXME: check the result and update the bar's color */
+      break;
+    default:
+      break;
     }
 }
 
