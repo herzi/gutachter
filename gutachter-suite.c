@@ -31,7 +31,6 @@ struct _GtkTestSuitePrivate
 {
   GTestLogBuffer      * buffer;
   GIOChannel          * channel;
-  guint64               errors;
   guint64               executed;
   guint64               failures;
   GFile               * file;
@@ -251,14 +250,6 @@ gtk_test_suite_get_channel (GtkTestSuite* self)
 }
 
 guint64
-gtk_test_suite_get_errors (GtkTestSuite* self)
-{
-  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), G_GUINT64_CONSTANT (0));
-
-  return PRIV (self)->errors;
-}
-
-guint64
 gtk_test_suite_get_executed (GtkTestSuite* self)
 {
   g_return_val_if_fail (GTK_TEST_IS_SUITE (self), G_GUINT64_CONSTANT (0));
@@ -354,6 +345,11 @@ run_or_warn (GPid                   * pid,
   gboolean found_display = FALSE;
 
   base = g_file_get_basename (PRIV (self)->file);
+
+  while (!gtk_test_xvfb_wrapper_get_pid (xvfb))
+    {
+      g_main_context_iteration (NULL, FALSE);
+    }
 
   /* FIXME: this is X11 specific */
   for (iter = env; iter && *iter; iter++)
@@ -607,6 +603,11 @@ gtk_test_suite_read_available (GtkTestSuite* self)
 
           switch (msg->log_type)
             {
+            case G_TEST_LOG_ERROR:
+              g_warning ("%s(%s): error while loading test suite: %s",
+                         G_STRFUNC, G_STRLOC,
+                         msg->strings[0]);
+              break;
             case G_TEST_LOG_START_BINARY:
               break;
             case G_TEST_LOG_LIST_CASE:
@@ -616,7 +617,9 @@ gtk_test_suite_read_available (GtkTestSuite* self)
                                         1 + gtk_test_suite_get_tests (self));
               break;
             default:
-              g_warning ("unexpected message type: %d", msg->log_type);
+              g_warning ("%s(%s): unexpected message type: %d",
+                         G_STRFUNC, G_STRLOC,
+                         msg->log_type);
             }
 
           g_test_log_msg_free (msg);
@@ -651,7 +654,7 @@ gtk_test_suite_read_available (GtkTestSuite* self)
               gtk_test_suite_set_executed (self,
                                            1 + gtk_test_suite_get_executed (self));
               PRIV (self)->passed = FALSE;
-              PRIV (self)->errors++;
+              PRIV (self)->failures++;
               gtk_tree_store_set (store, &PRIV (self)->iter,
                                   GUTACHTER_HIERARCHY_COLUMN_UNSURE, FALSE,
                                   GUTACHTER_HIERARCHY_COLUMN_PASSED, FALSE,

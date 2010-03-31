@@ -29,7 +29,6 @@ struct _GtkTestWidgetPrivate
 {
   GtkWidget   * hierarchy_view;
   GtkWidget   * indicator_bar;
-  GtkWidget   * label_errors;
   GtkWidget   * label_failures;
   GtkWidget   * notebook;
   GtkWidget   * progress;
@@ -102,26 +101,17 @@ gtk_test_widget_init (GtkTestWidget* self)
 {
   GtkTreeViewColumn* column;
   GtkCellRenderer  * renderer;
-  GtkWidget        * hbox;
   GtkWidget        * scrolled;
 
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WIDGET, GtkTestWidgetPrivate);
   PRIV (self)->hierarchy_view = gtk_tree_view_new ();
   PRIV (self)->indicator_bar = gutachter_bar_new ();
-  PRIV (self)->label_errors = gtk_label_new (NULL);
   PRIV (self)->label_failures = gtk_label_new (NULL);
   PRIV (self)->notebook = gtk_notebook_new ();
   PRIV (self)->progress = gtk_progress_bar_new ();
 
-  hbox = gtk_hbox_new (TRUE, 12);
-
   column = gtk_tree_view_column_new ();
   gtk_tree_view_column_set_expand (column, TRUE);
-  renderer = gtk_cell_renderer_toggle_new ();
-  gtk_tree_view_column_pack_start (column, renderer, FALSE);
-  gtk_tree_view_column_set_attributes (column, renderer,
-                                       "active", GUTACHTER_HIERARCHY_COLUMN_PASSED,
-                                       NULL);
   renderer = gtk_cell_renderer_pixbuf_new ();
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
   gtk_tree_view_column_set_cell_data_func (column, renderer,
@@ -140,9 +130,7 @@ gtk_test_widget_init (GtkTestWidget* self)
 
   gtk_widget_show (PRIV (self)->progress);
   gtk_box_pack_start (GTK_BOX (self), PRIV (self)->progress, FALSE, FALSE, 0);
-  gtk_container_add (GTK_CONTAINER (hbox), PRIV (self)->label_errors);
-  gtk_container_add (GTK_CONTAINER (hbox), PRIV (self)->label_failures);
-  gtk_container_add (GTK_CONTAINER (PRIV (self)->indicator_bar), hbox);
+  gtk_container_add (GTK_CONTAINER (PRIV (self)->indicator_bar), PRIV (self)->label_failures);
   gtk_widget_show_all (PRIV (self)->indicator_bar);
   gtk_box_pack_start (GTK_BOX (self), PRIV (self)->indicator_bar, FALSE, FALSE, 0);
   gtk_widget_show (PRIV (self)->hierarchy_view);
@@ -309,14 +297,6 @@ model_changed (GtkTestWidget* self)
           gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (PRIV (self)->progress),
                                          1.0 * gtk_test_suite_get_executed (PRIV (self)->suite) / gtk_test_suite_get_tests (PRIV (self)->suite));
         }
-
-      text = g_strdup_printf (g_dngettext (GETTEXT_DOMAIN,
-                                           "%" G_GUINT64_FORMAT " error",
-                                           "%" G_GUINT64_FORMAT " errors",
-                                           gtk_test_suite_get_errors (PRIV (self)->suite)),
-                              gtk_test_suite_get_errors (PRIV (self)->suite));
-      gtk_label_set_text (GTK_LABEL (PRIV (self)->label_errors), text);
-      g_free (text);
 
       text = g_strdup_printf (g_dngettext (GETTEXT_DOMAIN,
                                            "%" G_GUINT64_FORMAT " failure",

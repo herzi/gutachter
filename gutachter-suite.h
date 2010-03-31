@@ -51,11 +51,10 @@ typedef enum
 #define GTK_TEST_IS_SUITE_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), GTK_TEST_TYPE_SUITE))
 #define GTK_TEST_SUITE_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), GTK_TEST_TYPE_SUITE, GtkTestSuiteClass))
 
-GType               gtk_test_suite_get_type     (void);
+GType                 gtk_test_suite_get_type       (void);
 GtkTestSuite*         gtk_test_suite_new            (GFile       * file);
 GTestLogBuffer*       gtk_test_suite_get_buffer     (GtkTestSuite* self);
 GIOChannel*           gtk_test_suite_get_channel    (GtkTestSuite* self);
-guint64               gtk_test_suite_get_errors     (GtkTestSuite* self);
 guint64               gtk_test_suite_get_executed   (GtkTestSuite* self);
 guint64               gtk_test_suite_get_failures   (GtkTestSuite* self);
 GFile*                gtk_test_suite_get_file       (GtkTestSuite* self);
@@ -64,15 +63,15 @@ gboolean              gtk_test_suite_get_passed     (GtkTestSuite* self);
 GutachterSuiteStatus  gtk_test_suite_get_status     (GtkTestSuite* self);
 guint64               gtk_test_suite_get_tests      (GtkTestSuite* self);
 GtkTreeModel*         gtk_test_suite_get_tree       (GtkTestSuite* self);
-gboolean            io_func                       (GIOChannel  * channel,
-                                                   GIOCondition  condition,
-                                                   gpointer      data);
-gboolean            lookup_iter_for_path          (GtkTestSuite* self,
-                                                   GtkTreeIter * iter,
-                                                   gchar       * path);
-void                create_iter_for_path          (GtkTestSuite* suite,
-                                                   GtkTreeIter * iter,
-                                                   gchar       * path);
+gboolean              io_func                       (GIOChannel  * channel,
+                                                     GIOCondition  condition,
+                                                     gpointer      data);
+gboolean              lookup_iter_for_path          (GtkTestSuite* self,
+                                                     GtkTreeIter * iter,
+                                                     gchar       * path);
+void                  create_iter_for_path          (GtkTestSuite* suite,
+                                                     GtkTreeIter * iter,
+                                                     gchar       * path);
 void                run_test_child_watch          (GPid      pid,
                                                    gint      status,
                                                    gpointer  user_data);
