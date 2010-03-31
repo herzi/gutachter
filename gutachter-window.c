@@ -28,6 +28,7 @@
 
 struct _GtkTestWindowPrivate
 {
+  guint        auto_update : 1;
   GtkWidget  * box;
   GtkToolItem* execute_button;
   GtkToolItem* open_button;
@@ -98,12 +99,12 @@ open_item_clicked (GtkButton* button G_GNUC_UNUSED,
 }
 
 static void
-button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
-                   gpointer   user_data)
+gtk_test_suite_execute (GtkTestSuite* self)
 {
-  GtkTestWindow* window = user_data;
   GPid           pid = 0;
   int            pipes[2];
+
+  g_return_if_fail (GTK_TEST_IS_SUITE (self));
 
   if (pipe (pipes))
     {
@@ -111,36 +112,67 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
       return;
     }
 
-  gtk_test_suite_set_executed (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)), 0);
-  if (!run_or_warn (&pid, pipes[1], MODE_TEST, gtk_test_runner_get_suite (GTK_TEST_RUNNER (window))))
+  gtk_test_suite_set_executed (self, 0);
+  if (!run_or_warn (&pid, pipes[1], MODE_TEST, self))
     {
       close (pipes[0]);
     }
   else
     {
-      GtkTestSuite* suite = gtk_test_runner_get_suite (GTK_TEST_RUNNER (window));
       GIOChannel* channel = g_io_channel_unix_new (pipes[0]);
       g_io_channel_set_encoding (channel, NULL, NULL);
       g_io_channel_set_buffered (channel, FALSE);
       g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
-      g_io_add_watch (channel, G_IO_IN, io_func, gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)));
-      g_child_watch_add_full (G_PRIORITY_DEFAULT, pid, run_test_child_watch, gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)), NULL);
-      gtk_widget_set_sensitive (gtk_test_window_get_exec (GTK_TEST_WINDOW (window)), FALSE);
+      g_io_add_watch (channel, G_IO_IN, io_func, self);
+      g_child_watch_add_full (G_PRIORITY_DEFAULT, pid, run_test_child_watch, self, NULL);
 
-      gtk_test_suite_set_status (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)),
-                                 GUTACHTER_SUITE_RUNNING);
-      gtk_test_suite_set_channel (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)), channel);
+      gtk_test_suite_set_status (self, GUTACHTER_SUITE_RUNNING);
+      gtk_test_suite_set_channel (self, channel);
       g_io_channel_unref (channel);
 
-      gutachter_hierarchy_set_unsure (GUTACHTER_HIERARCHY (gtk_test_suite_get_tree (suite)));
+      gutachter_hierarchy_set_unsure (GUTACHTER_HIERARCHY (gtk_test_suite_get_tree (self)));
     }
 
   close (pipes[1]);
 }
 
 static void
+button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
+                   gpointer   user_data)
+{
+  gtk_test_suite_execute (gtk_test_runner_get_suite (GTK_TEST_RUNNER (PRIV (user_data)->widget)));
+}
+
+static void
+auto_update_toggled (GtkToggleToolButton* button,
+                     gpointer             user_data)
+{
+  GtkTestWindow* self = user_data;
+  gboolean       new_value = gtk_toggle_tool_button_get_active (button);
+
+  if (PRIV (self)->auto_update == new_value)
+    {
+      return;
+    }
+
+  PRIV (self)->auto_update = new_value;
+
+  if (PRIV (self)->auto_update)
+    {
+      GtkTestSuite* suite = gtk_test_runner_get_suite (GTK_TEST_RUNNER (PRIV (self)->widget));
+
+      if (suite && GUTACHTER_SUITE_LOADED == gtk_test_suite_get_status (suite))
+        {
+          gtk_test_suite_execute (suite);
+        }
+    }
+}
+
+static void
 gtk_test_window_init (GtkTestWindow* self)
 {
+  GtkToolItem* item;
+
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WINDOW, GtkTestWindowPrivate);
   PRIV (self)->toolbar = gtk_toolbar_new ();
   PRIV (self)->widget = gtk_test_widget_new ();
@@ -159,6 +191,12 @@ gtk_test_window_init (GtkTestWindow* self)
   gtk_toolbar_insert (GTK_TOOLBAR (PRIV (self)->toolbar), PRIV (self)->open_button, -1);
   gtk_toolbar_insert (GTK_TOOLBAR (PRIV (self)->toolbar), gtk_separator_tool_item_new (), -1);
   gtk_toolbar_insert (GTK_TOOLBAR (PRIV (self)->toolbar), PRIV (self)->execute_button, -1);
+  item = gtk_toggle_tool_button_new ();
+  gtk_tool_button_set_label (GTK_TOOL_BUTTON (item), _("auto-update"));
+  gtk_tool_item_set_is_important (item, TRUE);
+  g_signal_connect (item, "toggled",
+                    G_CALLBACK (auto_update_toggled), self);
+  gtk_toolbar_insert (GTK_TOOLBAR (PRIV (self)->toolbar), item, -1);
 
   gtk_widget_show_all (PRIV (self)->toolbar);
   gtk_box_pack_start (GTK_BOX (PRIV (self)->box), PRIV (self)->toolbar, FALSE, FALSE, 0);
@@ -233,6 +271,10 @@ status_changed_cb (GObject   * suite_object,
   switch (gtk_test_suite_get_status (GTK_TEST_SUITE (suite_object)))
     {
     case GUTACHTER_SUITE_LOADED:
+      if (PRIV (user_data)->auto_update)
+        {
+          gtk_test_suite_execute (GTK_TEST_SUITE (suite_object));
+        }
     case GUTACHTER_SUITE_FINISHED:
       gtk_widget_set_sensitive (GTK_WIDGET (PRIV (user_data)->execute_button), TRUE);
       break;
