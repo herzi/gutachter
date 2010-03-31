@@ -44,8 +44,9 @@ enum
   GUTACHTER_HIERARCHY_N_COLUMNS
 };
 
-GType               gutachter_hierarchy_get_type (void);
-GutachterHierarchy* gutachter_hierarchy_new      (void);
+GType               gutachter_hierarchy_get_type   (void);
+GutachterHierarchy* gutachter_hierarchy_new        (void);
+void                gutachter_hierarchy_set_unsure (GutachterHierarchy* self);
 
 struct _GutachterHierarchy
 {

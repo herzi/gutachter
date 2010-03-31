@@ -97,18 +97,6 @@ open_item_clicked (GtkButton* button G_GNUC_UNUSED,
   gtk_widget_destroy (dialog);
 }
 
-static gboolean
-set_unsure (GtkTreeModel* model,
-            GtkTreePath * path      G_GNUC_UNUSED,
-            GtkTreeIter * iter,
-            gpointer      user_data G_GNUC_UNUSED)
-{
-  gtk_tree_store_set (GTK_TREE_STORE (model), iter,
-                      GUTACHTER_HIERARCHY_COLUMN_UNSURE, TRUE,
-                      -1);
-  return FALSE;
-}
-
 static void
 button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
                    gpointer   user_data)
@@ -144,7 +132,7 @@ button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
       gtk_test_suite_set_channel (gtk_test_runner_get_suite (GTK_TEST_RUNNER (window)), channel);
       g_io_channel_unref (channel);
 
-      gtk_tree_model_foreach (gtk_test_suite_get_tree (suite), set_unsure, NULL);
+      gutachter_hierarchy_set_unsure (GUTACHTER_HIERARCHY (gtk_test_suite_get_tree (suite)));
     }
 
   close (pipes[1]);

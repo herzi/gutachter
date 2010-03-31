@@ -44,4 +44,24 @@ gutachter_hierarchy_new (void)
                        NULL);
 }
 
+static gboolean
+set_unsure (GtkTreeModel* model,
+            GtkTreePath * path      G_GNUC_UNUSED,
+            GtkTreeIter * iter,
+            gpointer      user_data G_GNUC_UNUSED)
+{
+  gtk_tree_store_set (GTK_TREE_STORE (model), iter,
+                      GUTACHTER_HIERARCHY_COLUMN_UNSURE, TRUE,
+                      -1);
+  return FALSE;
+}
+
+void
+gutachter_hierarchy_set_unsure (GutachterHierarchy* self)
+{
+  g_return_if_fail (GUTACHTER_IS_HIERARCHY (self));
+
+  gtk_tree_model_foreach (GTK_TREE_MODEL (self), set_unsure, NULL);
+}
+
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
