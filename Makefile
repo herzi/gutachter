@@ -4,6 +4,9 @@ LINK=@echo "  CCLD  " $@; gcc -o $@ $^ -g -O2 -Wall -Wextra $(shell pkg-config -
 
 all: libgutachter.a gutachter test-dummy test-gutachter
 
+check: test-gutachter
+	./test-gutachter
+
 clean:
 	rm -rf libgutachter.a gutachter test-dummy *.o gutachter-types.c gutachter-types.h
 
