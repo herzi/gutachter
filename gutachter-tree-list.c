@@ -20,7 +20,8 @@
 
 #include "gutachter-tree-list.h"
 
-G_DEFINE_TYPE (GutachterTreeList, gutachter_tree_list, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (GutachterTreeList, gutachter_tree_list, G_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL, NULL));
 
 static void
 gutachter_tree_list_init (GutachterTreeList* self G_GNUC_UNUSED)

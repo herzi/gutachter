@@ -62,6 +62,18 @@ test_tree_list_init (void)
   g_object_unref (store);
 }
 
+static void
+test_tree_list_model_type (void)
+{
+  GtkTreeStore* store = gtk_tree_store_new (1, G_TYPE_STRING);
+  GtkTreeModel* subject = gutachter_tree_list_new (GTK_TREE_MODEL (store));
+
+  g_assert (GTK_IS_TREE_MODEL (subject));
+
+  g_object_unref (subject);
+  g_object_unref (store);
+}
+
 int
 main (int   argc,
       char**argv)
@@ -70,6 +82,7 @@ main (int   argc,
 
   g_test_add_func ("/com/github/herzi/gutachter/GutachterBar/init", test_bar_init);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/init", test_tree_list_init);
+  g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/type", test_tree_list_model_type);
   /* FIXME: test proper handling of this: "dummy/a", "/dummy/b" */
   /* FIXME: test proper handling of this: "/com/github/herzi/gutachter/a", "com.github.herzi.gutachter.a" */
   /* FIXME: test proper handling of this: "/dummy", "/dummy" */
