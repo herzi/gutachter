@@ -101,6 +101,25 @@ gutachter_hierarchy_get_message (GutachterHierarchy* self,
   return result;
 }
 
+gboolean
+gutachter_hierarchy_lookup_iter (GutachterHierarchy* self,
+                                 GtkTreeIter       * iter,
+                                 gchar const       * path)
+{
+  GtkTreeRowReference* reference = g_hash_table_lookup (gutachter_hierarchy_get_map (self), path);
+  if (reference)
+    {
+      GtkTreeModel* model = GTK_TREE_MODEL (self);
+      GtkTreePath * tree_path = gtk_tree_row_reference_get_path (reference);
+
+      g_assert (gtk_tree_model_get_iter (model, iter, tree_path));
+      gtk_tree_path_free (tree_path);
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
 GutachterHierarchy*
 gutachter_hierarchy_new (void)
 {

@@ -48,6 +48,9 @@ GType               gutachter_hierarchy_get_type    (void);
 GutachterHierarchy* gutachter_hierarchy_new         (void);
 void                gutachter_hierarchy_clear       (GutachterHierarchy* self);
 GHashTable*         gutachter_hierarchy_get_map     (GutachterHierarchy* self);
+gboolean            gutachter_hierarchy_lookup_iter (GutachterHierarchy* self,
+                                                     GtkTreeIter       * iter,
+                                                     gchar const       * path);
 void                gutachter_hierarchy_set_unsure  (GutachterHierarchy* self);
 void                gutachter_hierarchy_set_message (GutachterHierarchy* self,
                                                      GtkTreeIter       * iter,
