@@ -206,14 +206,6 @@ gtk_test_suite_get_file (GtkTestSuite* self)
   return PRIV (self)->file;
 }
 
-GHashTable*
-gtk_test_suite_get_iter_map (GtkTestSuite* self)
-{
-  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), NULL);
-
-  return gutachter_hierarchy_get_map (PRIV (self)->hierarchy);
-}
-
 gboolean
 gtk_test_suite_get_passed (GtkTestSuite* self)
 {

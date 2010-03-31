@@ -59,7 +59,6 @@ GIOChannel*           gtk_test_suite_get_channel    (GtkTestSuite* self);
 guint64               gtk_test_suite_get_executed   (GtkTestSuite* self);
 guint64               gtk_test_suite_get_failures   (GtkTestSuite* self);
 GFile*                gtk_test_suite_get_file       (GtkTestSuite* self);
-GHashTable*           gtk_test_suite_get_iter_map   (GtkTestSuite* self);
 gboolean              gtk_test_suite_get_passed     (GtkTestSuite* self);
 GutachterSuiteStatus  gtk_test_suite_get_status     (GtkTestSuite* self);
 guint64               gtk_test_suite_get_tests      (GtkTestSuite* self);
