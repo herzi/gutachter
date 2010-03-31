@@ -35,6 +35,7 @@ libgutachter.a: \
 	gutachter-hierarchy.o \
 	gutachter-runner.o \
 	gutachter-suite.o \
+	gutachter-tree-list.o \
 	gutachter-types.o \
 	gutachter-widget.o \
 	gutachter-window.o \
