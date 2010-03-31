@@ -86,6 +86,19 @@ test_tree_list_model_get_flags (void)
   g_object_unref (store);
 }
 
+static void
+test_tree_list_model_get_n_columns (void)
+{
+  GtkTreeStore* store = gtk_tree_store_new (1, G_TYPE_STRING);
+  GtkTreeModel* subject = gutachter_tree_list_new (GTK_TREE_MODEL (store));
+
+  g_assert_cmpint (gtk_tree_model_get_n_columns (GTK_TREE_MODEL (store)), ==,
+                   gtk_tree_model_get_n_columns (subject));
+
+  g_object_unref (subject);
+  g_object_unref (store);
+}
+
 int
 main (int   argc,
       char**argv)
@@ -96,8 +109,7 @@ main (int   argc,
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/init", test_tree_list_init);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/type", test_tree_list_model_type);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-flags", test_tree_list_model_get_flags);
-  /* API/get-flags */
-  /* API/get-n-columns */
+  g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-n-columns", test_tree_list_model_get_n_columns);
   /* API/get-column-type */
   /* API/get-iter */
   /* API/get-path */

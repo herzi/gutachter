@@ -92,10 +92,17 @@ get_flags (GtkTreeModel* model G_GNUC_UNUSED)
   return GTK_TREE_MODEL_LIST_ONLY;
 }
 
+gint
+get_n_columns (GtkTreeModel* model)
+{
+  return gtk_tree_model_get_n_columns (PRIV (model)->model);
+}
+
 static void
 implement_gtk_tree_model (GtkTreeModelIface* iface)
 {
-  iface->get_flags = get_flags;
+  iface->get_flags     = get_flags;
+  iface->get_n_columns = get_n_columns;
 }
 
 GtkTreeModel*
