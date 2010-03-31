@@ -38,7 +38,8 @@ libgutachter.a: \
 	gutachter-types.o \
 	gutachter-widget.o \
 	gutachter-window.o \
-	gutachter-xvfb.o
+	gutachter-xvfb.o \
+	tango.o
 	$(AR)
 
 %.o: %.c $(wildcard *.h) gutachter-types.h
