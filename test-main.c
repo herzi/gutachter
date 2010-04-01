@@ -140,6 +140,22 @@ test_tree_list_model_get_iter (void)
                       -1);
   g_assert_cmpint (TRUE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
 
+  gtk_tree_path_down (path);
+  g_assert_cmpint (FALSE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
+  gtk_tree_store_append (store, &iter2, &iter1);
+  gtk_tree_store_set (store, &iter2,
+                      0, "Milk",
+                      -1);
+  g_assert_cmpint (TRUE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
+  gtk_tree_path_next (path);
+  g_assert_cmpint (FALSE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
+  gtk_tree_store_append (store, &iter2, &iter1);
+  gtk_tree_store_set (store, &iter2,
+                      0, "Cheese",
+                      -1);
+  g_assert_cmpint (TRUE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
+
+  gtk_tree_path_up (path);
   gtk_tree_path_next (path);
   g_assert_cmpint (FALSE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
   gtk_tree_store_append (store, &iter1, NULL);
@@ -148,8 +164,26 @@ test_tree_list_model_get_iter (void)
                       -1);
   g_assert_cmpint (TRUE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
 
+  gtk_tree_path_down (path);
+  g_assert_cmpint (FALSE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
+  gtk_tree_store_append (store, &iter2, &iter1);
+  gtk_tree_store_set (store, &iter2,
+                      0, "Noodles",
+                      -1);
+  g_assert_cmpint (TRUE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
   gtk_tree_path_next (path);
   g_assert_cmpint (FALSE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
+  gtk_tree_store_append (store, &iter2, &iter1);
+  gtk_tree_store_set (store, &iter2,
+                      0, "Potatoes",
+                      -1);
+  g_assert_cmpint (TRUE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
+
+  gtk_tree_path_up (path);
+  gtk_tree_path_next (path);
+  g_assert_cmpint (FALSE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
+
+  /* FIXME: test child iters */
 
   g_object_unref (subject);
   g_object_unref (store);

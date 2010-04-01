@@ -181,15 +181,27 @@ get_column_type (GtkTreeModel* model, gint index)
   return gtk_tree_model_get_column_type (PRIV (model)->model, index);
 }
 
+static int
+compare_reference_with_path (gconstpointer a,
+                             gconstpointer b)
+{
+  GtkTreePath* path = gtk_tree_row_reference_get_path ((GtkTreeRowReference*) a);
+  int          result = gtk_tree_path_compare (path, b);
+
+  gtk_tree_path_free (path);
+
+  return result;
+}
+
 gboolean
 get_iter (GtkTreeModel* model,
           GtkTreeIter * iter,
           GtkTreePath * path)
 {
-  /* this should be already captured by gtk_tree_model_get_iter() itself */
-  g_assert (gtk_tree_path_get_depth (path));
+  gint  index = g_queue_link_index (PRIV (model)->references,
+                                    g_queue_find_custom (PRIV (model)->references, path, compare_reference_with_path));
 
-  return initialize_iter (GUTACHTER_TREE_LIST (model), iter, gtk_tree_path_get_indices (path)[0]);
+  return initialize_iter (GUTACHTER_TREE_LIST (model), iter, index);
 }
 
 static void
