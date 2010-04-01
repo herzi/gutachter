@@ -20,9 +20,19 @@
 
 #include "gutachter-tree-list.h"
 
+/* GtkTreeIter format:
+ * - stamp:      the stamp of the model (initially, a random number; increased
+ *               by one for every move, delete and insert before existing rows)
+ * - user_data:  the pointer to this model
+ * - user_data2: the pointer to the child model
+ * - user_data3: GINT_TO_POINTER() of the actual index
+ */
+
 struct _GutachterTreeListPrivate
 {
   GtkTreeModel* model;
+  GQueue      * references;
+  gint32        stamp;
 };
 
 #define PRIV(i) (((GutachterTreeList*)(i))->_private)
@@ -42,6 +52,8 @@ static void
 gutachter_tree_list_init (GutachterTreeList* self)
 {
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GUTACHTER_TYPE_TREE_LIST, GutachterTreeListPrivate);
+  PRIV (self)->references = g_queue_new ();
+  PRIV (self)->stamp      = g_random_int ();
 }
 
 static void
@@ -50,6 +62,68 @@ finalize (GObject* object)
   g_object_unref (PRIV (object)->model);
 
   G_OBJECT_CLASS (gutachter_tree_list_parent_class)->finalize (object);
+}
+
+static int
+compare_references (gconstpointer a,
+                    gconstpointer b,
+                    gpointer      user_data G_GNUC_UNUSED)
+{
+  GtkTreePath* path_a = gtk_tree_row_reference_get_path ((GtkTreeRowReference*)a);
+  GtkTreePath* path_b = gtk_tree_row_reference_get_path ((GtkTreeRowReference*)b);
+  int          result = gtk_tree_path_compare (path_a, path_b);
+
+  gtk_tree_path_free (path_a);
+  gtk_tree_path_free (path_b);
+
+  return result;
+}
+
+static inline gboolean
+validate_iter (GutachterTreeList* self,
+               GtkTreeIter      * iter)
+{
+  return iter->stamp == PRIV (self)->stamp &&
+         iter->user_data == self &&
+         iter->user_data2 == PRIV (self)->model &&
+         GPOINTER_TO_INT (iter->user_data3) >= 0 &&
+         GPOINTER_TO_UINT (iter->user_data3) < g_queue_get_length (PRIV (self)->references);
+}
+
+static inline gboolean
+initialize_iter (GutachterTreeList* self,
+                 GtkTreeIter      * iter,
+                 gint               flat_index)
+{
+  iter->stamp = PRIV (self)->stamp;
+  iter->user_data = self;
+  iter->user_data2 = PRIV (self)->model;
+  iter->user_data3 = GINT_TO_POINTER (flat_index);
+
+  return validate_iter (self, iter);
+}
+
+static void
+row_inserted_cb (GtkTreeModel* model,
+                 GtkTreePath * path,
+                 GtkTreeIter * iter      G_GNUC_UNUSED,
+                 gpointer      user_data)
+{
+  GtkTreeRowReference* reference = gtk_tree_row_reference_new (model, path);
+  GutachterTreeList  * self = user_data;
+  GtkTreePath        * our_path;
+  GtkTreeIter          our_iter;
+
+  g_queue_insert_sorted (PRIV (self)->references,
+                         reference,
+                         compare_references,
+                         NULL);
+
+  our_path = gtk_tree_path_new_from_indices (g_queue_index (PRIV (self)->references, reference),
+                                             -1);
+  g_assert (initialize_iter (self, &our_iter, gtk_tree_path_get_indices (our_path)[0]));
+  gtk_tree_model_row_inserted (GTK_TREE_MODEL (self), our_path, &our_iter);
+  gtk_tree_path_free (our_path);
 }
 
 static void
@@ -64,6 +138,9 @@ set_property (GObject     * object,
       g_return_if_fail (!PRIV (object)->model);
       PRIV (object)->model = g_value_dup_object (value);
       /* construct-only => no notification */
+
+      g_signal_connect (PRIV (object)->model, "row-inserted",
+                        G_CALLBACK (row_inserted_cb), object);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -104,12 +181,24 @@ get_column_type (GtkTreeModel* model, gint index)
   return gtk_tree_model_get_column_type (PRIV (model)->model, index);
 }
 
+gboolean
+get_iter (GtkTreeModel* model,
+          GtkTreeIter * iter,
+          GtkTreePath * path)
+{
+  /* this should be already captured by gtk_tree_model_get_iter() itself */
+  g_assert (gtk_tree_path_get_depth (path));
+
+  return initialize_iter (GUTACHTER_TREE_LIST (model), iter, gtk_tree_path_get_indices (path)[0]);
+}
+
 static void
 implement_gtk_tree_model (GtkTreeModelIface* iface)
 {
   iface->get_flags       = get_flags;
   iface->get_n_columns   = get_n_columns;
   iface->get_column_type = get_column_type;
+  iface->get_iter        = get_iter;
 }
 
 GtkTreeModel*

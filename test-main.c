@@ -122,6 +122,39 @@ test_tree_list_model_get_column_type (void)
   g_object_unref (store);
 }
 
+static void
+test_tree_list_model_get_iter (void)
+{
+  GtkTreeStore* store = gtk_tree_store_new (1, G_TYPE_STRING);
+  GtkTreeModel* subject = gutachter_tree_list_new (GTK_TREE_MODEL (store));
+  GtkTreeIter   iter1;
+  GtkTreeIter   iter2;
+  GtkTreeIter   iter3;
+  GtkTreePath * path = gtk_tree_path_new ();
+
+  gtk_tree_path_append_index (path, 0);
+  g_assert_cmpint (FALSE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
+  gtk_tree_store_append (store, &iter1, NULL);
+  gtk_tree_store_set (store, &iter1,
+                      0, "Sliffy Supermarkt",
+                      -1);
+  g_assert_cmpint (TRUE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
+
+  gtk_tree_path_next (path);
+  g_assert_cmpint (FALSE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
+  gtk_tree_store_append (store, &iter1, NULL);
+  gtk_tree_store_set (store, &iter1,
+                      0, "Sloff Shop",
+                      -1);
+  g_assert_cmpint (TRUE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
+
+  gtk_tree_path_next (path);
+  g_assert_cmpint (FALSE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
+
+  g_object_unref (subject);
+  g_object_unref (store);
+}
+
 int
 main (int   argc,
       char**argv)
@@ -134,8 +167,7 @@ main (int   argc,
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-flags", test_tree_list_model_get_flags);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-n-columns", test_tree_list_model_get_n_columns);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-column-type", test_tree_list_model_get_column_type);
-  /* API/get-column-type */
-  /* API/get-iter */
+  g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-iter", test_tree_list_model_get_iter);
   /* API/get-path */
   /* API/get-value */
   /* API/iter-next */
