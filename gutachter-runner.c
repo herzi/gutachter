@@ -21,7 +21,7 @@
 #include "gutachter-runner.h"
 
 static void
-gtk_test_runner_iface_init (GtkTestRunnerIface* iface)
+gutachter_runner_iface_init (GutachterRunnerIface* iface)
 {
   g_object_interface_install_property (iface,
                                        g_param_spec_object ("test-suite", NULL, NULL,
@@ -29,16 +29,16 @@ gtk_test_runner_iface_init (GtkTestRunnerIface* iface)
 }
 
 GType
-gtk_test_runner_get_type (void)
+gutachter_runner_get_type (void)
 {
   static GType  stored_type = 0;
 
   if (g_once_init_enter (&stored_type))
     {
       GType  registered_type = g_type_register_static_simple (G_TYPE_INTERFACE,
-                                                              "GtkTestRunner",
-                                                              sizeof (GtkTestRunnerIface),
-                                                              (GClassInitFunc) gtk_test_runner_iface_init,
+                                                              "GutachterRunner",
+                                                              sizeof (GutachterRunnerIface),
+                                                              (GClassInitFunc) gutachter_runner_iface_init,
                                                               0, NULL, 0);
 
       g_once_init_leave (&stored_type, registered_type);
@@ -48,16 +48,16 @@ gtk_test_runner_get_type (void)
 }
 
 GFile*
-gtk_test_runner_get_file (GtkTestRunner* self)
+gutachter_runner_get_file (GutachterRunner* self)
 {
-  GtkTestRunnerIface* iface;
+  GutachterRunnerIface* iface;
 
-  g_return_val_if_fail (GTK_TEST_IS_RUNNER (self), NULL);
+  g_return_val_if_fail (GUTACHTER_IS_RUNNER (self), NULL);
 
-  iface = GTK_TEST_RUNNER_GET_IFACE (self);
+  iface = GUTACHTER_RUNNER_GET_IFACE (self);
   if (!iface->get_file)
     {
-      g_warning ("%s(%s): %s doesn't implement gtk_test_runner_get_file()",
+      g_warning ("%s(%s): %s doesn't implement gutachter_runner_get_file()",
                  G_STRFUNC, G_STRLOC, G_OBJECT_TYPE_NAME (self));
       return NULL;
     }
@@ -66,16 +66,16 @@ gtk_test_runner_get_file (GtkTestRunner* self)
 }
 
 GtkTestSuite*
-gtk_test_runner_get_suite (GtkTestRunner* self)
+gutachter_runner_get_suite (GutachterRunner* self)
 {
-  GtkTestRunnerIface* iface;
+  GutachterRunnerIface* iface;
 
-  g_return_val_if_fail (GTK_TEST_IS_RUNNER (self), NULL);
+  g_return_val_if_fail (GUTACHTER_IS_RUNNER (self), NULL);
 
-  iface = GTK_TEST_RUNNER_GET_IFACE (self);
+  iface = GUTACHTER_RUNNER_GET_IFACE (self);
   if (!iface->get_suite)
     {
-      g_warning ("%s(%s): %s doesn't implement gtk_test_runner_get_suite()",
+      g_warning ("%s(%s): %s doesn't implement gutachter_runner_get_suite()",
                  G_STRFUNC, G_STRLOC, G_OBJECT_TYPE_NAME (self));
       return NULL;
     }
@@ -84,17 +84,17 @@ gtk_test_runner_get_suite (GtkTestRunner* self)
 }
 
 void
-gtk_test_runner_set_file (GtkTestRunner* self,
-                          GFile        * file)
+gutachter_runner_set_file (GutachterRunner* self,
+                           GFile          * file)
 {
-  GtkTestRunnerIface* iface;
+  GutachterRunnerIface* iface;
 
-  g_return_if_fail (GTK_TEST_IS_RUNNER (self));
+  g_return_if_fail (GUTACHTER_IS_RUNNER (self));
 
-  iface = GTK_TEST_RUNNER_GET_IFACE (self);
+  iface = GUTACHTER_RUNNER_GET_IFACE (self);
   if (!iface->set_file)
     {
-      g_warning ("%s(%s): %s doesn't implement gtk_test_runner_set_file()",
+      g_warning ("%s(%s): %s doesn't implement gutachter_runner_set_file()",
                  G_STRFUNC, G_STRLOC, G_OBJECT_TYPE_NAME (self));
     }
   else

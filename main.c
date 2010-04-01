@@ -49,7 +49,7 @@ main (int   argc,
   if (files && *files)
     {
       GFile* file = g_file_new_for_commandline_arg (*files);
-      gtk_test_runner_set_file (GTK_TEST_RUNNER (window), file);
+      gutachter_runner_set_file (GUTACHTER_RUNNER (window), file);
       g_object_unref (file);
     }
   g_strfreev (files);

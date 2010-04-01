@@ -45,10 +45,10 @@ enum
 
 #define PRIV(i) (((GtkTestWindow*)(i))->_private)
 
-static void implement_gtk_test_runner (GtkTestRunnerIface* iface);
+static void implement_gutachter_runner (GutachterRunnerIface* iface);
 
 G_DEFINE_TYPE_WITH_CODE (GtkTestWindow, gtk_test_window, GTK_TYPE_WINDOW,
-                         G_IMPLEMENT_INTERFACE (GTK_TEST_TYPE_RUNNER, implement_gtk_test_runner));
+                         G_IMPLEMENT_INTERFACE (GUTACHTER_TYPE_RUNNER, implement_gutachter_runner));
 
 static void
 forward_notify (GObject   * object G_GNUC_UNUSED,
@@ -59,7 +59,7 @@ forward_notify (GObject   * object G_GNUC_UNUSED,
 
   gtk_test_window_update_title (user_data);
 
-  suite = gtk_test_runner_get_suite (GTK_TEST_RUNNER (PRIV (user_data)->widget));
+  suite = gutachter_runner_get_suite (GUTACHTER_RUNNER (PRIV (user_data)->widget));
   if (suite)
     {
       gtk_test_suite_load (suite);
@@ -91,7 +91,7 @@ open_item_clicked (GtkButton* button G_GNUC_UNUSED,
   if (GTK_RESPONSE_ACCEPT == gtk_dialog_run (GTK_DIALOG (dialog)))
     {
       GFile* file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER (dialog));
-      gtk_test_runner_set_file (GTK_TEST_RUNNER (window), file);
+      gutachter_runner_set_file (GUTACHTER_RUNNER (window), file);
       g_object_unref (file);
     }
 
@@ -140,7 +140,7 @@ static void
 button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
                    gpointer   user_data)
 {
-  gtk_test_suite_execute (gtk_test_runner_get_suite (GTK_TEST_RUNNER (PRIV (user_data)->widget)));
+  gtk_test_suite_execute (gutachter_runner_get_suite (GUTACHTER_RUNNER (PRIV (user_data)->widget)));
 }
 
 static void
@@ -159,7 +159,7 @@ auto_update_toggled (GtkToggleToolButton* button,
 
   if (PRIV (self)->auto_update)
     {
-      GtkTestSuite* suite = gtk_test_runner_get_suite (GTK_TEST_RUNNER (PRIV (self)->widget));
+      GtkTestSuite* suite = gutachter_runner_get_suite (GUTACHTER_RUNNER (PRIV (self)->widget));
 
       if (suite && GUTACHTER_SUITE_LOADED == gtk_test_suite_get_status (suite))
         {
@@ -252,15 +252,15 @@ gtk_test_window_class_init (GtkTestWindowClass* self_class)
 }
 
 static GFile*
-get_file (GtkTestRunner* runner)
+get_file (GutachterRunner* runner)
 {
-  return gtk_test_runner_get_file (GTK_TEST_RUNNER (PRIV (runner)->widget));
+  return gutachter_runner_get_file (GUTACHTER_RUNNER (PRIV (runner)->widget));
 }
 
 static GtkTestSuite*
-get_suite (GtkTestRunner* runner)
+get_suite (GutachterRunner* runner)
 {
-  return gtk_test_runner_get_suite (GTK_TEST_RUNNER (PRIV (runner)->widget));
+  return gutachter_runner_get_suite (GUTACHTER_RUNNER (PRIV (runner)->widget));
 }
 
 static void
@@ -285,21 +285,21 @@ status_changed_cb (GObject   * suite_object,
 }
 
 static void
-set_file (GtkTestRunner* runner,
-          GFile        * file)
+set_file (GutachterRunner* runner,
+          GFile          * file)
 {
   GtkTestSuite* suite;
 
   if (PRIV (runner)->status_handler)
     {
-      g_signal_handler_disconnect (gtk_test_runner_get_suite (GTK_TEST_RUNNER (PRIV (runner)->widget)),
+      g_signal_handler_disconnect (gutachter_runner_get_suite (GUTACHTER_RUNNER (PRIV (runner)->widget)),
                                    PRIV (runner)->status_handler);
       PRIV (runner)->status_handler = 0;
     }
 
-  gtk_test_runner_set_file (GTK_TEST_RUNNER (PRIV (runner)->widget), file);
+  gutachter_runner_set_file (GUTACHTER_RUNNER (PRIV (runner)->widget), file);
 
-  suite = gtk_test_runner_get_suite (GTK_TEST_RUNNER (PRIV (runner)->widget));
+  suite = gutachter_runner_get_suite (GUTACHTER_RUNNER (PRIV (runner)->widget));
   if (suite)
     {
       PRIV (runner)->status_handler = g_signal_connect (suite, "notify::status",
@@ -309,7 +309,7 @@ set_file (GtkTestRunner* runner,
 }
 
 static void
-implement_gtk_test_runner (GtkTestRunnerIface* iface)
+implement_gutachter_runner (GutachterRunnerIface* iface)
 {
   iface->get_file  = get_file;
   iface->get_suite = get_suite;
@@ -371,7 +371,7 @@ gtk_test_window_update_title (GtkTestWindow* self)
 
   g_return_if_fail (GTK_TEST_IS_WINDOW (self));
 
-  testcase = gtk_test_runner_get_file (GTK_TEST_RUNNER (PRIV (self)->widget));
+  testcase = gutachter_runner_get_file (GUTACHTER_RUNNER (PRIV (self)->widget));
   if (testcase)
     {
       GFileInfo* info;

@@ -18,41 +18,41 @@
  * USA
  */
 
-#ifndef GT_RUNNER_H
-#define GT_RUNNER_H
+#ifndef GUTACHTER_RUNNER_H
+#define GUTACHTER_RUNNER_H
 
 #include <gio/gio.h>
 #include <gutachter-suite.h>
 
 G_BEGIN_DECLS
 
-typedef struct _GtkTestRunner      GtkTestRunner;
-typedef struct _GtkTestRunnerIface GtkTestRunnerIface;
+typedef struct _GutachterRunner      GutachterRunner;
+typedef struct _GutachterRunnerIface GutachterRunnerIface;
 
-#define GTK_TEST_TYPE_RUNNER         (gtk_test_runner_get_type ())
-#define GTK_TEST_RUNNER(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), GTK_TEST_TYPE_RUNNER, GtkTestRunner))
-#define GTK_TEST_IS_RUNNER(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), GTK_TEST_TYPE_RUNNER))
-#define GTK_TEST_RUNNER_GET_IFACE(i) (G_TYPE_INSTANCE_GET_INTERFACE ((i), GTK_TEST_TYPE_RUNNER, GtkTestRunnerIface))
+#define GUTACHTER_TYPE_RUNNER         (gutachter_runner_get_type ())
+#define GUTACHTER_RUNNER(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), GUTACHTER_TYPE_RUNNER, GutachterRunner))
+#define GUTACHTER_IS_RUNNER(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), GUTACHTER_TYPE_RUNNER))
+#define GUTACHTER_RUNNER_GET_IFACE(i) (G_TYPE_INSTANCE_GET_INTERFACE ((i), GUTACHTER_TYPE_RUNNER, GutachterRunnerIface))
 
-GType         gtk_test_runner_get_type  (void);
-GFile*        gtk_test_runner_get_file  (GtkTestRunner* self);
-GtkTestSuite* gtk_test_runner_get_suite (GtkTestRunner* self);
-void          gtk_test_runner_set_file  (GtkTestRunner* self,
-                                         GFile        * file);
+GType         gutachter_runner_get_type  (void);
+GFile*        gutachter_runner_get_file  (GutachterRunner* self);
+GtkTestSuite* gutachter_runner_get_suite (GutachterRunner* self);
+void          gutachter_runner_set_file  (GutachterRunner* self,
+                                          GFile          * file);
 
-struct _GtkTestRunnerIface
+struct _GutachterRunnerIface
 {
   GTypeInterface  base_interface;
 
   /* vtable */
-  GFile*        (*get_file)  (GtkTestRunner* self);
-  GtkTestSuite* (*get_suite) (GtkTestRunner* self);
-  void          (*set_file)  (GtkTestRunner* self,
-                              GFile        * file);
+  GFile*        (*get_file)  (GutachterRunner* self);
+  GtkTestSuite* (*get_suite) (GutachterRunner* self);
+  void          (*set_file)  (GutachterRunner* self,
+                              GFile          * file);
 };
 
 G_END_DECLS
 
-#endif /* !GT_RUNNER_H */
+#endif /* !GUTACHER_RUNNER_H */
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

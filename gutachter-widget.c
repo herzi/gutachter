@@ -44,10 +44,10 @@ enum
 
 #define PRIV(i) (((GtkTestWidget*)(i))->_private)
 
-static void implement_gtk_test_runner (GtkTestRunnerIface* iface);
+static void implement_gutachter_runner (GutachterRunnerIface* iface);
 
 G_DEFINE_TYPE_WITH_CODE (GtkTestWidget, gtk_test_widget, GTK_TYPE_VBOX,
-                         G_IMPLEMENT_INTERFACE (GTK_TEST_TYPE_RUNNER, implement_gtk_test_runner));
+                         G_IMPLEMENT_INTERFACE (GUTACHTER_TYPE_RUNNER, implement_gutachter_runner));
 
 static void
 update_sensitivity (GtkTestWidget* self)
@@ -193,20 +193,20 @@ gtk_test_widget_class_init (GtkTestWidgetClass* self_class)
 }
 
 static GFile*
-get_file (GtkTestRunner* runner)
+get_file (GutachterRunner* runner)
 {
   return PRIV (runner)->suite ? gtk_test_suite_get_file (PRIV (runner)->suite) : NULL;
 }
 
 static GtkTestSuite*
-get_suite (GtkTestRunner* runner)
+get_suite (GutachterRunner* runner)
 {
   return PRIV (runner)->suite;
 }
 
 static void
-set_file (GtkTestRunner* runner,
-          GFile        * file)
+set_file (GutachterRunner* runner,
+          GFile          * file)
 {
   if (!file && !PRIV (runner)->suite)
     {
@@ -231,7 +231,7 @@ set_file (GtkTestRunner* runner,
 }
 
 static void
-implement_gtk_test_runner (GtkTestRunnerIface* iface)
+implement_gutachter_runner (GutachterRunnerIface* iface)
 {
   iface->get_file  = get_file;
   iface->get_suite = get_suite;
