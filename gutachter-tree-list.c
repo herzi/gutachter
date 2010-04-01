@@ -211,6 +211,15 @@ get_iter (GtkTreeModel* model,
   return initialize_iter (GUTACHTER_TREE_LIST (model), iter, index);
 }
 
+GtkTreePath*
+get_path (GtkTreeModel* model,
+          GtkTreeIter * iter)
+{
+  g_return_val_if_fail (validate_iter (GUTACHTER_TREE_LIST (model), iter), NULL);
+
+  return gtk_tree_path_new_from_indices (GPOINTER_TO_INT (iter->user_data3), -1);
+}
+
 static void
 implement_gtk_tree_model (GtkTreeModelIface* iface)
 {
@@ -218,6 +227,7 @@ implement_gtk_tree_model (GtkTreeModelIface* iface)
   iface->get_n_columns   = get_n_columns;
   iface->get_column_type = get_column_type;
   iface->get_iter        = get_iter;
+  iface->get_path        = get_path;
 }
 
 gboolean

@@ -22,6 +22,18 @@
 
 #include <gutachter.h>
 
+#define gutachter_assert_cmppath(p1, cmp, p2)    do { \
+                                                     if (gtk_tree_path_compare (p1, p2) cmp 0) ; \
+                                                     else { \
+                                                         gchar* __s1 = gtk_tree_path_to_string (p1); \
+                                                         gchar* __s2 = gtk_tree_path_to_string (p2); \
+                                                         g_assertion_message_cmpstr (G_LOG_DOMAIN, __FILE__, __LINE__, G_STRFUNC, \
+                                                                                     #p1 " " #cmp " " #p2, __s1, #cmp, __s2); \
+                                                         g_free (__s2); \
+                                                         g_free (__s1); \
+                                                     } \
+                                                 } while (0)
+
 static void
 test_bar_init (void)
 {
@@ -251,7 +263,87 @@ test_tree_list_model_get_iter (void)
   gtk_tree_path_next (path);
   g_assert_cmpint (FALSE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
 
-  /* FIXME: test child iters */
+  g_object_unref (subject);
+  g_object_unref (store);
+}
+
+static void
+test_tree_list_model_get_path (void)
+{
+  GtkTreeStore* store = gtk_tree_store_new (1, G_TYPE_STRING);
+  GtkTreeModel* subject = gutachter_tree_list_new (GTK_TREE_MODEL (store));
+  GtkTreePath * reference;
+  GtkTreePath * selector;
+  GtkTreeIter   iter1;
+  GtkTreeIter   iter2;
+  GtkTreeIter   iter3;
+
+  selector = gtk_tree_path_new ();
+  gtk_tree_store_append (store, &iter1, NULL);
+  gtk_tree_store_set (store, &iter1,
+                      0, "Sliffy Supermarkt",
+                      -1);
+
+  g_assert (gutachter_tree_list_iter_from_child (GUTACHTER_TREE_LIST (subject), &iter3, &iter1));
+  gtk_tree_path_append_index (selector, 0);
+  reference = gtk_tree_model_get_path (subject, &iter3);
+  gutachter_assert_cmppath (selector, ==, reference);
+  gtk_tree_path_free (reference);
+
+  gtk_tree_store_append (store, &iter2, &iter1);
+  gtk_tree_store_set (store, &iter2,
+                      0, "Milk",
+                      -1);
+
+  g_assert (gutachter_tree_list_iter_from_child (GUTACHTER_TREE_LIST (subject), &iter3, &iter2));
+  gtk_tree_path_next (selector);
+  reference = gtk_tree_model_get_path (subject, &iter3);
+  gutachter_assert_cmppath (selector, ==, reference);
+  gtk_tree_path_free (reference);
+
+  gtk_tree_store_append (store, &iter2, &iter1);
+  gtk_tree_store_set (store, &iter2,
+                      0, "Cheese",
+                      -1);
+
+  g_assert (gutachter_tree_list_iter_from_child (GUTACHTER_TREE_LIST (subject), &iter3, &iter2));
+  gtk_tree_path_next (selector);
+  reference = gtk_tree_model_get_path (subject, &iter3);
+  gutachter_assert_cmppath (selector, ==, reference);
+  gtk_tree_path_free (reference);
+
+  gtk_tree_store_append (store, &iter1, NULL);
+  gtk_tree_store_set (store, &iter1,
+                      0, "Sloff Shop",
+                      -1);
+
+  g_assert (gutachter_tree_list_iter_from_child (GUTACHTER_TREE_LIST (subject), &iter3, &iter1));
+  gtk_tree_path_next (selector);
+  reference = gtk_tree_model_get_path (subject, &iter3);
+  gutachter_assert_cmppath (selector, ==, reference);
+  gtk_tree_path_free (reference);
+
+  gtk_tree_store_append (store, &iter2, &iter1);
+  gtk_tree_store_set (store, &iter2,
+                      0, "Noodles",
+                      -1);
+
+  g_assert (gutachter_tree_list_iter_from_child (GUTACHTER_TREE_LIST (subject), &iter3, &iter2));
+  gtk_tree_path_next (selector);
+  reference = gtk_tree_model_get_path (subject, &iter3);
+  gutachter_assert_cmppath (selector, ==, reference);
+  gtk_tree_path_free (reference);
+
+  gtk_tree_store_append (store, &iter2, &iter1);
+  gtk_tree_store_set (store, &iter2,
+                      0, "Potatoes",
+                      -1);
+
+  g_assert (gutachter_tree_list_iter_from_child (GUTACHTER_TREE_LIST (subject), &iter3, &iter2));
+  gtk_tree_path_next (selector);
+  reference = gtk_tree_model_get_path (subject, &iter3);
+  gutachter_assert_cmppath (selector, ==, reference);
+  gtk_tree_path_free (reference);
 
   g_object_unref (subject);
   g_object_unref (store);
@@ -274,7 +366,7 @@ main (int   argc,
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-n-columns", test_tree_list_model_get_n_columns);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-column-type", test_tree_list_model_get_column_type);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-iter", test_tree_list_model_get_iter);
-  /* API/get-path */
+  g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-path", test_tree_list_model_get_path);
   /* API/get-value */
   /* API/iter-next */
   /* API/iter-children */
