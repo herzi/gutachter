@@ -36,8 +36,11 @@ typedef struct _GutachterTreeListPrivate GutachterTreeListPrivate;
 #define GUTACHTER_IS_TREE_LIST_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), GUTACHTER_TYPE_TREE_LIST))
 #define GUTACHTER_TREE_LIST_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), GUTACHTER_TYPE_TREE_LIST, GutachterTreeList))
 
-GType         gutachter_tree_list_get_type (void);
-GtkTreeModel* gutachter_tree_list_new      (GtkTreeModel* real_tree);
+GType         gutachter_tree_list_get_type        (void);
+GtkTreeModel* gutachter_tree_list_new             (GtkTreeModel* real_tree);
+gboolean      gutachter_tree_list_iter_from_child (GutachterTreeList* self,
+                                                   GtkTreeIter      * iter,
+                                                   GtkTreeIter      * child_iter);
 
 struct _GutachterTreeList
 {

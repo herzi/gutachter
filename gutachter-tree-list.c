@@ -193,13 +193,20 @@ compare_reference_with_path (gconstpointer a,
   return result;
 }
 
+static GList*
+find_glist_for_tree_path (GQueue     * queue,
+                          GtkTreePath* path)
+{
+  return g_queue_find_custom (queue, path, compare_reference_with_path);
+}
+
 gboolean
 get_iter (GtkTreeModel* model,
           GtkTreeIter * iter,
           GtkTreePath * path)
 {
   gint  index = g_queue_link_index (PRIV (model)->references,
-                                    g_queue_find_custom (PRIV (model)->references, path, compare_reference_with_path));
+                                    find_glist_for_tree_path (PRIV (model)->references, path));
 
   return initialize_iter (GUTACHTER_TREE_LIST (model), iter, index);
 }
@@ -211,6 +218,35 @@ implement_gtk_tree_model (GtkTreeModelIface* iface)
   iface->get_n_columns   = get_n_columns;
   iface->get_column_type = get_column_type;
   iface->get_iter        = get_iter;
+}
+
+gboolean
+gutachter_tree_list_iter_from_child (GutachterTreeList* self,
+                                     GtkTreeIter      * iter,
+                                     GtkTreeIter      * child_iter)
+{
+  GtkTreePath* path = gtk_tree_model_get_path (PRIV (self)->model, child_iter);
+  gboolean     result;
+  GList      * list;
+
+  if (!path)
+    {
+      return FALSE;
+    }
+
+  list = find_glist_for_tree_path (PRIV (self)->references, path);
+  if (!list)
+    {
+      gtk_tree_path_free (path);
+      return FALSE;
+    }
+
+  gtk_tree_path_free (path);
+  path = gtk_tree_row_reference_get_path (list->data);
+  result = gtk_tree_model_get_iter (GTK_TREE_MODEL (self), iter, path);
+  gtk_tree_path_free (path);
+
+  return result;
 }
 
 GtkTreeModel*
