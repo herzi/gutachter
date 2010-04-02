@@ -8,6 +8,7 @@ configure
 depcomp
 .deps
 gutachter
+gutachter-*.tar.*
 gutachter-types.*
 INSTALL
 install-sh

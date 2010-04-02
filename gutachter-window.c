@@ -181,6 +181,7 @@ gtk_test_window_init (GtkTestWindow* self)
   PRIV (self)->box = gtk_vbox_new (FALSE, 0);
 
   gtk_window_set_default_size (GTK_WINDOW (self), 300, 400);
+  gtk_window_set_icon_name (GTK_WINDOW (self), "gutachter");
 
   g_signal_connect (PRIV (self)->open_button, "clicked",
                     G_CALLBACK (open_item_clicked), self);

@@ -7,6 +7,8 @@ TESTS=
 
 AM_CPPFLAGS=-Wall -Wextra -I. @GUTACHTER_CFLAGS@ -DGETTEXT_PACKAGE=NULL
 
+include pixmaps/Makefile.inc
+
 bin_PROGRAMS+=gutachter
 gutachter_LDADD=libgutachter.a $(GUTACHTER_LIBS)
 gutachter_SOURCES=main.c
