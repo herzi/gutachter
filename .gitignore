@@ -5,6 +5,8 @@ aclocal.m4
 ChangeLog
 config.*
 configure
+depcomp
+.deps
 gutachter
 gutachter-types.*
 INSTALL

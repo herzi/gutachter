@@ -1,5 +1,6 @@
-lib_LIBRARIES=
 bin_PROGRAMS=
+lib_LIBRARIES=
+noinst_PROGRAMS=
 
 COMPILE=$(AM_V_CC) @CC@ -c -o $@ $< -g -O2 -Wall -Wextra -I. @GUTACHTER_CFLAGS@ -DGETTEXT_PACKAGE=NULL
 OUR_LINK=@echo "  CCLD  " $@; @CC@ -o $@ $^ -g -O2 -Wall -Wextra @GUTACHTER_LIBS@
@@ -32,9 +33,13 @@ libgutachter_a_SOURCES=\
 	tango.h \
 	$(NULL)
 
-all-local: test-dummy test-gutachter
+noinst_PROGRAMS+=test-gutachter
+test_gutachter_LDADD=libgutachter.a $(GUTACHTER_LIBS)
+test_gutachter_SOURCES=test-main.c
 
-check: test-gutachter
+all-local: test-dummy
+
+check-local: test-gutachter
 	./test-gutachter
 
 clean-local:
@@ -61,8 +66,5 @@ gutachter-types.o: gutachter-types.c gutachter-types.h
 	$(COMPILE)
 
 test-dummy: test-dummy.o
-	$(OUR_LINK)
-
-test-gutachter: test-main.o libgutachter.a
 	$(OUR_LINK)
 
