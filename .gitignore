@@ -1,7 +1,11 @@
 *~
 *.a
+*autom4te.cache
+config.*
+configure
 gutachter
 gutachter-types.*
+Makefile
 *.o
 test-dummy
 test-gutachter
