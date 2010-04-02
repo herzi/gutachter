@@ -295,6 +295,14 @@ iter_nth_child (GtkTreeModel* model,
   return initialize_iter (GUTACHTER_TREE_LIST (model), iter, index);
 }
 
+static gboolean
+iter_parent (GtkTreeModel* model  G_GNUC_UNUSED,
+             GtkTreeIter * parent G_GNUC_UNUSED,
+             GtkTreeIter * child  G_GNUC_UNUSED)
+{
+  return FALSE;
+}
+
 static void
 implement_gtk_tree_model (GtkTreeModelIface* iface)
 {
@@ -309,6 +317,7 @@ implement_gtk_tree_model (GtkTreeModelIface* iface)
   iface->iter_n_children = iter_n_children;
   iface->iter_next       = iter_next;
   iface->iter_nth_child  = iter_nth_child;
+  iface->iter_parent     = iter_parent;
 }
 
 gboolean
