@@ -1,6 +1,6 @@
 AR=@echo "  AR    " $@; ar qcs $@ $^
-COMPILE=@echo "  CC    " $@; @CC@ -c -o $@ $< -g -O2 -Wall -Wextra -I. $(shell pkg-config --cflags gtk+-2.0) -DGETTEXT_PACKAGE=NULL
-LINK=@echo "  CCLD  " $@; @CC@ -o $@ $^ -g -O2 -Wall -Wextra $(shell pkg-config --libs gtk+-2.0)
+COMPILE=@echo "  CC    " $@; @CC@ -c -o $@ $< -g -O2 -Wall -Wextra -I. @GUTACHTER_CFLAGS@ -DGETTEXT_PACKAGE=NULL
+LINK=@echo "  CCLD  " $@; @CC@ -o $@ $^ -g -O2 -Wall -Wextra @GUTACHTER_LIBS@
 
 all: libgutachter.a gutachter test-dummy test-gutachter
 
@@ -51,3 +51,6 @@ test-dummy: test-dummy.o
 
 test-gutachter: test-main.o libgutachter.a
 	$(LINK)
+
+Makefile: config.status Makefile.in
+	@echo "  GEN   " $@; ./$< -q $@
