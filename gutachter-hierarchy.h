@@ -44,19 +44,21 @@ enum
   GUTACHTER_HIERARCHY_N_COLUMNS
 };
 
-GType               gutachter_hierarchy_get_type    (void);
-GutachterHierarchy* gutachter_hierarchy_new         (void);
-void                gutachter_hierarchy_clear       (GutachterHierarchy* self);
-void                gutachter_hierarchy_get_iter    (GutachterHierarchy* self,
-                                                     GtkTreeIter       * iter,
-                                                     gchar const       * path);
-gboolean            gutachter_hierarchy_lookup_iter (GutachterHierarchy* self,
-                                                     GtkTreeIter       * iter,
-                                                     gchar const       * path);
-void                gutachter_hierarchy_set_unsure  (GutachterHierarchy* self);
-void                gutachter_hierarchy_set_message (GutachterHierarchy* self,
-                                                     GtkTreeIter       * iter,
-                                                     gchar const       * message);
+GType               gutachter_hierarchy_get_type      (void);
+GutachterHierarchy* gutachter_hierarchy_new           (void);
+void                gutachter_hierarchy_clear         (GutachterHierarchy* self);
+gchar*              gutachter_hierarchy_get_full_path (GutachterHierarchy* self,
+                                                       GtkTreeIter       * iter);
+void                gutachter_hierarchy_get_iter      (GutachterHierarchy* self,
+                                                       GtkTreeIter       * iter,
+                                                       gchar const       * path);
+gboolean            gutachter_hierarchy_lookup_iter   (GutachterHierarchy* self,
+                                                       GtkTreeIter       * iter,
+                                                       gchar const       * path);
+void                gutachter_hierarchy_set_unsure    (GutachterHierarchy* self);
+void                gutachter_hierarchy_set_message   (GutachterHierarchy* self,
+                                                       GtkTreeIter       * iter,
+                                                       gchar const       * message);
 
 struct _GutachterHierarchy
 {

@@ -320,6 +320,14 @@ implement_gtk_tree_model (GtkTreeModelIface* iface)
   iface->iter_parent     = iter_parent;
 }
 
+GtkTreeModel*
+gutachter_tree_list_get_model (GutachterTreeList* self)
+{
+  g_return_val_if_fail (GUTACHTER_IS_TREE_LIST (self), NULL);
+
+  return PRIV (self)->model;
+}
+
 gboolean
 gutachter_tree_list_iter_from_child (GutachterTreeList* self,
                                      GtkTreeIter      * iter,

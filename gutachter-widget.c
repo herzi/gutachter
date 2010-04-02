@@ -27,6 +27,7 @@
 
 struct _GtkTestWidgetPrivate
 {
+  GtkWidget     * failure_view;
   GtkWidget     * hierarchy_view;
   GtkWidget     * indicator_bar;
   GtkWidget     * label_failures;
@@ -97,6 +98,28 @@ pixbuf_data_func (GtkTreeViewColumn* column    G_GNUC_UNUSED,
 }
 
 static void
+full_path_data_func (GtkTreeViewColumn* column    G_GNUC_UNUSED,
+                     GtkCellRenderer  * renderer,
+                     GtkTreeModel     * model,
+                     GtkTreeIter      * iter,
+                     gpointer           user_data G_GNUC_UNUSED)
+{
+  GtkTreeIter  hierarchy;
+
+  gchar* full_path = NULL;
+
+  g_return_if_fail (gutachter_tree_list_iter_to_child (GUTACHTER_TREE_LIST (model), &hierarchy, iter));
+
+  full_path = gutachter_hierarchy_get_full_path (GUTACHTER_HIERARCHY (gutachter_tree_list_get_model (GUTACHTER_TREE_LIST (model))), &hierarchy);
+
+  g_object_set (renderer,
+                "text", full_path,
+                NULL);
+
+  g_free (full_path);
+}
+
+static void
 gtk_test_widget_init (GtkTestWidget* self)
 {
   GtkTreeViewColumn* column;
@@ -104,11 +127,25 @@ gtk_test_widget_init (GtkTestWidget* self)
   GtkWidget        * scrolled;
 
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WIDGET, GtkTestWidgetPrivate);
+  PRIV (self)->failure_view = gtk_tree_view_new ();
   PRIV (self)->hierarchy_view = gtk_tree_view_new ();
   PRIV (self)->indicator_bar = gutachter_bar_new ();
   PRIV (self)->label_failures = gtk_label_new (NULL);
   PRIV (self)->notebook = gtk_notebook_new ();
   PRIV (self)->progress = gtk_progress_bar_new ();
+
+  column = gtk_tree_view_column_new ();
+  gtk_tree_view_column_set_expand (column, TRUE);
+  renderer = gtk_cell_renderer_text_new ();
+  g_object_set (renderer,
+                "ellipsize", PANGO_ELLIPSIZE_MIDDLE,
+                NULL);
+  gtk_tree_view_column_pack_start (column, renderer, TRUE);
+  gtk_tree_view_column_set_cell_data_func (column, renderer,
+                                           full_path_data_func, NULL,
+                                           NULL);
+  gtk_tree_view_insert_column (GTK_TREE_VIEW (PRIV (self)->failure_view), column, -1);
+  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (PRIV (self)->failure_view), FALSE);
 
   column = gtk_tree_view_column_new ();
   gtk_tree_view_column_set_expand (column, TRUE);
@@ -126,27 +163,32 @@ gtk_test_widget_init (GtkTestWidget* self)
 
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), FALSE);
 
-  scrolled = gtk_scrolled_window_new (NULL, NULL);
-
   gtk_widget_show (PRIV (self)->progress);
   gtk_box_pack_start (GTK_BOX (self), PRIV (self)->progress, FALSE, FALSE, 0);
   gtk_container_add (GTK_CONTAINER (PRIV (self)->indicator_bar), PRIV (self)->label_failures);
   gtk_widget_show_all (PRIV (self)->indicator_bar);
   gtk_box_pack_start (GTK_BOX (self), PRIV (self)->indicator_bar, FALSE, FALSE, 0);
+
+  gtk_widget_show (PRIV (self)->failure_view);
+  scrolled = gtk_scrolled_window_new (NULL, NULL);
+  gtk_container_add (GTK_CONTAINER (scrolled), PRIV (self)->failure_view);
+  gtk_widget_show (scrolled);
+  gtk_container_add_with_properties (GTK_CONTAINER (PRIV (self)->notebook), scrolled,
+                                     "tab-label", _("Failures"),
+                                     NULL);
+
   gtk_widget_show (PRIV (self)->hierarchy_view);
+  scrolled = gtk_scrolled_window_new (NULL, NULL);
   gtk_container_add (GTK_CONTAINER (scrolled), PRIV (self)->hierarchy_view);
   gtk_widget_show (scrolled);
   gtk_container_add_with_properties (GTK_CONTAINER (PRIV (self)->notebook), scrolled,
                                      "tab-label", _("Hierarchy"),
                                      NULL);
-  gtk_widget_show (PRIV (self)->notebook);
+
+  gtk_notebook_set_current_page (GTK_NOTEBOOK (PRIV (self)->notebook), 1);
+  gtk_widget_show_all (PRIV (self)->notebook);
   /* FIXME: pack the notebook into a paned with the text view */
   gtk_container_add (GTK_CONTAINER (self), PRIV (self)->notebook);
-#if 0
-  gtk_container_add_with_properties (GTK_CONTAINER (notebook), gtk_label_new ("FAILURES"),
-                                     "tab-label", _("Failures"),
-                                     NULL);
-#endif
 
   update_sensitivity (self);
 }
@@ -394,6 +436,7 @@ gtk_test_widget_set_suite (GtkTestWidget * self,
   if (PRIV (self)->suite)
     {
       g_signal_handler_disconnect (PRIV (self)->suite, PRIV (self)->status_handler);
+      gtk_tree_view_set_model (GTK_TREE_VIEW (PRIV (self)->failure_view), NULL);
       gtk_tree_view_set_model (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), NULL);
       g_object_unref (PRIV (self)->suite);
       PRIV (self)->suite = NULL;
@@ -415,6 +458,11 @@ gtk_test_widget_set_suite (GtkTestWidget * self,
                         G_CALLBACK (row_inserted_cb), self);
       g_signal_connect (model, "rows-reordered",
                         G_CALLBACK (rows_reordered_cb), self);
+
+      model = gutachter_tree_list_new (model);
+      gtk_tree_view_set_model (GTK_TREE_VIEW (PRIV (self)->failure_view),
+                               model);
+      g_object_unref (model);
 
       PRIV (self)->status_handler = g_signal_connect (PRIV (self)->suite, "notify::status",
                                                       G_CALLBACK (status_changed_cb), self);

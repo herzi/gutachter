@@ -79,6 +79,22 @@ gutachter_hierarchy_clear (GutachterHierarchy* self)
   gtk_tree_store_clear (GTK_TREE_STORE (self));
 }
 
+gchar*
+gutachter_hierarchy_get_full_path (GutachterHierarchy* self,
+                                   GtkTreeIter       * iter)
+{
+  gchar* result = NULL;
+
+  g_return_val_if_fail (GUTACHTER_IS_HIERARCHY (self), NULL);
+  g_return_val_if_fail (gtk_tree_store_iter_is_valid (GTK_TREE_STORE (self), iter), NULL);
+
+  gtk_tree_model_get (GTK_TREE_MODEL (self), iter,
+                      COL_FULL_PATH, &result,
+                      -1);
+
+  return result;
+}
+
 void
 gutachter_hierarchy_get_iter (GutachterHierarchy* self,
                               GtkTreeIter       * iter,
