@@ -1,8 +1,11 @@
 bin_PROGRAMS=
 lib_LIBRARIES=
 noinst_PROGRAMS=
+BUILT_SOURCES=
+CLEANFILES=
+TESTS=
 
-COMPILE=$(AM_V_CC) @CC@ -c -o $@ $< -g -O2 -Wall -Wextra -I. @GUTACHTER_CFLAGS@ -DGETTEXT_PACKAGE=NULL
+AM_CPPFLAGS=-Wall -Wextra -I. @GUTACHTER_CFLAGS@ -DGETTEXT_PACKAGE=NULL
 
 bin_PROGRAMS+=gutachter
 gutachter_LDADD=libgutachter.a $(GUTACHTER_LIBS)
@@ -10,6 +13,7 @@ gutachter_SOURCES=main.c
 
 lib_LIBRARIES+=libgutachter.a
 libgutachter_a_SOURCES=\
+	gutachter.h \
 	gutachter-bar.c \
 	gutachter-bar.h \
 	gutachter-hierarchy.c \
@@ -20,8 +24,6 @@ libgutachter_a_SOURCES=\
 	gutachter-suite.h \
 	gutachter-tree-list.c \
 	gutachter-tree-list.h \
-	gutachter-types.c \
-	gutachter-types.h \
 	gutachter-widget.c \
 	gutachter-widget.h \
 	gutachter-window.c \
@@ -31,20 +33,21 @@ libgutachter_a_SOURCES=\
 	tango.c \
 	tango.h \
 	$(NULL)
+nodist_libgutachter_a_SOURCES=\
+	gutachter-types.c \
+	gutachter-types.h \
+	$(NULL)
+BUILT_SOURCES+=$(nodist_libgutachter_a_SOURCES)
+CLEANFILES+=$(nodist_libgutachter_a_SOURCES)
 
 noinst_PROGRAMS+=test-dummy
 test_dummy_LDADD=libgutachter.a $(GUTACHTER_LIBS)
 test_dummy_SOURCES=test-dummy.c
 
 noinst_PROGRAMS+=test-gutachter
+TESTS+=test-gutachter
 test_gutachter_LDADD=libgutachter.a $(GUTACHTER_LIBS)
 test_gutachter_SOURCES=test-main.c
-
-check-local: test-gutachter
-	./test-gutachter
-
-clean-local:
-	rm -rf gutachter-types.c gutachter-types.h
 
 gutachter-types.h: gutachter-suite.h Makefile
 	@echo "  GEN   " $@; glib-mkenums \
@@ -61,8 +64,4 @@ gutachter-types.c: gutachter-suite.h Makefile
 		--vprod "{@VALUENAME@, \"@VALUENAME@\", \"@valuenick@\"}," \
 		--vtail "{0, NULL, NULL}}; GType registered = g_@type@_register_static(\"@EnumName@\", values); g_once_init_leave (&stored, registered);} return stored;}" \
 		$< > $@
-gutachter-types.o: gutachter-types.c gutachter-types.h
-
-%.o: %.c $(wildcard *.h) gutachter-types.h
-	$(COMPILE)
 
