@@ -248,6 +248,14 @@ iter_children (GtkTreeModel* model,
 }
 
 static gboolean
+iter_has_child (GtkTreeModel* model G_GNUC_UNUSED,
+                GtkTreeIter * iter)
+{
+  g_assert (iter); /* gtk_tree_model_iter_has_child() should catch NULL already */
+  return FALSE;
+}
+
+static gboolean
 iter_next (GtkTreeModel* model,
            GtkTreeIter * iter)
 {
@@ -285,6 +293,7 @@ implement_gtk_tree_model (GtkTreeModelIface* iface)
   iface->get_path        = get_path;
   iface->get_value       = get_value;
   iface->iter_children   = iter_children;
+  iface->iter_has_child  = iter_has_child;
   iface->iter_next       = iter_next;
   iface->iter_nth_child  = iter_nth_child;
 }
