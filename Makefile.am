@@ -1,8 +1,33 @@
-AR=@echo "  AR    " $@; ar qcs $@ $^
-COMPILE=@echo "  CC    " $@; @CC@ -c -o $@ $< -g -O2 -Wall -Wextra -I. @GUTACHTER_CFLAGS@ -DGETTEXT_PACKAGE=NULL
+lib_LIBRARIES=
+
+COMPILE=$(AM_V_CC) @CC@ -c -o $@ $< -g -O2 -Wall -Wextra -I. @GUTACHTER_CFLAGS@ -DGETTEXT_PACKAGE=NULL
 LINK=@echo "  CCLD  " $@; @CC@ -o $@ $^ -g -O2 -Wall -Wextra @GUTACHTER_LIBS@
 
-all: libgutachter.a gutachter test-dummy test-gutachter
+lib_LIBRARIES+=libgutachter.a
+libgutachter_a_SOURCES=\
+	gutachter-bar.c \
+	gutachter-bar.h \
+	gutachter-hierarchy.c \
+	gutachter-hierarchy.h \
+	gutachter-runner.c \
+	gutachter-runner.h \
+	gutachter-suite.c \
+	gutachter-suite.h \
+	gutachter-tree-list.c \
+	gutachter-tree-list.h \
+	gutachter-types.c \
+	gutachter-types.h \
+	gutachter-widget.c \
+	gutachter-widget.h \
+	gutachter-window.c \
+	gutachter-window.h \
+	gutachter-xvfb.c \
+	gutachter-xvfb.h \
+	tango.c \
+	tango.h \
+	$(NULL)
+
+all-local: gutachter test-dummy test-gutachter
 
 check: test-gutachter
 	./test-gutachter
@@ -30,19 +55,6 @@ gutachter-types.c: gutachter-suite.h Makefile
 		$< > $@
 gutachter-types.o: gutachter-types.c gutachter-types.h
 
-libgutachter.a: \
-	gutachter-bar.o \
-	gutachter-hierarchy.o \
-	gutachter-runner.o \
-	gutachter-suite.o \
-	gutachter-tree-list.o \
-	gutachter-types.o \
-	gutachter-widget.o \
-	gutachter-window.o \
-	gutachter-xvfb.o \
-	tango.o
-	$(AR)
-
 %.o: %.c $(wildcard *.h) gutachter-types.h
 	$(COMPILE)
 
@@ -52,5 +64,3 @@ test-dummy: test-dummy.o
 test-gutachter: test-main.o libgutachter.a
 	$(LINK)
 
-Makefile: config.status Makefile.in
-	@echo "  GEN   " $@; ./$< -q $@
