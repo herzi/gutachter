@@ -44,8 +44,8 @@ GtkWidget* gtk_test_widget_get_hierarchy (GtkTestWidget* self);
 GtkWidget* gtk_test_widget_get_notebook  (GtkTestWidget* self);
 GtkWidget* gtk_test_widget_get_progress  (GtkTestWidget* self);
 #endif
-void       gtk_test_widget_set_suite     (GtkTestWidget* self,
-                                          GtkTestSuite * suite); /* FIXME: consider moving to GtkTestRunner */
+void       gtk_test_widget_set_suite     (GtkTestWidget * self,
+                                          GutachterSuite* suite); /* FIXME: consider moving to GtkTestRunner */
 
 struct _GtkTestWidget
 {

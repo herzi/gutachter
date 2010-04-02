@@ -34,21 +34,21 @@ typedef struct _GutachterRunnerIface GutachterRunnerIface;
 #define GUTACHTER_IS_RUNNER(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), GUTACHTER_TYPE_RUNNER))
 #define GUTACHTER_RUNNER_GET_IFACE(i) (G_TYPE_INSTANCE_GET_INTERFACE ((i), GUTACHTER_TYPE_RUNNER, GutachterRunnerIface))
 
-GType         gutachter_runner_get_type  (void);
-GFile*        gutachter_runner_get_file  (GutachterRunner* self);
-GtkTestSuite* gutachter_runner_get_suite (GutachterRunner* self);
-void          gutachter_runner_set_file  (GutachterRunner* self,
-                                          GFile          * file);
+GType           gutachter_runner_get_type  (void);
+GFile*          gutachter_runner_get_file  (GutachterRunner* self);
+GutachterSuite* gutachter_runner_get_suite (GutachterRunner* self);
+void            gutachter_runner_set_file  (GutachterRunner* self,
+                                            GFile          * file);
 
 struct _GutachterRunnerIface
 {
   GTypeInterface  base_interface;
 
   /* vtable */
-  GFile*        (*get_file)  (GutachterRunner* self);
-  GtkTestSuite* (*get_suite) (GutachterRunner* self);
-  void          (*set_file)  (GutachterRunner* self,
-                              GFile          * file);
+  GFile*          (*get_file)  (GutachterRunner* self);
+  GutachterSuite* (*get_suite) (GutachterRunner* self);
+  void            (*set_file)  (GutachterRunner* self,
+                                GFile          * file);
 };
 
 G_END_DECLS

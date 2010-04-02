@@ -27,7 +27,7 @@
 
 #include <glib/gi18n.h>
 
-struct _GtkTestSuitePrivate
+struct _GutachterSuitePrivate
 {
   GTestLogBuffer      * buffer;
   GIOChannel          * channel;
@@ -49,14 +49,14 @@ enum
   PROP_STATUS
 };
 
-#define PRIV(i) (((GtkTestSuite*)(i))->_private)
+#define PRIV(i) (((GutachterSuite*)(i))->_private)
 
-G_DEFINE_TYPE (GtkTestSuite, gtk_test_suite, G_TYPE_OBJECT);
+G_DEFINE_TYPE (GutachterSuite, gutachter_suite, G_TYPE_OBJECT);
 
 static void
-gtk_test_suite_init (GtkTestSuite* self)
+gutachter_suite_init (GutachterSuite* self)
 {
-  PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_SUITE, GtkTestSuitePrivate);
+  PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GUTACHTER_TYPE_SUITE, GutachterSuitePrivate);
 
   PRIV (self)->buffer = g_test_log_buffer_new ();
   PRIV (self)->hierarchy = gutachter_hierarchy_new ();
@@ -71,7 +71,7 @@ finalize (GObject* object)
   g_object_unref (PRIV (object)->file);
   g_test_log_buffer_free (PRIV (object)->buffer);
 
-  G_OBJECT_CLASS (gtk_test_suite_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gutachter_suite_parent_class)->finalize (object);
 }
 
 static void
@@ -88,12 +88,12 @@ file_changed_cb (GFileMonitor     * monitor    G_GNUC_UNUSED,
     case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
       if (PRIV (user_data)->status == GUTACHTER_SUITE_INDETERMINED)
         {
-          gtk_test_suite_load (user_data);
+          gutachter_suite_load (user_data);
         }
       break;
     case G_FILE_MONITOR_EVENT_DELETED:
-      gtk_test_suite_set_status (user_data, GUTACHTER_SUITE_INDETERMINED);
-      gtk_test_suite_reset (user_data);
+      gutachter_suite_set_status (user_data, GUTACHTER_SUITE_INDETERMINED);
+      gutachter_suite_reset (user_data);
       break;
     case G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
       break;
@@ -146,7 +146,7 @@ set_property (GObject     * object,
 }
 
 static void
-gtk_test_suite_class_init (GtkTestSuiteClass* self_class)
+gutachter_suite_class_init (GutachterSuiteClass* self_class)
 {
   GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
@@ -163,94 +163,94 @@ gtk_test_suite_class_init (GtkTestSuiteClass* self_class)
                                                       GUTACHTER_SUITE_INDETERMINED,
                                                       G_PARAM_READABLE));
 
-  g_type_class_add_private (self_class, sizeof (GtkTestSuitePrivate));
+  g_type_class_add_private (self_class, sizeof (GutachterSuitePrivate));
 }
 
 GTestLogBuffer*
-gtk_test_suite_get_buffer (GtkTestSuite* self)
+gutachter_suite_get_buffer (GutachterSuite* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), NULL);
+  g_return_val_if_fail (GUTACHTER_IS_SUITE (self), NULL);
 
   return PRIV (self)->buffer;
 }
 
 GIOChannel*
-gtk_test_suite_get_channel (GtkTestSuite* self)
+gutachter_suite_get_channel (GutachterSuite* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), NULL);
+  g_return_val_if_fail (GUTACHTER_IS_SUITE (self), NULL);
 
   return PRIV (self)->channel;
 }
 
 guint64
-gtk_test_suite_get_executed (GtkTestSuite* self)
+gutachter_suite_get_executed (GutachterSuite* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), G_GUINT64_CONSTANT (0));
+  g_return_val_if_fail (GUTACHTER_IS_SUITE (self), G_GUINT64_CONSTANT (0));
 
   return PRIV (self)->executed;
 }
 
 guint64
-gtk_test_suite_get_failures (GtkTestSuite* self)
+gutachter_suite_get_failures (GutachterSuite* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), G_GUINT64_CONSTANT (0));
+  g_return_val_if_fail (GUTACHTER_IS_SUITE (self), G_GUINT64_CONSTANT (0));
 
   return PRIV (self)->failures;
 }
 
 GFile*
-gtk_test_suite_get_file (GtkTestSuite* self)
+gutachter_suite_get_file (GutachterSuite* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), NULL);
+  g_return_val_if_fail (GUTACHTER_IS_SUITE (self), NULL);
 
   return PRIV (self)->file;
 }
 
 gboolean
-gtk_test_suite_get_passed (GtkTestSuite* self)
+gutachter_suite_get_passed (GutachterSuite* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), FALSE);
+  g_return_val_if_fail (GUTACHTER_IS_SUITE (self), FALSE);
 
   return PRIV (self)->passed;
 }
 
 GutachterSuiteStatus
-gtk_test_suite_get_status (GtkTestSuite* self)
+gutachter_suite_get_status (GutachterSuite* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), GUTACHTER_SUITE_INDETERMINED);
+  g_return_val_if_fail (GUTACHTER_IS_SUITE (self), GUTACHTER_SUITE_INDETERMINED);
 
   return PRIV (self)->status;
 }
 
 guint64
-gtk_test_suite_get_tests (GtkTestSuite* self)
+gutachter_suite_get_tests (GutachterSuite* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), G_GUINT64_CONSTANT (0));
+  g_return_val_if_fail (GUTACHTER_IS_SUITE (self), G_GUINT64_CONSTANT (0));
 
   return PRIV (self)->tests;
 }
 
 GtkTreeModel*
-gtk_test_suite_get_tree (GtkTestSuite* self)
+gutachter_suite_get_tree (GutachterSuite* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_SUITE (self), G_GUINT64_CONSTANT (0));
+  g_return_val_if_fail (GUTACHTER_IS_SUITE (self), G_GUINT64_CONSTANT (0));
 
   return GTK_TREE_MODEL (PRIV (self)->hierarchy);
 }
 
-GtkTestSuite*
-gtk_test_suite_new (GFile* file)
+GutachterSuite*
+gutachter_suite_new (GFile* file)
 {
-  return g_object_new (GTK_TEST_TYPE_SUITE,
+  return g_object_new (GUTACHTER_TYPE_SUITE,
                        "file", file,
                        NULL);
 }
 
 gboolean
-run_or_warn (GPid                   * pid,
-             guint                    pipe_id,
-             GtkTestSuiteRunningMode  mode,
-             GtkTestSuite           * self)
+run_or_warn (GPid                     * pid,
+             guint                      pipe_id,
+             GutachterSuiteRunningMode  mode,
+             GutachterSuite           * self)
 {
   GtkTestXvfbWrapper* xvfb = gtk_test_xvfb_wrapper_get_instance ();
   gboolean  result = FALSE;
@@ -344,16 +344,16 @@ io_func (GIOChannel  * channel,
          GIOCondition  condition G_GNUC_UNUSED,
          gpointer      user_data)
 {
-  GtkTestSuite* suite = user_data;
-  guchar  buf[512];
-  gsize read_bytes = 0;
+  GutachterSuite* suite = user_data;
+  guchar          buf[512];
+  gsize           read_bytes = 0;
 
   while (G_IO_STATUS_NORMAL == g_io_channel_read_chars (channel, (gchar*)buf, sizeof (buf), &read_bytes, NULL))
     {
-      g_test_log_buffer_push (gtk_test_suite_get_buffer (suite), read_bytes, buf);
+      g_test_log_buffer_push (gutachter_suite_get_buffer (suite), read_bytes, buf);
     }
 
-  gtk_test_suite_read_available (suite);
+  gutachter_suite_read_available (suite);
   return TRUE;
 }
 
@@ -362,14 +362,14 @@ child_watch_cb (GPid      pid,
                 gint      status,
                 gpointer  data)
 {
-  GtkTestSuite* suite = data;
+  GutachterSuite* suite = data;
 
   g_spawn_close_pid (pid);
 
   if (WIFEXITED (status) && WEXITSTATUS (status) != 0)
     {
       g_warning ("child exited with error code: %d", WEXITSTATUS (status));
-      gtk_test_suite_set_status (suite, GUTACHTER_SUITE_INDETERMINED);
+      gutachter_suite_set_status (suite, GUTACHTER_SUITE_INDETERMINED);
     }
   else if (!WIFEXITED (status))
     {
@@ -381,22 +381,22 @@ child_watch_cb (GPid      pid,
         {
           g_warning ("child didn't exit normally: %d", status);
         }
-      gtk_test_suite_set_status (suite, GUTACHTER_SUITE_INDETERMINED);
+      gutachter_suite_set_status (suite, GUTACHTER_SUITE_INDETERMINED);
     }
   else
     {
-      gtk_test_suite_read_available (suite);
-      gtk_test_suite_set_channel (suite, NULL);
-      gtk_test_suite_set_status (suite, GUTACHTER_SUITE_LOADED);
+      gutachter_suite_read_available (suite);
+      gutachter_suite_set_channel (suite, NULL);
+      gutachter_suite_set_status (suite, GUTACHTER_SUITE_LOADED);
     }
 }
 
 void
-gtk_test_suite_load (GtkTestSuite* self)
+gutachter_suite_load (GutachterSuite* self)
 {
-  GtkTestSuite* suite = self;
+  GutachterSuite* suite = self;
 
-  g_return_if_fail (GTK_TEST_IS_SUITE (self));
+  g_return_if_fail (GUTACHTER_IS_SUITE (self));
   g_return_if_fail (PRIV (self)->status == GUTACHTER_SUITE_INDETERMINED);
 
   if (suite)
@@ -404,7 +404,7 @@ gtk_test_suite_load (GtkTestSuite* self)
       GPid   pid = 0;
       int pipes[2];
 
-      gtk_test_suite_reset (suite);
+      gutachter_suite_reset (suite);
 
       if (pipe (pipes) < 0)
         {
@@ -415,7 +415,7 @@ gtk_test_suite_load (GtkTestSuite* self)
       if (!run_or_warn (&pid, pipes[1], MODE_LIST, suite))
         {
           close (pipes[0]);
-          gtk_test_suite_set_status (suite, GUTACHTER_SUITE_INDETERMINED);
+          gutachter_suite_set_status (suite, GUTACHTER_SUITE_INDETERMINED);
         }
       else
         {
@@ -425,8 +425,8 @@ gtk_test_suite_load (GtkTestSuite* self)
           g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
           g_io_add_watch (channel, G_IO_IN, io_func, suite);
           g_child_watch_add_full (G_PRIORITY_DEFAULT, pid, child_watch_cb, suite, NULL);
-          gtk_test_suite_set_status (suite, GUTACHTER_SUITE_LOADING);
-          gtk_test_suite_set_channel (suite, channel);
+          gutachter_suite_set_status (suite, GUTACHTER_SUITE_LOADING);
+          gutachter_suite_set_channel (suite, channel);
           g_io_channel_unref (channel);
         }
       close (pipes[1]);
@@ -438,7 +438,7 @@ run_test_child_watch (GPid      pid,
                       gint      status,
                       gpointer  user_data)
 {
-  GtkTestSuite* suite = user_data;
+  GutachterSuite* suite = user_data;
 
   g_spawn_close_pid (pid);
 
@@ -452,10 +452,10 @@ run_test_child_watch (GPid      pid,
     }
   else if (WIFEXITED (status))
     {
-      gtk_test_suite_read_available (suite);
+      gutachter_suite_read_available (suite);
     }
 
-  gtk_test_suite_set_status (suite, GUTACHTER_SUITE_FINISHED);
+  gutachter_suite_set_status (suite, GUTACHTER_SUITE_FINISHED);
 }
 
 static void
@@ -507,17 +507,17 @@ update_parent (GtkTreeStore* store,
 }
 
 void
-gtk_test_suite_read_available (GtkTestSuite* self)
+gutachter_suite_read_available (GutachterSuite* self)
 {
   GutachterSuiteStatus  status;
-  GTestLogBuffer      * tlb;
+  GTestLogBuffer      * tlb; /* FIXME: drop this one */
   GTestLogMsg         * msg;
   GtkTreeStore        * store;
 
-  g_return_if_fail (GTK_TEST_IS_SUITE (self));
-  status = gtk_test_suite_get_status (self);
+  g_return_if_fail (GUTACHTER_IS_SUITE (self));
+  status = gutachter_suite_get_status (self);
 
-  tlb = gtk_test_suite_get_buffer (self);
+  tlb = PRIV (self)->buffer;
   switch (status)
     {
     case GUTACHTER_SUITE_LOADING:
@@ -548,7 +548,7 @@ gtk_test_suite_read_available (GtkTestSuite* self)
       break;
     case GUTACHTER_SUITE_RUNNING:
     case GUTACHTER_SUITE_FINISHED: /* FIXME: finish the process only after regular EOF */
-      store = GTK_TREE_STORE (gtk_test_suite_get_tree (self));
+      store = GTK_TREE_STORE (PRIV (self)->hierarchy);
       for (msg = g_test_log_buffer_pop (tlb); msg; msg = g_test_log_buffer_pop (tlb))
         {
           switch (msg->log_type)
@@ -559,8 +559,7 @@ gtk_test_suite_read_available (GtkTestSuite* self)
               gutachter_hierarchy_lookup_iter (PRIV (self)->hierarchy, &PRIV (self)->iter, msg->strings[0]);
               break;
             case G_TEST_LOG_STOP_CASE:
-              gtk_test_suite_set_executed (self,
-                                           1 + gtk_test_suite_get_executed (self));
+              PRIV (self)->executed++;
               gtk_tree_store_set (store, &PRIV (self)->iter,
                                   GUTACHTER_HIERARCHY_COLUMN_UNSURE, FALSE,
                                   GUTACHTER_HIERARCHY_COLUMN_PASSED, msg->nums[0] == 0,
@@ -572,10 +571,10 @@ gtk_test_suite_read_available (GtkTestSuite* self)
 #endif
               break;
             case G_TEST_LOG_ERROR:
-              gtk_test_suite_set_executed (self,
-                                           1 + gtk_test_suite_get_executed (self));
+              PRIV (self)->executed++;
               PRIV (self)->passed = FALSE;
               PRIV (self)->failures++;
+              /* FIXME: move into the hierarchy */
               gtk_tree_store_set (store, &PRIV (self)->iter,
                                   GUTACHTER_HIERARCHY_COLUMN_UNSURE, FALSE,
                                   GUTACHTER_HIERARCHY_COLUMN_PASSED, FALSE,
@@ -598,19 +597,19 @@ gtk_test_suite_read_available (GtkTestSuite* self)
 }
 
 void
-gtk_test_suite_reset (GtkTestSuite* self)
+gutachter_suite_reset (GutachterSuite* self)
 {
-  g_return_if_fail (GTK_TEST_IS_SUITE (self));
+  g_return_if_fail (GUTACHTER_IS_SUITE (self));
 
   PRIV (self)->tests = G_GUINT64_CONSTANT (0);
   gutachter_hierarchy_clear (PRIV (self)->hierarchy);
 }
 
 void
-gtk_test_suite_set_channel (GtkTestSuite* self,
-                            GIOChannel  * channel)
+gutachter_suite_set_channel (GutachterSuite* self,
+                             GIOChannel    * channel)
 {
-  g_return_if_fail (GTK_TEST_IS_SUITE (self));
+  g_return_if_fail (GUTACHTER_IS_SUITE (self));
 
   if (PRIV (self)->channel == channel)
     {
@@ -630,19 +629,19 @@ gtk_test_suite_set_channel (GtkTestSuite* self,
 }
 
 void
-gtk_test_suite_set_executed (GtkTestSuite* self,
-                             guint64       executed)
+gutachter_suite_set_executed (GutachterSuite* self,
+                              guint64         executed)
 {
-  g_return_if_fail (GTK_TEST_IS_SUITE (self));
+  g_return_if_fail (GUTACHTER_IS_SUITE (self));
 
   PRIV (self)->executed = executed;
 }
 
 void
-gtk_test_suite_set_status (GtkTestSuite      * self,
-                           GutachterSuiteStatus  status)
+gutachter_suite_set_status (GutachterSuite      * self,
+                            GutachterSuiteStatus  status)
 {
-  g_return_if_fail (GTK_TEST_IS_SUITE (self));
+  g_return_if_fail (GUTACHTER_IS_SUITE (self));
   /* comparison of unsigned int with 0 is always true; FIXME: is there a way to glue this into a test case? */
   g_return_if_fail (/*GTK_TEST_SUITE_INDETERMINED <= status && */ status <= GUTACHTER_SUITE_FINISHED);
 
@@ -683,10 +682,10 @@ gtk_test_suite_set_status (GtkTestSuite      * self,
 }
 
 void
-gtk_test_suite_set_tests (GtkTestSuite* self,
-                          guint64       tests)
+gutachter_suite_set_tests (GutachterSuite* self,
+                           guint64         tests)
 {
-  g_return_if_fail (GTK_TEST_IS_SUITE (self));
+  g_return_if_fail (GUTACHTER_IS_SUITE (self));
 
   PRIV (self)->tests = tests;
 }

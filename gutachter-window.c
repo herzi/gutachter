@@ -55,14 +55,14 @@ forward_notify (GObject   * object G_GNUC_UNUSED,
                 GParamSpec* pspec,
                 gpointer    user_data)
 {
-  GtkTestSuite* suite;
+  GutachterSuite* suite;
 
   gtk_test_window_update_title (user_data);
 
   suite = gutachter_runner_get_suite (GUTACHTER_RUNNER (PRIV (user_data)->widget));
   if (suite)
     {
-      gtk_test_suite_load (suite);
+      gutachter_suite_load (suite);
     }
 
   g_object_notify (user_data, pspec->name);
@@ -99,12 +99,12 @@ open_item_clicked (GtkButton* button G_GNUC_UNUSED,
 }
 
 static void
-gtk_test_suite_execute (GtkTestSuite* self)
+gutachter_suite_execute (GutachterSuite* self)
 {
   GPid           pid = 0;
   int            pipes[2];
 
-  g_return_if_fail (GTK_TEST_IS_SUITE (self));
+  g_return_if_fail (GUTACHTER_IS_SUITE (self));
 
   if (pipe (pipes))
     {
@@ -112,7 +112,7 @@ gtk_test_suite_execute (GtkTestSuite* self)
       return;
     }
 
-  gtk_test_suite_set_executed (self, 0);
+  gutachter_suite_set_executed (self, 0);
   if (!run_or_warn (&pid, pipes[1], MODE_TEST, self))
     {
       close (pipes[0]);
@@ -126,11 +126,11 @@ gtk_test_suite_execute (GtkTestSuite* self)
       g_io_add_watch (channel, G_IO_IN, io_func, self);
       g_child_watch_add_full (G_PRIORITY_DEFAULT, pid, run_test_child_watch, self, NULL);
 
-      gtk_test_suite_set_status (self, GUTACHTER_SUITE_RUNNING);
-      gtk_test_suite_set_channel (self, channel);
+      gutachter_suite_set_status (self, GUTACHTER_SUITE_RUNNING);
+      gutachter_suite_set_channel (self, channel);
       g_io_channel_unref (channel);
 
-      gutachter_hierarchy_set_unsure (GUTACHTER_HIERARCHY (gtk_test_suite_get_tree (self)));
+      gutachter_hierarchy_set_unsure (GUTACHTER_HIERARCHY (gutachter_suite_get_tree (self)));
     }
 
   close (pipes[1]);
@@ -140,7 +140,7 @@ static void
 button_clicked_cb (GtkButton* button    G_GNUC_UNUSED,
                    gpointer   user_data)
 {
-  gtk_test_suite_execute (gutachter_runner_get_suite (GUTACHTER_RUNNER (PRIV (user_data)->widget)));
+  gutachter_suite_execute (gutachter_runner_get_suite (GUTACHTER_RUNNER (PRIV (user_data)->widget)));
 }
 
 static void
@@ -159,11 +159,11 @@ auto_update_toggled (GtkToggleToolButton* button,
 
   if (PRIV (self)->auto_update)
     {
-      GtkTestSuite* suite = gutachter_runner_get_suite (GUTACHTER_RUNNER (PRIV (self)->widget));
+      GutachterSuite* suite = gutachter_runner_get_suite (GUTACHTER_RUNNER (PRIV (self)->widget));
 
-      if (suite && GUTACHTER_SUITE_LOADED == gtk_test_suite_get_status (suite))
+      if (suite && GUTACHTER_SUITE_LOADED == gutachter_suite_get_status (suite))
         {
-          gtk_test_suite_execute (suite);
+          gutachter_suite_execute (suite);
         }
     }
 }
@@ -257,7 +257,7 @@ get_file (GutachterRunner* runner)
   return gutachter_runner_get_file (GUTACHTER_RUNNER (PRIV (runner)->widget));
 }
 
-static GtkTestSuite*
+static GutachterSuite*
 get_suite (GutachterRunner* runner)
 {
   return gutachter_runner_get_suite (GUTACHTER_RUNNER (PRIV (runner)->widget));
@@ -268,12 +268,12 @@ status_changed_cb (GObject   * suite_object,
                    GParamSpec* pspec        G_GNUC_UNUSED,
                    gpointer    user_data)
 {
-  switch (gtk_test_suite_get_status (GTK_TEST_SUITE (suite_object)))
+  switch (gutachter_suite_get_status (GUTACHTER_SUITE (suite_object)))
     {
     case GUTACHTER_SUITE_LOADED:
       if (PRIV (user_data)->auto_update)
         {
-          gtk_test_suite_execute (GTK_TEST_SUITE (suite_object));
+          gutachter_suite_execute (GUTACHTER_SUITE (suite_object));
         }
     case GUTACHTER_SUITE_FINISHED:
       gtk_widget_set_sensitive (GTK_WIDGET (PRIV (user_data)->execute_button), TRUE);
@@ -288,7 +288,7 @@ static void
 set_file (GutachterRunner* runner,
           GFile          * file)
 {
-  GtkTestSuite* suite;
+  GutachterSuite* suite;
 
   if (PRIV (runner)->status_handler)
     {

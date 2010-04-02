@@ -25,7 +25,7 @@ gutachter_runner_iface_init (GutachterRunnerIface* iface)
 {
   g_object_interface_install_property (iface,
                                        g_param_spec_object ("test-suite", NULL, NULL,
-                                                            GTK_TEST_TYPE_SUITE, G_PARAM_READABLE));
+                                                            GUTACHTER_TYPE_SUITE, G_PARAM_READABLE));
 }
 
 GType
@@ -65,7 +65,7 @@ gutachter_runner_get_file (GutachterRunner* self)
   return iface->get_file (self);
 }
 
-GtkTestSuite*
+GutachterSuite*
 gutachter_runner_get_suite (GutachterRunner* self)
 {
   GutachterRunnerIface* iface;

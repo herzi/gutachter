@@ -27,13 +27,13 @@
 
 struct _GtkTestWidgetPrivate
 {
-  GtkWidget   * hierarchy_view;
-  GtkWidget   * indicator_bar;
-  GtkWidget   * label_failures;
-  GtkWidget   * notebook;
-  GtkWidget   * progress;
-  gulong        status_handler;
-  GtkTestSuite* suite;
+  GtkWidget     * hierarchy_view;
+  GtkWidget     * indicator_bar;
+  GtkWidget     * label_failures;
+  GtkWidget     * notebook;
+  GtkWidget     * progress;
+  gulong          status_handler;
+  GutachterSuite* suite;
 };
 
 enum
@@ -59,7 +59,7 @@ update_sensitivity (GtkTestWidget* self)
 
   if (PRIV (self)->suite)
     {
-      if (gtk_test_suite_get_status (PRIV (self)->suite) == GUTACHTER_SUITE_INDETERMINED)
+      if (gutachter_suite_get_status (PRIV (self)->suite) == GUTACHTER_SUITE_INDETERMINED)
         {
           gtk_progress_bar_set_fraction (progress, 0.0);
         }
@@ -195,10 +195,10 @@ gtk_test_widget_class_init (GtkTestWidgetClass* self_class)
 static GFile*
 get_file (GutachterRunner* runner)
 {
-  return PRIV (runner)->suite ? gtk_test_suite_get_file (PRIV (runner)->suite) : NULL;
+  return PRIV (runner)->suite ? gutachter_suite_get_file (PRIV (runner)->suite) : NULL;
 }
 
-static GtkTestSuite*
+static GutachterSuite*
 get_suite (GutachterRunner* runner)
 {
   return PRIV (runner)->suite;
@@ -213,14 +213,14 @@ set_file (GutachterRunner* runner,
       return;
     }
 
-  if (file && PRIV (runner)->suite && file == gtk_test_suite_get_file (PRIV (runner)->suite))
+  if (file && PRIV (runner)->suite && file == gutachter_suite_get_file (PRIV (runner)->suite))
     {
       return;
     }
 
   if (file)
     {
-      GtkTestSuite* suite = gtk_test_suite_new (file);
+      GutachterSuite* suite = gutachter_suite_new (file);
       gtk_test_widget_set_suite (GTK_TEST_WIDGET (runner), suite);
       g_object_unref (suite);
     }
@@ -272,7 +272,7 @@ gtk_test_widget_new (void)
 static void
 model_changed (GtkTestWidget* self)
 {
-  switch (gtk_test_suite_get_status (PRIV (self)->suite))
+  switch (gutachter_suite_get_status (PRIV (self)->suite))
     {
       gchar* text;
     case GUTACHTER_SUITE_LOADING:
@@ -282,32 +282,32 @@ model_changed (GtkTestWidget* self)
     case GUTACHTER_SUITE_RUNNING:
     case GUTACHTER_SUITE_FINISHED: /* FIXME: finish the process only after regular EOF */
       text = g_strdup_printf (_("%" G_GUINT64_FORMAT "/%" G_GUINT64_FORMAT),
-                              gtk_test_suite_get_executed (PRIV (self)->suite),
-                              gtk_test_suite_get_tests (PRIV (self)->suite));
+                              gutachter_suite_get_executed (PRIV (self)->suite),
+                              gutachter_suite_get_tests (PRIV (self)->suite));
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (PRIV (self)->progress),
                                  text);
       g_free (text);
-      if (!gtk_test_suite_get_passed (PRIV (self)->suite) ||
-          gtk_test_suite_get_executed (PRIV (self)->suite) >= gtk_test_suite_get_tests (PRIV (self)->suite))
+      if (!gutachter_suite_get_passed (PRIV (self)->suite) ||
+          gutachter_suite_get_executed (PRIV (self)->suite) >= gutachter_suite_get_tests (PRIV (self)->suite))
         {
           gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (PRIV (self)->progress), 1.0);
         }
       else
         {
           gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (PRIV (self)->progress),
-                                         1.0 * gtk_test_suite_get_executed (PRIV (self)->suite) / gtk_test_suite_get_tests (PRIV (self)->suite));
+                                         1.0 * gutachter_suite_get_executed (PRIV (self)->suite) / gutachter_suite_get_tests (PRIV (self)->suite));
         }
 
       text = g_strdup_printf (g_dngettext (GETTEXT_DOMAIN,
                                            "%" G_GUINT64_FORMAT " failure",
                                            "%" G_GUINT64_FORMAT " failures",
-                                           gtk_test_suite_get_failures (PRIV (self)->suite)),
-                              gtk_test_suite_get_failures (PRIV (self)->suite));
+                                           gutachter_suite_get_failures (PRIV (self)->suite)),
+                              gutachter_suite_get_failures (PRIV (self)->suite));
       gtk_label_set_text (GTK_LABEL (PRIV (self)->label_failures), text);
       g_free (text);
 
       gutachter_bar_set_okay (GUTACHTER_BAR (PRIV (self)->indicator_bar),
-                              gtk_test_suite_get_passed (PRIV (self)->suite));
+                              gutachter_suite_get_passed (PRIV (self)->suite));
       break;
     case GUTACHTER_SUITE_INDETERMINED:
       update_sensitivity (self);
@@ -361,7 +361,7 @@ status_changed_cb (GObject   * suite     G_GNUC_UNUSED,
 {
   GtkTestWidget* self = user_data;
 
-  switch (gtk_test_suite_get_status (PRIV (self)->suite))
+  switch (gutachter_suite_get_status (PRIV (self)->suite))
     {
     case GUTACHTER_SUITE_LOADED:
       gtk_tree_view_expand_all (GTK_TREE_VIEW (PRIV (self)->hierarchy_view));
@@ -372,7 +372,7 @@ status_changed_cb (GObject   * suite     G_GNUC_UNUSED,
     case GUTACHTER_SUITE_FINISHED:
       /* let the bar be green in the beginning */
       gutachter_bar_set_okay (GUTACHTER_BAR (PRIV (self)->indicator_bar),
-                              gtk_test_suite_get_passed (PRIV (self)->suite));
+                              gutachter_suite_get_passed (PRIV (self)->suite));
       break;
     default:
       break;
@@ -380,11 +380,11 @@ status_changed_cb (GObject   * suite     G_GNUC_UNUSED,
 }
 
 void
-gtk_test_widget_set_suite (GtkTestWidget* self,
-                           GtkTestSuite * suite)
+gtk_test_widget_set_suite (GtkTestWidget * self,
+                           GutachterSuite* suite)
 {
   g_return_if_fail (GTK_TEST_IS_WIDGET (self));
-  g_return_if_fail (!suite || GTK_TEST_IS_SUITE (suite));
+  g_return_if_fail (!suite || GUTACHTER_IS_SUITE (suite));
 
   if (PRIV (self)->suite == suite)
     {
@@ -401,7 +401,7 @@ gtk_test_widget_set_suite (GtkTestWidget* self,
 
   if (suite)
     {
-      GtkTreeModel* model = gtk_test_suite_get_tree (suite);
+      GtkTreeModel* model = gutachter_suite_get_tree (suite);
 
       PRIV (self)->suite = g_object_ref (suite);
       gtk_tree_view_set_model (GTK_TREE_VIEW (PRIV (self)->hierarchy_view),
