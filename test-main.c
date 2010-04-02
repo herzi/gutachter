@@ -429,6 +429,27 @@ test_tree_list_model_iter_children (void)
   g_object_unref (store);
 }
 
+static void
+test_tree_list_model_iter_next (void)
+{
+  GtkTreeStore* store = gtk_tree_store_new (1, G_TYPE_STRING);
+  GtkTreeModel* subject = gutachter_tree_list_new (GTK_TREE_MODEL (store));
+  GtkTreeIter   iter;
+
+  populate_shopping_list (store);
+
+  g_assert (gtk_tree_model_iter_children (subject, &iter, NULL));
+  g_assert (gtk_tree_model_iter_next (subject, &iter));
+  g_assert (gtk_tree_model_iter_next (subject, &iter));
+  g_assert (gtk_tree_model_iter_next (subject, &iter));
+  g_assert (gtk_tree_model_iter_next (subject, &iter));
+  g_assert (gtk_tree_model_iter_next (subject, &iter));
+  g_assert (!gtk_tree_model_iter_next (subject, &iter));
+
+  g_object_unref (subject);
+  g_object_unref (store);
+}
+
 int
 main (int   argc,
       char**argv)
@@ -446,7 +467,7 @@ main (int   argc,
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-path", test_tree_list_model_get_path);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/iter-nth-child", test_tree_list_model_iter_nth_child);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/iter-children", test_tree_list_model_iter_children);
-  /* API/iter-next */
+  g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/iter-next", test_tree_list_model_iter_next);
   /* API/get-value */
   /* API/iter-has-child */
   /* API/iter-n-children */

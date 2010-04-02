@@ -232,6 +232,20 @@ iter_children (GtkTreeModel* model,
 }
 
 static gboolean
+iter_next (GtkTreeModel* model,
+           GtkTreeIter * iter)
+{
+  if (!validate_iter (GUTACHTER_TREE_LIST (model), iter))
+    {
+      return FALSE;
+    }
+
+  iter->user_data3 = GINT_TO_POINTER (GPOINTER_TO_INT (iter->user_data3) + 1);
+
+  return validate_iter (GUTACHTER_TREE_LIST (model), iter);
+}
+
+static gboolean
 iter_nth_child (GtkTreeModel* model,
                 GtkTreeIter * iter,
                 GtkTreeIter * parent,
@@ -254,6 +268,7 @@ implement_gtk_tree_model (GtkTreeModelIface* iface)
   iface->get_iter        = get_iter;
   iface->get_path        = get_path;
   iface->iter_children   = iter_children;
+  iface->iter_next       = iter_next;
   iface->iter_nth_child  = iter_nth_child;
 }
 
