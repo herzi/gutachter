@@ -1,11 +1,17 @@
 *~
 *.a
+aclocal.m4
 *autom4te.cache
+ChangeLog
 config.*
 configure
 gutachter
 gutachter-types.*
+INSTALL
+install-sh
 Makefile
+Makefile.in
+missing
 *.o
 test-dummy
 test-gutachter

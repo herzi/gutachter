@@ -1,0 +1,5 @@
+Gutachter 0.0.1
+===============
+This is the initial release. It provides a simple user interface for running
+unit tests written with the GLib/GTK+ testing system.
+
