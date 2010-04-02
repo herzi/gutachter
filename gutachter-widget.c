@@ -104,13 +104,17 @@ full_path_data_func (GtkTreeViewColumn* column    G_GNUC_UNUSED,
                      GtkTreeIter      * iter,
                      gpointer           user_data G_GNUC_UNUSED)
 {
-  GtkTreeIter  hierarchy;
+  GutachterTreeList* tree_list;
+  GtkTreeIter        hierarchy_iter;
+  GtkTreeIter        tree_list_iter;
+  gchar            * full_path = NULL;
 
-  gchar* full_path = NULL;
+  gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (model), &tree_list_iter, iter);
+  tree_list = GUTACHTER_TREE_LIST (gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model)));
 
-  g_return_if_fail (gutachter_tree_list_iter_to_child (GUTACHTER_TREE_LIST (model), &hierarchy, iter));
+  g_return_if_fail (gutachter_tree_list_iter_to_child (tree_list, &hierarchy_iter, &tree_list_iter));
 
-  full_path = gutachter_hierarchy_get_full_path (GUTACHTER_HIERARCHY (gutachter_tree_list_get_model (GUTACHTER_TREE_LIST (model))), &hierarchy);
+  full_path = gutachter_hierarchy_get_full_path (GUTACHTER_HIERARCHY (gutachter_tree_list_get_model (tree_list)), &hierarchy_iter);
 
   g_object_set (renderer,
                 "text", full_path,
@@ -421,6 +425,22 @@ status_changed_cb (GObject   * suite     G_GNUC_UNUSED,
     }
 }
 
+static gboolean
+failure_visible_func (GtkTreeModel* model,
+                      GtkTreeIter * iter,
+                      gpointer      user_data G_GNUC_UNUSED)
+{
+  gboolean  passed = TRUE;
+  gboolean  unsure = TRUE;
+
+  gtk_tree_model_get (model, iter,
+                      GUTACHTER_HIERARCHY_COLUMN_UNSURE, &unsure,
+                      GUTACHTER_HIERARCHY_COLUMN_PASSED, &passed,
+                      -1);
+
+  return !unsure && !passed;
+}
+
 void
 gtk_test_widget_set_suite (GtkTestWidget * self,
                            GutachterSuite* suite)
@@ -461,7 +481,12 @@ gtk_test_widget_set_suite (GtkTestWidget * self,
 
       model = gutachter_tree_list_new (model);
       gtk_tree_view_set_model (GTK_TREE_VIEW (PRIV (self)->failure_view),
-                               model);
+                               gtk_tree_model_filter_new (model, NULL));
+      g_object_unref (model);
+      model = gtk_tree_view_get_model (GTK_TREE_VIEW (PRIV (self)->failure_view));
+      gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (model),
+                                              failure_visible_func,
+                                              NULL, NULL);
       g_object_unref (model);
 
       PRIV (self)->status_handler = g_signal_connect (PRIV (self)->suite, "notify::status",
