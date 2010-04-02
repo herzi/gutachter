@@ -618,6 +618,89 @@ test_tree_model_iter_parent (void)
   g_object_unref (store);
 }
 
+static void
+row_changed_cb (GtkTreeModel* model     G_GNUC_UNUSED,
+                GtkTreePath * path,
+                GtkTreeIter * iter      G_GNUC_UNUSED,
+                gpointer      user_data)
+{
+  GtkTreePath**return_path = user_data;
+
+  g_return_if_fail (return_path && !*return_path);
+  *return_path = gtk_tree_path_copy (path);
+}
+
+static void
+test_tree_model_row_changed (void)
+{
+  GtkTreeStore* store = gtk_tree_store_new (1, G_TYPE_STRING);
+  GtkTreeModel* subject = gutachter_tree_list_new (GTK_TREE_MODEL (store));
+  GtkTreePath * return_path = NULL;
+  GtkTreePath * path;
+  GtkTreeIter   iter1;
+  GtkTreeIter   iter2;
+
+  g_signal_connect (subject, "row-changed",
+                    G_CALLBACK (row_changed_cb), &return_path);
+
+  gtk_tree_store_append (store, &iter1, NULL);
+  gtk_tree_store_set (store, &iter1,
+                      0, "Sliffy Supermarkt",
+                      -1);
+  path = gtk_tree_path_new_from_indices (0, -1);
+  gutachter_assert_cmppath (path, ==, return_path);
+  gtk_tree_path_free (return_path);
+  return_path = NULL;
+
+  gtk_tree_store_append (store, &iter2, &iter1);
+  gtk_tree_store_set (store, &iter2,
+                      0, "Milk",
+                      -1);
+  gtk_tree_path_next (path);
+  gutachter_assert_cmppath (path, ==, return_path);
+  gtk_tree_path_free (return_path);
+  return_path = NULL;
+
+  gtk_tree_store_append (store, &iter2, &iter1);
+  gtk_tree_store_set (store, &iter2,
+                      0, "Cheese",
+                      -1);
+  gtk_tree_path_next (path);
+  gutachter_assert_cmppath (path, ==, return_path);
+  gtk_tree_path_free (return_path);
+  return_path = NULL;
+
+  gtk_tree_store_append (store, &iter1, NULL);
+  gtk_tree_store_set (store, &iter1,
+                      0, "Sloff Shop",
+                      -1);
+  gtk_tree_path_next (path);
+  gutachter_assert_cmppath (path, ==, return_path);
+  gtk_tree_path_free (return_path);
+  return_path = NULL;
+
+  gtk_tree_store_append (store, &iter2, &iter1);
+  gtk_tree_store_set (store, &iter2,
+                      0, "Noodles",
+                      -1);
+  gtk_tree_path_next (path);
+  gutachter_assert_cmppath (path, ==, return_path);
+  gtk_tree_path_free (return_path);
+  return_path = NULL;
+
+  gtk_tree_store_append (store, &iter2, &iter1);
+  gtk_tree_store_set (store, &iter2,
+                      0, "Potatoes",
+                      -1);
+  gtk_tree_path_next (path);
+  gutachter_assert_cmppath (path, ==, return_path);
+  gtk_tree_path_free (return_path);
+  return_path = NULL;
+
+  g_object_unref (subject);
+  g_object_unref (store);
+}
+
 int
 main (int   argc,
       char**argv)
@@ -641,14 +724,15 @@ main (int   argc,
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/iter-has-child", test_tree_model_iter_has_child);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/iter-n-children", test_tree_model_iter_n_children);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/iter-parent", test_tree_model_iter_parent);
+  /* "/com/github/herzi/gutachter/GutachterTreeList/path-from-child"
+   * This function could be very useful in the internal row-changed handler.  */
+  g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/signals/row-changed", test_tree_model_row_changed);
   /* API/ref-node */
   /* API/unref-node */
-  /* signals/row-changed */
   /* signals/row-inserted */
   /* signals/row-has-child-toggled */
   /* signals/row-deleted */
   /* signals/rows-reordered */
-  /* "/com/github/herzi/gutachter/GutachterTreeList/path-from-child" */
   /* "/com/github/herzi/gutachter/GutachterTreeList/path-to-child" */
 
   /* FIXME: test proper handling of this: "dummy/a", "/dummy/b" */

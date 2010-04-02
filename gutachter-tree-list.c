@@ -43,7 +43,9 @@ enum
   PROP_MODEL
 };
 
-static void implement_gtk_tree_model (GtkTreeModelIface* iface);
+static void   implement_gtk_tree_model (GtkTreeModelIface* iface);
+static GList* find_glist_for_tree_path (GQueue           * queue,
+                                        GtkTreePath      * path);
 
 G_DEFINE_TYPE_WITH_CODE (GutachterTreeList, gutachter_tree_list, G_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL, implement_gtk_tree_model));
@@ -104,6 +106,26 @@ initialize_iter (GutachterTreeList* self,
 }
 
 static void
+row_changed_cb (GtkTreeModel* model     G_GNUC_UNUSED,
+                GtkTreePath * path,
+                GtkTreeIter * iter      G_GNUC_UNUSED,
+                gpointer      user_data)
+{
+  GutachterTreeList* self = user_data;
+  GtkTreePath      * our_path;
+  GtkTreeIter        our_iter;
+  GList            * link;
+
+  /* FIXME: use gutachter_tree_list_path_from_child() */
+  link = find_glist_for_tree_path (PRIV (self)->references, path);
+  g_assert (link);
+  our_path = gtk_tree_path_new_from_indices (g_queue_link_index (PRIV (self)->references, link), -1);
+  g_assert (gtk_tree_model_get_iter (user_data, &our_iter, our_path));
+  gtk_tree_model_row_changed (user_data, our_path, &our_iter);
+  gtk_tree_path_free (our_path);
+}
+
+static void
 row_inserted_cb (GtkTreeModel* model,
                  GtkTreePath * path,
                  GtkTreeIter * iter      G_GNUC_UNUSED,
@@ -139,6 +161,8 @@ set_property (GObject     * object,
       PRIV (object)->model = g_value_dup_object (value);
       /* construct-only => no notification */
 
+      g_signal_connect (PRIV (object)->model, "row-changed",
+                        G_CALLBACK (row_changed_cb), object);
       g_signal_connect (PRIV (object)->model, "row-inserted",
                         G_CALLBACK (row_inserted_cb), object);
       break;
