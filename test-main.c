@@ -359,6 +359,7 @@ main (int   argc,
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-n-columns", test_tree_list_model_get_n_columns);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-column-type", test_tree_list_model_get_column_type);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-iter", test_tree_list_model_get_iter);
+  g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/iter-from-child", test_tree_list_iter_from_child);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-path", test_tree_list_model_get_path);
   /* API/get-value */
   /* API/iter-next */
@@ -374,7 +375,6 @@ main (int   argc,
   /* signals/row-has-child-toggled */
   /* signals/row-deleted */
   /* signals/rows-reordered */
-  g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/iter-from-child", test_tree_list_iter_from_child);
   /* "/com/github/herzi/gutachter/GutachterTreeList/iter-to-child" */
   /* "/com/github/herzi/gutachter/GutachterTreeList/path-from-child" */
   /* "/com/github/herzi/gutachter/GutachterTreeList/path-to-child" */

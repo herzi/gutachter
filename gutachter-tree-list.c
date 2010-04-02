@@ -240,22 +240,22 @@ gutachter_tree_list_iter_from_child (GutachterTreeList* self,
 {
   GtkTreePath* path = gtk_tree_model_get_path (PRIV (self)->model, child_iter);
   gboolean     result;
-  GList      * list;
+  GList      * link;
 
   if (!path)
     {
       return FALSE;
     }
 
-  list = find_glist_for_tree_path (PRIV (self)->references, path);
-  if (!list)
+  link = find_glist_for_tree_path (PRIV (self)->references, path);
+  if (!link)
     {
       gtk_tree_path_free (path);
       return FALSE;
     }
 
   gtk_tree_path_free (path);
-  path = gtk_tree_row_reference_get_path (list->data);
+  path = gtk_tree_path_new_from_indices (g_queue_link_index (PRIV (self)->references, link), -1);
   result = gtk_tree_model_get_iter (GTK_TREE_MODEL (self), iter, path);
   gtk_tree_path_free (path);
 
