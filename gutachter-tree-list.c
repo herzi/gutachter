@@ -223,6 +223,22 @@ get_path (GtkTreeModel* model,
   return gtk_tree_path_new_from_indices (GPOINTER_TO_INT (iter->user_data3), -1);
 }
 
+static void
+get_value (GtkTreeModel* model,
+           GtkTreeIter * iter,
+           gint          column,
+           GValue      * value)
+{
+  GtkTreeIter  child_iter;
+
+  g_return_if_fail (gutachter_tree_list_iter_to_child (GUTACHTER_TREE_LIST (model), &child_iter, iter));
+
+  gtk_tree_model_get_value (PRIV (model)->model,
+                            &child_iter,
+                            column,
+                            value);
+}
+
 static gboolean
 iter_children (GtkTreeModel* model,
                GtkTreeIter * iter,
@@ -267,6 +283,7 @@ implement_gtk_tree_model (GtkTreeModelIface* iface)
   iface->get_column_type = get_column_type;
   iface->get_iter        = get_iter;
   iface->get_path        = get_path;
+  iface->get_value       = get_value;
   iface->iter_children   = iter_children;
   iface->iter_next       = iter_next;
   iface->iter_nth_child  = iter_nth_child;
