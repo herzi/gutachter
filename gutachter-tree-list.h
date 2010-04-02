@@ -41,6 +41,9 @@ GtkTreeModel* gutachter_tree_list_new             (GtkTreeModel* real_tree);
 gboolean      gutachter_tree_list_iter_from_child (GutachterTreeList* self,
                                                    GtkTreeIter      * iter,
                                                    GtkTreeIter      * child_iter);
+gboolean      gutachter_tree_list_iter_to_child   (GutachterTreeList* self,
+                                                   GtkTreeIter      * child_iter,
+                                                   GtkTreeIter      * iter);
 
 struct _GutachterTreeList
 {

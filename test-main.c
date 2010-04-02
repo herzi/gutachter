@@ -143,6 +143,53 @@ test_tree_list_iter_from_child (void)
 }
 
 static void
+test_tree_list_iter_to_child (void)
+{
+  GtkTreeStore* store = gtk_tree_store_new (1, G_TYPE_STRING);
+  GtkTreeModel* subject = gutachter_tree_list_new (GTK_TREE_MODEL (store));
+  GtkTreePath * path;
+  GtkTreeIter   iter_item;
+  GtkTreeIter   iter_mall;
+  GtkTreeIter   iter;
+
+  populate_shopping_list (store);
+
+  path = gtk_tree_path_new_from_indices (0, -1);
+  g_assert (gtk_tree_model_get_iter (subject, &iter, path));
+  g_assert (gutachter_tree_list_iter_to_child (GUTACHTER_TREE_LIST (subject), &iter_mall, &iter));
+
+  gtk_tree_path_next (path);
+  g_assert (gtk_tree_model_get_iter (subject, &iter, path));
+  g_assert (gutachter_tree_list_iter_to_child (GUTACHTER_TREE_LIST (subject), &iter_item, &iter));
+
+  gtk_tree_path_next (path);
+  if (g_test_verbose ())
+    {
+      gchar* string = gtk_tree_path_to_string (path);
+      g_message ("trying path %s", string);
+      g_free (string);
+    }
+  g_assert (gtk_tree_model_get_iter (subject, &iter, path));
+  g_assert (gutachter_tree_list_iter_to_child (GUTACHTER_TREE_LIST (subject), &iter_item, &iter));
+
+  gtk_tree_path_next (path);
+  g_assert (gtk_tree_model_get_iter (subject, &iter, path));
+  g_assert (gutachter_tree_list_iter_to_child (GUTACHTER_TREE_LIST (subject), &iter_mall, &iter));
+
+  gtk_tree_path_next (path);
+  g_assert (gtk_tree_model_get_iter (subject, &iter, path));
+  g_assert (gutachter_tree_list_iter_to_child (GUTACHTER_TREE_LIST (subject), &iter_item, &iter));
+
+  gtk_tree_path_next (path);
+  g_assert (gtk_tree_model_get_iter (subject, &iter, path));
+  g_assert (gutachter_tree_list_iter_to_child (GUTACHTER_TREE_LIST (subject), &iter_item, &iter));
+
+  gtk_tree_path_free (path);
+  g_object_unref (subject);
+  g_object_unref (store);
+}
+
+static void
 test_tree_list_model_type (void)
 {
   GtkTreeStore* store = gtk_tree_store_new (1, G_TYPE_STRING);
@@ -479,7 +526,7 @@ main (int   argc,
   /* signals/row-has-child-toggled */
   /* signals/row-deleted */
   /* signals/rows-reordered */
-  /* "/com/github/herzi/gutachter/GutachterTreeList/iter-to-child" */
+  g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/iter-to-child", test_tree_list_iter_to_child);
   /* "/com/github/herzi/gutachter/GutachterTreeList/path-from-child" */
   /* "/com/github/herzi/gutachter/GutachterTreeList/path-to-child" */
 

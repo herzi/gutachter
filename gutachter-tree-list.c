@@ -301,6 +301,34 @@ gutachter_tree_list_iter_from_child (GutachterTreeList* self,
   return result;
 }
 
+gboolean
+gutachter_tree_list_iter_to_child (GutachterTreeList* self,
+                                   GtkTreeIter      * child_iter,
+                                   GtkTreeIter      * iter)
+{
+  GtkTreeRowReference* reference;
+  GtkTreePath* path;
+  gboolean     result;
+
+  g_return_val_if_fail (GUTACHTER_IS_TREE_LIST (self), FALSE);
+  if (!validate_iter (self, iter))
+    {
+      return FALSE;
+    }
+
+  reference = g_queue_peek_nth (PRIV (self)->references, GPOINTER_TO_INT (iter->user_data3));
+  if (!reference)
+    {
+      return FALSE;
+    }
+
+  path = gtk_tree_row_reference_get_path (reference);
+  result = gtk_tree_model_get_iter (PRIV (self)->model, child_iter, path);
+  gtk_tree_path_free (path);
+
+  return result;
+}
+
 GtkTreeModel*
 gutachter_tree_list_new (GtkTreeModel* model)
 {
