@@ -1,7 +1,12 @@
 lib_LIBRARIES=
+bin_PROGRAMS=
 
 COMPILE=$(AM_V_CC) @CC@ -c -o $@ $< -g -O2 -Wall -Wextra -I. @GUTACHTER_CFLAGS@ -DGETTEXT_PACKAGE=NULL
-LINK=@echo "  CCLD  " $@; @CC@ -o $@ $^ -g -O2 -Wall -Wextra @GUTACHTER_LIBS@
+OUR_LINK=@echo "  CCLD  " $@; @CC@ -o $@ $^ -g -O2 -Wall -Wextra @GUTACHTER_LIBS@
+
+bin_PROGRAMS+=gutachter
+gutachter_LDADD=libgutachter.a $(GUTACHTER_LIBS)
+gutachter_SOURCES=main.c
 
 lib_LIBRARIES+=libgutachter.a
 libgutachter_a_SOURCES=\
@@ -27,16 +32,13 @@ libgutachter_a_SOURCES=\
 	tango.h \
 	$(NULL)
 
-all-local: gutachter test-dummy test-gutachter
+all-local: test-dummy test-gutachter
 
 check: test-gutachter
 	./test-gutachter
 
-clean:
-	rm -rf libgutachter.a gutachter test-dummy *.o gutachter-types.c gutachter-types.h
-
-gutachter: main.o libgutachter.a
-	$(LINK)
+clean-local:
+	rm -rf test-dummy *.o gutachter-types.c gutachter-types.h
 
 gutachter-types.h: gutachter-suite.h Makefile
 	@echo "  GEN   " $@; glib-mkenums \
@@ -59,8 +61,8 @@ gutachter-types.o: gutachter-types.c gutachter-types.h
 	$(COMPILE)
 
 test-dummy: test-dummy.o
-	$(LINK)
+	$(OUR_LINK)
 
 test-gutachter: test-main.o libgutachter.a
-	$(LINK)
+	$(OUR_LINK)
 
