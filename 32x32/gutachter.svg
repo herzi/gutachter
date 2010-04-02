@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
@@ -13,17 +14,23 @@
    height="32"
    id="svg4908"
    sodipodi:version="0.32"
-   inkscape:version="0.45"
+   inkscape:version="0.47 r22583"
    version="1.0"
-   sodipodi:docbase="/home/andreas/project/application icons/32x32"
-   sodipodi:docname="classify.svg"
+   sodipodi:docname="gutachter.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="/home/andreas/project/application icons/32x32/classify.png"
+   inkscape:export-filename="/home/herzi/Hacking/Development/gutachter/32x32/gutachter.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
    sodipodi:modified="true">
   <defs
      id="defs4910">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 16 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="32 : 16 : 1"
+       inkscape:persp3d-origin="16 : 10.666667 : 1"
+       id="perspective2889" />
     <linearGradient
        inkscape:collect="always"
        id="linearGradient9286">
@@ -99,19 +106,20 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="16"
-     inkscape:cx="17.482218"
-     inkscape:cy="13.623833"
+     inkscape:zoom="45.254834"
+     inkscape:cx="12.344645"
+     inkscape:cy="16.581132"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
      width="48px"
      height="48px"
-     inkscape:window-width="1552"
-     inkscape:window-height="923"
-     inkscape:window-x="34"
-     inkscape:window-y="95" />
+     inkscape:window-width="1270"
+     inkscape:window-height="721"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0" />
   <metadata
      id="metadata4913">
     <rdf:RDF>
@@ -136,7 +144,7 @@
           <rdf:Bag>
             <rdf:li>todo</rdf:li>
             <rdf:li>2do</rdf:li>
-            <rdf:li></rdf:li>
+            <rdf:li />
           </rdf:Bag>
         </dc:subject>
         <cc:license
@@ -247,7 +255,7 @@
        rx="0"
        ry="0" />
     <path
-       style="fill:#ef2929;fill-rule:evenodd;stroke:#a40000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:#8ae234;fill-rule:evenodd;stroke:#4e9a06;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1"
        d="M 7.60823,14.134343 L 9.3007017,15.529774 L 12.46875,11.46875 L 14.5,11.46875 L 9.46875,18.5 L 6.46875,15.5 L 7.60823,14.134343 z "
        id="path9294"
        sodipodi:nodetypes="ccccccc" />

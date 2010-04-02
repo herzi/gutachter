@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
@@ -13,17 +14,23 @@
    height="22"
    id="svg4908"
    sodipodi:version="0.32"
-   inkscape:version="0.45"
+   inkscape:version="0.47 r22583"
    version="1.0"
-   sodipodi:docbase="/home/andreas/project/application icons/22x22"
-   sodipodi:docname="classify.svg"
+   sodipodi:docname="gutachter.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="/home/andreas/project/application icons/22x22/classify.png"
+   inkscape:export-filename="/home/herzi/Hacking/Development/gutachter/22x22/gutachter.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
    sodipodi:modified="true">
   <defs
      id="defs4910">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 11 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="22 : 11 : 1"
+       inkscape:persp3d-origin="11 : 7.3333333 : 1"
+       id="perspective2859" />
     <linearGradient
        inkscape:collect="always"
        id="linearGradient9286">
@@ -98,8 +105,8 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="22.627417"
-     inkscape:cx="12.687933"
+     inkscape:zoom="64"
+     inkscape:cx="9.0551205"
      inkscape:cy="12.644168"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -107,10 +114,11 @@
      inkscape:document-units="px"
      width="22px"
      height="22px"
-     inkscape:window-width="1552"
-     inkscape:window-height="923"
-     inkscape:window-x="34"
-     inkscape:window-y="95" />
+     inkscape:window-width="1270"
+     inkscape:window-height="721"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0" />
   <metadata
      id="metadata4913">
     <rdf:RDF>
@@ -119,6 +127,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -208,7 +217,7 @@
        rx="0"
        ry="0" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#a40000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="fill:none;fill-rule:evenodd;stroke:#4e9a06;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="M 5.4687502,10.209597 L 6.8310347,11.522097 L 9.5,8.0220971"
        id="path9294" />
   </g>
