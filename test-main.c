@@ -563,6 +563,34 @@ test_tree_model_iter_has_child (void)
   g_object_unref (store);
 }
 
+static void
+test_tree_model_iter_n_children (void)
+{
+  GtkTreeStore* store = gtk_tree_store_new (1, G_TYPE_STRING);
+  GtkTreeModel* subject = gutachter_tree_list_new (GTK_TREE_MODEL (store));
+  GtkTreeIter   iter;
+
+  g_assert_cmpint (0, ==, gtk_tree_model_iter_n_children (subject, NULL));
+  populate_shopping_list (store);
+  g_assert_cmpint (6, ==, gtk_tree_model_iter_n_children (subject, NULL));
+  g_assert (gtk_tree_model_iter_children (subject, &iter, NULL));
+  g_assert_cmpint (0, ==, gtk_tree_model_iter_n_children (subject, &iter));
+  g_assert (gtk_tree_model_iter_next (subject, &iter));
+  g_assert_cmpint (0, ==, gtk_tree_model_iter_n_children (subject, &iter));
+  g_assert (gtk_tree_model_iter_next (subject, &iter));
+  g_assert_cmpint (0, ==, gtk_tree_model_iter_n_children (subject, &iter));
+  g_assert (gtk_tree_model_iter_next (subject, &iter));
+  g_assert_cmpint (0, ==, gtk_tree_model_iter_n_children (subject, &iter));
+  g_assert (gtk_tree_model_iter_next (subject, &iter));
+  g_assert_cmpint (0, ==, gtk_tree_model_iter_n_children (subject, &iter));
+  g_assert (gtk_tree_model_iter_next (subject, &iter));
+  g_assert_cmpint (0, ==, gtk_tree_model_iter_n_children (subject, &iter));
+  g_assert (!gtk_tree_model_iter_next (subject, &iter));
+
+  g_object_unref (subject);
+  g_object_unref (store);
+}
+
 int
 main (int   argc,
       char**argv)
@@ -584,7 +612,7 @@ main (int   argc,
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/iter-to-child", test_tree_list_iter_to_child);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-value", test_tree_list_model_get_value);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/iter-has-child", test_tree_model_iter_has_child);
-  /* API/iter-n-children */
+  g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/iter-n-children", test_tree_model_iter_n_children);
   /* API/iter-parent */
   /* API/ref-node */
   /* API/unref-node */

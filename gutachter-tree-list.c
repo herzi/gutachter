@@ -255,6 +255,18 @@ iter_has_child (GtkTreeModel* model G_GNUC_UNUSED,
   return FALSE;
 }
 
+static gint
+iter_n_children (GtkTreeModel* model,
+                 GtkTreeIter * iter)
+{
+  if (iter)
+    {
+      return FALSE;
+    }
+
+  return g_queue_get_length (PRIV (model)->references);
+}
+
 static gboolean
 iter_next (GtkTreeModel* model,
            GtkTreeIter * iter)
@@ -294,6 +306,7 @@ implement_gtk_tree_model (GtkTreeModelIface* iface)
   iface->get_value       = get_value;
   iface->iter_children   = iter_children;
   iface->iter_has_child  = iter_has_child;
+  iface->iter_n_children = iter_n_children;
   iface->iter_next       = iter_next;
   iface->iter_nth_child  = iter_nth_child;
 }
