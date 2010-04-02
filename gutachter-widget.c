@@ -430,15 +430,27 @@ failure_visible_func (GtkTreeModel* model,
                       GtkTreeIter * iter,
                       gpointer      user_data G_GNUC_UNUSED)
 {
-  gboolean  passed = TRUE;
-  gboolean  unsure = TRUE;
+  GutachterHierarchy* hierarchy = GUTACHTER_HIERARCHY (gutachter_tree_list_get_model (GUTACHTER_TREE_LIST (model)));
+  GtkTreeIter         child_iter;
+  gboolean            passed = TRUE;
+  gboolean            unsure = TRUE;
+  gboolean            is_testcase = FALSE;
 
   gtk_tree_model_get (model, iter,
                       GUTACHTER_HIERARCHY_COLUMN_UNSURE, &unsure,
                       GUTACHTER_HIERARCHY_COLUMN_PASSED, &passed,
                       -1);
 
-  return !unsure && !passed;
+  if (gutachter_tree_list_iter_to_child (GUTACHTER_TREE_LIST (model), &child_iter, iter))
+    {
+      is_testcase = gutachter_hierarchy_is_testcase (hierarchy, &child_iter);
+    }
+  else
+    {
+      g_warning ("Eeeek!");
+    }
+
+  return is_testcase && !unsure && !passed;
 }
 
 void

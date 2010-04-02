@@ -29,6 +29,7 @@ enum
 {
   COL_FULL_PATH = GUTACHTER_HIERARCHY_N_COLUMNS,
   COL_MESSAGE,
+  COL_IS_TESTCASE,
   N_COLUMNS
 };
 
@@ -44,7 +45,8 @@ gutachter_hierarchy_init (GutachterHierarchy* self)
           G_TYPE_BOOLEAN,
           G_TYPE_BOOLEAN,
           G_TYPE_STRING,
-          G_TYPE_STRING
+          G_TYPE_STRING,
+          G_TYPE_BOOLEAN
   };
 
   gtk_tree_store_set_column_types (GTK_TREE_STORE (self), N_COLUMNS, types);
@@ -95,10 +97,11 @@ gutachter_hierarchy_get_full_path (GutachterHierarchy* self,
   return result;
 }
 
-void
-gutachter_hierarchy_get_iter (GutachterHierarchy* self,
-                              GtkTreeIter       * iter,
-                              gchar const       * path)
+static void
+get_iter_internal (GutachterHierarchy* self,
+                   GtkTreeIter       * iter,
+                   gchar const       * path,
+                   gboolean            is_testcase)
 {
   GtkTreeRowReference* reference;
   GtkTreeStore       * store = GTK_TREE_STORE (self);
@@ -107,6 +110,7 @@ gutachter_hierarchy_get_iter (GutachterHierarchy* self,
 
   if (gutachter_hierarchy_lookup_iter (self, iter, path))
     {
+      /* FIXME: test adding /sliff/sloff and the /sliff */
       return;
     }
 
@@ -127,7 +131,7 @@ gutachter_hierarchy_get_iter (GutachterHierarchy* self,
       gchar* last_slash_in_parent = parent_path + (last_slash - path);
 
       *last_slash_in_parent = '\0';
-      gutachter_hierarchy_get_iter (self, &parent, parent_path);
+      get_iter_internal (self, &parent, parent_path, FALSE);
       *last_slash_in_parent = '/';
 
       last_slash++;
@@ -141,12 +145,21 @@ gutachter_hierarchy_get_iter (GutachterHierarchy* self,
                       GUTACHTER_HIERARCHY_COLUMN_UNSURE, TRUE,
                       GUTACHTER_HIERARCHY_COLUMN_NAME, last_slash,
                       COL_FULL_PATH, path,
+                      COL_IS_TESTCASE, is_testcase,
                       -1);
 
   tree_path = gtk_tree_model_get_path (GTK_TREE_MODEL (store), iter);
   reference = gtk_tree_row_reference_new (GTK_TREE_MODEL (store), tree_path);
   g_hash_table_insert (PRIV (store)->path_to_reference, g_strdup (path), reference);
   gtk_tree_path_free (tree_path);
+}
+
+void
+gutachter_hierarchy_get_iter (GutachterHierarchy* self,
+                              GtkTreeIter       * iter,
+                              gchar const       * path)
+{
+  get_iter_internal (self, iter, path, TRUE);
 }
 
 gchar*
@@ -160,6 +173,22 @@ gutachter_hierarchy_get_message (GutachterHierarchy* self,
 
   gtk_tree_model_get (GTK_TREE_MODEL (self), iter,
                       COL_MESSAGE, &result,
+                      -1);
+
+  return result;
+}
+
+gboolean
+gutachter_hierarchy_is_testcase (GutachterHierarchy* self,
+                                 GtkTreeIter       * iter)
+{
+  gboolean result = FALSE;
+
+  g_return_val_if_fail (GUTACHTER_IS_HIERARCHY (self), FALSE);
+  g_return_val_if_fail (gtk_tree_store_iter_is_valid (GTK_TREE_STORE (self), iter), FALSE);
+
+  gtk_tree_model_get (GTK_TREE_MODEL (self), iter,
+                      COL_IS_TESTCASE, &result,
                       -1);
 
   return result;
