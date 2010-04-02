@@ -205,10 +205,13 @@ get_iter (GtkTreeModel* model,
           GtkTreeIter * iter,
           GtkTreePath * path)
 {
-  gint  index = g_queue_link_index (PRIV (model)->references,
-                                    find_glist_for_tree_path (PRIV (model)->references, path));
+  if (gtk_tree_path_get_depth (path) != 1)
+    {
+      g_debug ("tree path too deep");
+      return FALSE;
+    }
 
-  return initialize_iter (GUTACHTER_TREE_LIST (model), iter, index);
+  return initialize_iter (GUTACHTER_TREE_LIST (model), iter, gtk_tree_path_get_indices (path)[0]);
 }
 
 GtkTreePath*

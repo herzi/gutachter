@@ -190,8 +190,7 @@ test_tree_list_model_get_column_type (void)
     {
       if (g_test_verbose ())
         {
-          /* FIXME: add g_info() */
-          g_message ("testing column index %d", column);
+          g_test_message ("testing column index %d", column);
         }
 
       g_assert_cmpint (gtk_tree_model_get_column_type (GTK_TREE_MODEL (store), column), ==,
@@ -220,7 +219,7 @@ test_tree_list_model_get_iter (void)
                       -1);
   g_assert_cmpint (TRUE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
 
-  gtk_tree_path_down (path);
+  gtk_tree_path_next (path);
   g_assert_cmpint (FALSE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
   gtk_tree_store_append (store, &iter2, &iter1);
   gtk_tree_store_set (store, &iter2,
@@ -235,7 +234,6 @@ test_tree_list_model_get_iter (void)
                       -1);
   g_assert_cmpint (TRUE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
 
-  gtk_tree_path_up (path);
   gtk_tree_path_next (path);
   g_assert_cmpint (FALSE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
   gtk_tree_store_append (store, &iter1, NULL);
@@ -244,7 +242,7 @@ test_tree_list_model_get_iter (void)
                       -1);
   g_assert_cmpint (TRUE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
 
-  gtk_tree_path_down (path);
+  gtk_tree_path_next (path);
   g_assert_cmpint (FALSE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
   gtk_tree_store_append (store, &iter2, &iter1);
   gtk_tree_store_set (store, &iter2,
@@ -259,7 +257,6 @@ test_tree_list_model_get_iter (void)
                       -1);
   g_assert_cmpint (TRUE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
 
-  gtk_tree_path_up (path);
   gtk_tree_path_next (path);
   g_assert_cmpint (FALSE, ==, gtk_tree_model_get_iter (subject, &iter3, path));
 
@@ -357,10 +354,6 @@ main (int   argc,
 
   g_test_add_func ("/com/github/herzi/gutachter/GutachterBar/init", test_bar_init);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/init", test_tree_list_init);
-  g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/iter-from-child", test_tree_list_iter_from_child);
-  /* "/com/github/herzi/gutachter/GutachterTreeList/iter-to-child" */
-  /* "/com/github/herzi/gutachter/GutachterTreeList/path-from-child" */
-  /* "/com/github/herzi/gutachter/GutachterTreeList/path-to-child" */
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/type", test_tree_list_model_type);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-flags", test_tree_list_model_get_flags);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-n-columns", test_tree_list_model_get_n_columns);
@@ -381,6 +374,10 @@ main (int   argc,
   /* signals/row-has-child-toggled */
   /* signals/row-deleted */
   /* signals/rows-reordered */
+  g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/iter-from-child", test_tree_list_iter_from_child);
+  /* "/com/github/herzi/gutachter/GutachterTreeList/iter-to-child" */
+  /* "/com/github/herzi/gutachter/GutachterTreeList/path-from-child" */
+  /* "/com/github/herzi/gutachter/GutachterTreeList/path-to-child" */
 
   /* FIXME: test proper handling of this: "dummy/a", "/dummy/b" */
   /* FIXME: test proper handling of this: "/com/github/herzi/gutachter/a", "com.github.herzi.gutachter.a" */
