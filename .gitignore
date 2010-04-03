@@ -7,6 +7,8 @@ config.*
 configure
 depcomp
 .deps
+*.desktop
+*.desktop.in
 gutachter
 gutachter-*.tar.*
 gutachter-paths.h

@@ -2,3 +2,4 @@ gutachter-suite.c
 gutachter-widget.c
 gutachter-window.c
 main.c
+data/gutachter.desktop.in.in

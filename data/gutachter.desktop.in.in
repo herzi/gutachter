@@ -1,0 +1,8 @@
+[Desktop Entry]
+_Name=Gutachter
+_Comment=Run unit tests until the bar is green!
+Exec=@BINDIR@/gutachter
+Icon=gutachter
+Type=Application
+Categories=GTK;GNOME;Development;Debugger;Profiling;
+
