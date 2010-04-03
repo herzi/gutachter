@@ -252,13 +252,13 @@ run_or_warn (GPid                     * pid,
              GutachterSuiteRunningMode  mode,
              GutachterSuite           * self)
 {
-  GtkTestXvfbWrapper* xvfb = gtk_test_xvfb_wrapper_get_instance ();
-  gboolean  result = FALSE;
-  GError  * error  = NULL;
-  GFile   * parent = g_file_get_parent (PRIV (self)->file);
-  gchar   * base;
-  gchar   * folder = g_file_get_path (parent);
-  gchar   * argv[] = {
+  GutachterXvfb* xvfb = gutachter_xvfb_get_instance ();
+  gboolean       result = FALSE;
+  GError       * error  = NULL;
+  GFile        * parent = g_file_get_parent (PRIV (self)->file);
+  gchar        * base;
+  gchar        * folder = g_file_get_path (parent);
+  gchar        * argv[] = {
           NULL,
           NULL,
           "-q",
@@ -271,7 +271,7 @@ run_or_warn (GPid                     * pid,
 
   base = g_file_get_basename (PRIV (self)->file);
 
-  while (!gtk_test_xvfb_wrapper_get_pid (xvfb))
+  while (!gutachter_xvfb_get_pid (xvfb))
     {
       g_main_context_iteration (NULL, FALSE);
     }
@@ -283,7 +283,7 @@ run_or_warn (GPid                     * pid,
         {
           g_free (*iter);
           *iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT,
-                                   gtk_test_xvfb_wrapper_get_display (xvfb));
+                                   gutachter_xvfb_get_display (xvfb));
           found_display = TRUE;
           break;
         }
@@ -294,7 +294,7 @@ run_or_warn (GPid                     * pid,
       gchar** new_env = g_new (gchar*, g_strv_length (env) + 2);
       gchar** new_iter = new_env;
 
-      *new_iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT, gtk_test_xvfb_wrapper_get_display (xvfb));
+      *new_iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT, gutachter_xvfb_get_display (xvfb));
       for (new_iter++, iter = env; iter && *iter; iter++, new_iter++)
         {
           *new_iter = *iter;

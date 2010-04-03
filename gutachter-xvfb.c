@@ -24,19 +24,19 @@
 #include <string.h>   /* strerror() */
 #include <sys/wait.h> /* WIFEXITED() */
 
-struct _GtkTestXvfbWrapperPrivate
+struct _GutachterXvfbPrivate
 {
   guint64  display;
   GPid     pid;
 };
 
-#define PRIV(i) (((GtkTestXvfbWrapper*)(i))->_private)
+#define PRIV(i) (((GutachterXvfb*)(i))->_private)
 
 static gboolean setup_xvfb (gpointer  data);
 
 static GObject* instance = NULL;
 
-G_DEFINE_TYPE (GtkTestXvfbWrapper, gtk_test_xvfb_wrapper, G_TYPE_OBJECT);
+G_DEFINE_TYPE (GutachterXvfb, gutachter_xvfb, G_TYPE_OBJECT);
 
 static void
 xvfb_child_watch (GPid      pid,
@@ -64,7 +64,7 @@ xvfb_child_watch (GPid      pid,
 static gboolean
 setup_xvfb (gpointer data)
 {
-  GtkTestXvfbWrapper* self = data;
+  GutachterXvfb* self = data;
   gchar* display;
   gchar* argv[] = {
           "Xvfb",
@@ -97,9 +97,9 @@ setup_xvfb (gpointer data)
 }
 
 static void
-gtk_test_xvfb_wrapper_init (GtkTestXvfbWrapper* self)
+gutachter_xvfb_init (GutachterXvfb* self)
 {
-  PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_XVFB_WRAPPER, GtkTestXvfbWrapperPrivate);
+  PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GUTACHTER_TYPE_XVFB, GutachterXvfbPrivate);
 }
 
 static GObject*
@@ -109,7 +109,7 @@ constructor (GType                  type,
 {
   if (G_UNLIKELY (!instance))
     {
-      instance = G_OBJECT_CLASS (gtk_test_xvfb_wrapper_parent_class)->constructor (type, n_params, params);
+      instance = G_OBJECT_CLASS (gutachter_xvfb_parent_class)->constructor (type, n_params, params);
 
       g_idle_add (setup_xvfb, instance);
     }
@@ -144,57 +144,57 @@ finalize (GObject* object)
 
   instance = NULL;
 
-  G_OBJECT_CLASS (gtk_test_xvfb_wrapper_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gutachter_xvfb_parent_class)->finalize (object);
 }
 
 static void
-gtk_test_xvfb_wrapper_class_init (GtkTestXvfbWrapperClass* self_class)
+gutachter_xvfb_class_init (GutachterXvfbClass* self_class)
 {
   GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
   object_class->constructor = constructor;
   object_class->finalize    = finalize;
 
-  g_type_class_add_private (self_class, sizeof (GtkTestXvfbWrapperPrivate));
+  g_type_class_add_private (self_class, sizeof (GutachterXvfbPrivate));
 }
 
 guint64
-gtk_test_xvfb_wrapper_get_display (GtkTestXvfbWrapper* self)
+gutachter_xvfb_get_display (GutachterXvfb* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_XVFB_WRAPPER (self), G_GUINT64_CONSTANT (0));
+  g_return_val_if_fail (GUTACHTER_IS_XVFB (self), G_GUINT64_CONSTANT (0));
 
   return PRIV (self)->display;
 }
 
 GPid
-gtk_test_xvfb_wrapper_get_pid (GtkTestXvfbWrapper* self)
+gutachter_xvfb_get_pid (GutachterXvfb* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_XVFB_WRAPPER (self), 0);
+  g_return_val_if_fail (GUTACHTER_IS_XVFB (self), 0);
 
   return PRIV (self)->pid;
 }
 
-GtkTestXvfbWrapper*
-gtk_test_xvfb_wrapper_get_instance (void)
+GutachterXvfb*
+gutachter_xvfb_get_instance (void)
 {
-  return g_object_new (GTK_TEST_TYPE_XVFB_WRAPPER,
+  return g_object_new (GUTACHTER_TYPE_XVFB,
                        NULL);
 }
 
 void
-gtk_test_xvfb_wrapper_set_display (GtkTestXvfbWrapper* self,
-                                   guint64             display)
+gutachter_xvfb_set_display (GutachterXvfb* self,
+                            guint64        display)
 {
-  g_return_if_fail (GTK_TEST_IS_XVFB_WRAPPER (self));
+  g_return_if_fail (GUTACHTER_IS_XVFB (self));
 
   PRIV (self)->display = display;
 }
 
 void
-gtk_test_xvfb_wrapper_set_pid (GtkTestXvfbWrapper* self,
-                               GPid                pid)
+gutachter_xvfb_set_pid (GutachterXvfb* self,
+                        GPid           pid)
 {
-  g_return_if_fail (GTK_TEST_IS_XVFB_WRAPPER (self));
+  g_return_if_fail (GUTACHTER_IS_XVFB (self));
 
   PRIV (self)->pid = pid;
 }

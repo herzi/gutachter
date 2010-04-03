@@ -18,46 +18,46 @@
  * USA
  */
 
-#ifndef GT_XVFB_WRAPPER_H
-#define GT_XVFB_WRAPPER_H
+#ifndef GUTACHTER_XVFB_H
+#define GUTACHTER_XVFB_H
 
 #include <glib-object.h>
 
 G_BEGIN_DECLS
 
-typedef struct _GtkTestXvfbWrapper        GtkTestXvfbWrapper;
-typedef struct _GtkTestXvfbWrapperClass   GtkTestXvfbWrapperClass;
-typedef struct _GtkTestXvfbWrapperPrivate GtkTestXvfbWrapperPrivate;
+typedef struct _GutachterXvfb        GutachterXvfb;
+typedef struct _GutachterXvfbClass   GutachterXvfbClass;
+typedef struct _GutachterXvfbPrivate GutachterXvfbPrivate;
 
-#define GTK_TEST_TYPE_XVFB_WRAPPER         (gtk_test_xvfb_wrapper_get_type ())
-#define GTK_TEST_XVFB_WRAPPER(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), GTK_TEST_TYPE_XVFB_WRAPPER, GtkTestXvfbWrapper))
-#define GTK_TEST_XVFB_WRAPPER_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c), GTK_TEST_TYPE_XVFB_WRAPPER, GtkTestXvfbWrapperClass))
-#define GTK_TEST_IS_XVFB_WRAPPER(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), GTK_TEST_TYPE_XVFB_WRAPPER))
-#define GTK_TEST_IS_XVFB_WRAPPER_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), GTK_TEST_TYPE_XVFB_WRAPPER))
-#define GTK_TEST_XVFB_WRAPPER_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), GTK_TEST_TYPE_XVFB_WRAPPER, GtkTestXvfbWrapperClass))
+#define GUTACHTER_TYPE_XVFB         (gutachter_xvfb_get_type ())
+#define GUTACHTER_XVFB(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), GUTACHTER_TYPE_XVFB, GtkTestXvfb))
+#define GUTACHTER_XVFB_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c), GUTACHTER_TYPE_XVFB, GtkTestXvfbClass))
+#define GUTACHTER_IS_XVFB(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), GUTACHTER_TYPE_XVFB))
+#define GUTACHTER_IS_XVFB_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), GUTACHTER_TYPE_XVFB))
+#define GUTACHTER_XVFB_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), GUTACHTER_TYPE_XVFB, GtkTestXvfbClass))
 
-GType               gtk_test_xvfb_wrapper_get_type     (void);
-GtkTestXvfbWrapper* gtk_test_xvfb_wrapper_get_instance (void);
-guint64             gtk_test_xvfb_wrapper_get_display  (GtkTestXvfbWrapper* self);
-GPid                gtk_test_xvfb_wrapper_get_pid      (GtkTestXvfbWrapper* self);
-void                gtk_test_xvfb_wrapper_set_display  (GtkTestXvfbWrapper* self,
-                                                        guint64             display);
-void                gtk_test_xvfb_wrapper_set_pid      (GtkTestXvfbWrapper* self,
-                                                        GPid                pid);
+GType          gutachter_xvfb_get_type     (void);
+GutachterXvfb* gutachter_xvfb_get_instance (void);
+guint64        gutachter_xvfb_get_display  (GutachterXvfb* self);
+GPid           gutachter_xvfb_get_pid      (GutachterXvfb* self);
+void           gutachter_xvfb_set_display  (GutachterXvfb* self,
+                                            guint64        display);
+void           gutachter_xvfb_set_pid      (GutachterXvfb* self,
+                                            GPid           pid);
 
-struct _GtkTestXvfbWrapper
+struct _GutachterXvfb
 {
-  GObject                    base_instance;
-  GtkTestXvfbWrapperPrivate* _private;
+  GObject               base_instance;
+  GutachterXvfbPrivate* _private;
 };
 
-struct _GtkTestXvfbWrapperClass
+struct _GutachterXvfbClass
 {
-  GObjectClass               base_class;
+  GObjectClass          base_class;
 };
 
 G_END_DECLS
 
-#endif /* !GT_XVFB_WRAPPER_H */
+#endif /* !GUTACHTER_XVFB_H */
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

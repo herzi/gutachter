@@ -27,11 +27,11 @@ int
 main (int   argc,
       char**argv)
 {
-  GtkTestXvfbWrapper* xvfb;
-  gchar             ** files = NULL;
-  GtkWidget         * window;
-  GError            * error = NULL;
-  GOptionEntry        entries[] = {
+  GutachterXvfb* xvfb;
+  gchar        ** files = NULL;
+  GtkWidget    * window;
+  GError       * error = NULL;
+  GOptionEntry   entries[] = {
             {G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &files, NULL, NULL},
             {NULL, 0, 0, 0, NULL, NULL, NULL}
   };
@@ -43,7 +43,7 @@ main (int   argc,
       return 1;
     }
 
-  xvfb = gtk_test_xvfb_wrapper_get_instance ();
+  xvfb = gutachter_xvfb_get_instance ();
 
   window = gtk_test_window_new ();
   if (files && *files)
