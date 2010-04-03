@@ -1,5 +1,5 @@
 [Desktop Entry]
-_Name=Gutachter
+_Name=Gutachter Unit Testing
 _Comment=Run unit tests until the bar is green!
 Exec=@BINDIR@/gutachter
 Icon=gutachter

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-03 12:18+0200\n"
+"POT-Creation-Date: 2010-04-03 12:31+0200\n"
 "PO-Revision-Date: 2010-04-03 11:38+0200\n"
 "Last-Translator: Sven Herzberg <herzi@gnome-de.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -64,14 +64,17 @@ msgstr "Aktualisieren"
 msgid "%s - Gutachter"
 msgstr "%s - Gutachter"
 
-#. vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s:
-#: ../gutachter-window.c:411 ../data/gutachter.desktop.in.in.h:1
+#: ../gutachter-window.c:411
 msgid "Gutachter"
 msgstr "Gutachter"
 
 #: ../main.c:43
 msgid "[TESTCASE]"
 msgstr "[TESTCASE]"
+
+#: ../data/gutachter.desktop.in.in.h:1
+msgid "Gutachter Unit Testing"
+msgstr "Gutachter Unit-Tests"
 
 #: ../data/gutachter.desktop.in.in.h:2
 msgid "Run unit tests until the bar is green!"
