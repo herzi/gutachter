@@ -3,6 +3,7 @@ lib_LTLIBRARIES=
 noinst_PROGRAMS=
 BUILT_SOURCES=
 CLEANFILES=
+EXTRA_DIST=
 TESTS=
 SUBDIRS=. po
 
@@ -15,27 +16,40 @@ bin_PROGRAMS+=gutachter
 gutachter_LDADD=libgutachter.la
 gutachter_SOURCES=main.c
 
+pkgconfigdir=$(libdir)/pkgconfig
+pkgconfig_DATA=gutachter-$(PACKAGE_VERSION).pc
+CLEANFILES+=$(pkgconfig_DATA)
+gutachter-$(PACKAGE_VERSION).pc: gutachter.pc
+	$(AM_V_GEN) cp $< $@
+installcheck-local:
+	cd /tmp; echo "#include <gutachter.h>" | cpp -o /dev/null $(shell PKG_CONFIG_PATH=$(pkgconfigdir) pkg-config --cflags gutachter-$(PACKAGE_VERSION))
+
+gutachterdir=$(includedir)/gutachter-$(PACKAGE_VERSION)
+gutachter_HEADERS=\
+	gutachter.h \
+	gutachter-bar.h \
+	gutachter-hierarchy.h \
+	gutachter-runner.h \
+	gutachter-suite.h \
+	gutachter-tree-list.h \
+	gutachter-types.h \
+	gutachter-widget.h \
+	gutachter-window.h \
+	gutachter-xvfb.h \
+	$(NULL)
+
 lib_LTLIBRARIES+=libgutachter.la
 libgutachter_la_LDFLAGS=-release $(PACKAGE_VERSION)
 libgutachter_la_LIBADD=$(GUTACHTER_LIBS)
 libgutachter_la_SOURCES=\
-	gutachter.h \
 	gutachter-bar.c \
-	gutachter-bar.h \
 	gutachter-hierarchy.c \
-	gutachter-hierarchy.h \
 	gutachter-runner.c \
-	gutachter-runner.h \
 	gutachter-suite.c \
-	gutachter-suite.h \
 	gutachter-tree-list.c \
-	gutachter-tree-list.h \
 	gutachter-widget.c \
-	gutachter-widget.h \
 	gutachter-window.c \
-	gutachter-window.h \
 	gutachter-xvfb.c \
-	gutachter-xvfb.h \
 	tango.c \
 	tango.h \
 	$(NULL)

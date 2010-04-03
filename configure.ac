@@ -13,8 +13,9 @@ GETTEXT_PACKAGE="gutachter"
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [The gettext translation domain])
 AM_GLIB_GNU_GETTEXT
-AC_CONFIG_FILES([po/Makefile.in])
 
 AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([gutachter.pc])
+AC_CONFIG_FILES([po/Makefile.in])
 
 AC_OUTPUT

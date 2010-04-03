@@ -24,5 +24,6 @@ Makefile
 Makefile.in
 missing
 *.o
+*.pc
 test-dummy
 test-gutachter

@@ -3,6 +3,7 @@
 applicationsdir=$(datadir)/applications
 applications_DATA=gutachter.desktop
 CLEANFILES+=$(applications_DATA)
+EXTRA_DIST+=data/$(applications_DATA).in.in
 
 @INTLTOOL_DESKTOP_RULE@
 
