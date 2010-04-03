@@ -4,8 +4,9 @@ noinst_PROGRAMS=
 BUILT_SOURCES=
 CLEANFILES=
 TESTS=
+SUBDIRS=. po
 
-AM_CPPFLAGS=-Wall -Wextra -I. @GUTACHTER_CFLAGS@ -DGETTEXT_PACKAGE=NULL
+AM_CPPFLAGS=-Wall -Wextra @GUTACHTER_CFLAGS@
 
 include pixmaps/Makefile.inc
 
@@ -38,6 +39,7 @@ libgutachter_la_SOURCES=\
 	tango.h \
 	$(NULL)
 nodist_libgutachter_la_SOURCES=\
+	gutachter-paths.h \
 	gutachter-types.c \
 	gutachter-types.h \
 	$(NULL)
@@ -53,6 +55,8 @@ TESTS+=test-gutachter
 test_gutachter_LDADD=libgutachter.la
 test_gutachter_SOURCES=test-main.c
 
+gutachter-paths.h: Makefile
+	$(AM_V_GEN) echo "#define LOCALEDIR \"$(localedir)\"" > $@
 gutachter-types.h: gutachter-suite.h Makefile
 	@echo "  GEN   " $@; glib-mkenums \
 		--fhead "#ifndef GUTACHTER_TYPES_H\n#define GUTACHTER_TYPES_H\n\n#include <glib-object.h>" \

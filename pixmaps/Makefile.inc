@@ -11,6 +11,7 @@ dist_icons48_DATA=pixmaps/16x16/gutachter.png pixmaps/16x16/gutachter.svg
 
 install-data-hook: update-icon-cache
 uninstall-hook: update-icon-cache
+gtk_update_icon_cache = gtk-update-icon-cache -f -t $(datadir)/icons/hicolor
 
 update-icon-cache:
 	@-if test -z "$(DESTDIR)"; then \

@@ -9,6 +9,7 @@ depcomp
 .deps
 gutachter
 gutachter-*.tar.*
+gutachter-paths.h
 gutachter-types.*
 INSTALL
 install-sh

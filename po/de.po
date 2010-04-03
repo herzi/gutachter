@@ -1,0 +1,73 @@
+# German translation for Gutachter.
+# Copyright (C) 2010 Sven Herzberg
+# This file is distributed under the same license as the gutachter package.
+# Sven Herzberg <herzi@gnome-de.org>, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-04-03 11:44+0200\n"
+"PO-Revision-Date: 2010-04-03 11:38+0200\n"
+"Last-Translator: Sven Herzberg <herzi@gnome-de.org>\n"
+"Language-Team: German <gnome-de@gnome.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: ../gutachter-suite.c:447
+#, c-format
+msgid "exited with exit code %d"
+msgstr "Beendet mit Status-Code %d"
+
+#: ../gutachter-widget.c:71
+msgid "Loading Test Paths..."
+msgstr "Lade Test-Pfade…"
+
+#: ../gutachter-widget.c:77
+msgid "no test selected"
+msgstr "kein Test gewählt"
+
+#: ../gutachter-widget.c:230
+msgid "Failures"
+msgstr "Fehler"
+
+#: ../gutachter-widget.c:238
+msgid "Hierarchy"
+msgstr "Struktur"
+
+#. FIXME: finish the process only after regular EOF
+#: ../gutachter-widget.c:379 ../gutachter-widget.c:397
+msgid "%"
+msgid_plural "%"
+msgstr[0] "%"
+msgstr[1] "%"
+
+#: ../gutachter-widget.c:465
+msgid "not tested yet"
+msgstr "noch nicht getestet"
+
+#: ../gutachter-window.c:76
+msgid "Choose Unit Test"
+msgstr "Unit-Test auswählen"
+
+#: ../gutachter-window.c:86
+msgid "Executable Programs"
+msgstr "Ausführbare Programme"
+
+#: ../gutachter-window.c:196
+msgid "auto-update"
+msgstr "Aktualisieren"
+
+#: ../gutachter-window.c:393
+#, c-format
+msgid "%s - Gutachter"
+msgstr "%s - Gutachter"
+
+#: ../gutachter-window.c:411
+msgid "Gutachter"
+msgstr "Gutachter"
+
+#: ../main.c:39
+msgid "[TESTCASE]"
+msgstr "[TESTCASE]"

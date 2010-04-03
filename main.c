@@ -19,8 +19,8 @@
  */
 
 #include <gutachter.h>
+#include <gutachter-paths.h>
 
-#define GETTEXT_DOMAIN NULL /* FIXME: enable i18n */
 #include <glib/gi18n-lib.h>
 
 int
@@ -36,8 +36,12 @@ main (int   argc,
             {NULL, 0, 0, 0, NULL, NULL, NULL}
   };
 
+  bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
+  bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+  textdomain (GETTEXT_PACKAGE);
+
   if (!gtk_init_with_args (&argc, &argv, _("[TESTCASE]"),
-                           entries, GETTEXT_DOMAIN, &error))
+                           entries, GETTEXT_PACKAGE, &error))
     {
       g_warning ("error initializing application");
       return 1;

@@ -20,8 +20,6 @@
 
 #include "gutachter-widget.h"
 
-#define GETTEXT_DOMAIN NULL /* FIXME: enable proper i18n */
-
 #include <gutachter.h>
 #include <glib/gi18n.h>
 
@@ -393,7 +391,7 @@ model_changed (GtkTestWidget* self)
                                          1.0 * gutachter_suite_get_executed (PRIV (self)->suite) / gutachter_suite_get_tests (PRIV (self)->suite));
         }
 
-      text = g_strdup_printf (g_dngettext (GETTEXT_DOMAIN,
+      text = g_strdup_printf (g_dngettext (GETTEXT_PACKAGE,
                                            "%" G_GUINT64_FORMAT " failure",
                                            "%" G_GUINT64_FORMAT " failures",
                                            gutachter_suite_get_failures (PRIV (self)->suite)),
