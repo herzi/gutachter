@@ -12,6 +12,11 @@ gutachter-*.tar.*
 gutachter-types.*
 INSTALL
 install-sh
+.libs
+libtool
+*.la
+*.lo
+ltmain.sh
 Makefile
 Makefile.in
 missing

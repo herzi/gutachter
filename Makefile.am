@@ -1,5 +1,5 @@
 bin_PROGRAMS=
-lib_LIBRARIES=
+lib_LTLIBRARIES=
 noinst_PROGRAMS=
 BUILT_SOURCES=
 CLEANFILES=
@@ -10,11 +10,13 @@ AM_CPPFLAGS=-Wall -Wextra -I. @GUTACHTER_CFLAGS@ -DGETTEXT_PACKAGE=NULL
 include pixmaps/Makefile.inc
 
 bin_PROGRAMS+=gutachter
-gutachter_LDADD=libgutachter.a $(GUTACHTER_LIBS)
+gutachter_LDADD=libgutachter.la
 gutachter_SOURCES=main.c
 
-lib_LIBRARIES+=libgutachter.a
-libgutachter_a_SOURCES=\
+lib_LTLIBRARIES+=libgutachter.la
+libgutachter_la_LDFLAGS=-release $(PACKAGE_VERSION)
+libgutachter_la_LIBADD=$(GUTACHTER_LIBS)
+libgutachter_la_SOURCES=\
 	gutachter.h \
 	gutachter-bar.c \
 	gutachter-bar.h \
@@ -35,20 +37,20 @@ libgutachter_a_SOURCES=\
 	tango.c \
 	tango.h \
 	$(NULL)
-nodist_libgutachter_a_SOURCES=\
+nodist_libgutachter_la_SOURCES=\
 	gutachter-types.c \
 	gutachter-types.h \
 	$(NULL)
-BUILT_SOURCES+=$(nodist_libgutachter_a_SOURCES)
-CLEANFILES+=$(nodist_libgutachter_a_SOURCES)
+BUILT_SOURCES+=$(nodist_libgutachter_la_SOURCES)
+CLEANFILES+=$(nodist_libgutachter_la_SOURCES)
 
 noinst_PROGRAMS+=test-dummy
-test_dummy_LDADD=libgutachter.a $(GUTACHTER_LIBS)
+test_dummy_LDADD=libgutachter.la
 test_dummy_SOURCES=test-dummy.c
 
 noinst_PROGRAMS+=test-gutachter
 TESTS+=test-gutachter
-test_gutachter_LDADD=libgutachter.a $(GUTACHTER_LIBS)
+test_gutachter_LDADD=libgutachter.la
 test_gutachter_SOURCES=test-main.c
 
 gutachter-types.h: gutachter-suite.h Makefile
