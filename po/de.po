@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-04-03 11:44+0200\n"
+"POT-Creation-Date: 2010-04-03 12:18+0200\n"
 "PO-Revision-Date: 2010-04-03 11:38+0200\n"
 "Last-Translator: Sven Herzberg <herzi@gnome-de.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -20,30 +20,30 @@ msgstr ""
 msgid "exited with exit code %d"
 msgstr "Beendet mit Status-Code %d"
 
-#: ../gutachter-widget.c:71
+#: ../gutachter-widget.c:69
 msgid "Loading Test Paths..."
 msgstr "Lade Test-Pfade…"
 
-#: ../gutachter-widget.c:77
+#: ../gutachter-widget.c:75
 msgid "no test selected"
 msgstr "kein Test gewählt"
 
-#: ../gutachter-widget.c:230
+#: ../gutachter-widget.c:228
 msgid "Failures"
 msgstr "Fehler"
 
-#: ../gutachter-widget.c:238
+#: ../gutachter-widget.c:236
 msgid "Hierarchy"
 msgstr "Struktur"
 
 #. FIXME: finish the process only after regular EOF
-#: ../gutachter-widget.c:379 ../gutachter-widget.c:397
+#: ../gutachter-widget.c:377 ../gutachter-widget.c:395
 msgid "%"
 msgid_plural "%"
 msgstr[0] "%"
 msgstr[1] "%"
 
-#: ../gutachter-widget.c:465
+#: ../gutachter-widget.c:463
 msgid "not tested yet"
 msgstr "noch nicht getestet"
 
@@ -64,10 +64,15 @@ msgstr "Aktualisieren"
 msgid "%s - Gutachter"
 msgstr "%s - Gutachter"
 
-#: ../gutachter-window.c:411
+#. vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s:
+#: ../gutachter-window.c:411 ../data/gutachter.desktop.in.in.h:1
 msgid "Gutachter"
 msgstr "Gutachter"
 
-#: ../main.c:39
+#: ../main.c:43
 msgid "[TESTCASE]"
 msgstr "[TESTCASE]"
+
+#: ../data/gutachter.desktop.in.in.h:2
+msgid "Run unit tests until the bar is green!"
+msgstr "Unit-Tests ausführen bis der Balken grün wird!"
