@@ -73,7 +73,7 @@ open_item_clicked (GtkButton* button G_GNUC_UNUSED,
                    GtkWindow* window)
 {
   GtkFileFilter* filter;
-  GtkWidget* dialog = gtk_file_chooser_dialog_new (_("Choose Unit Tests"),
+  GtkWidget* dialog = gtk_file_chooser_dialog_new (_("Choose Unit Test"),
                                                    window,
                                                    GTK_FILE_CHOOSER_ACTION_OPEN,
                                                    GTK_STOCK_CLOSE, GTK_RESPONSE_REJECT,
@@ -390,7 +390,7 @@ gtk_test_window_update_title (GtkTestWindow* self)
         }
       else
         {
-          title = g_strdup_printf (_("%s - GLib Unit Tests"), g_file_info_get_display_name (info));
+          title = g_strdup_printf (_("%s - Gutachter"), g_file_info_get_display_name (info));
           g_object_unref (info);
         }
     }
@@ -408,7 +408,7 @@ gtk_test_window_update_title (GtkTestWindow* self)
     }
   else
     {
-      gtk_window_set_title (GTK_WINDOW (self), _("GLib Unit Tests"));
+      gtk_window_set_title (GTK_WINDOW (self), _("Gutachter"));
     }
 }
 
