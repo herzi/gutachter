@@ -4,11 +4,6 @@ http://www.freecsstemplates.org
 Released for free under a Creative Commons Attribution 2.5 License
 */
 
-* {
-	margin: 0;
-	padding: 0;
-}
-
 body {
 	margin-top: 40px;
 	background: #1A1A1A;
@@ -22,30 +17,9 @@ h1, h2, h3 {
 	color: #AA2808;
 }
 
-h1 {
-}
-
-h2 {
-}
-
-h3 {
-}
-
 p, blockquote, ul, ol {
 	margin-bottom: 20px;
 	line-height: 2em;
-}
-
-p {
-}
-
-blockquote {
-}
-
-ul, ol, li {
-	margin: 0px;
-	padding: 0px;
-	list-style: none;
 }
 
 a {
