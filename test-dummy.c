@@ -38,8 +38,8 @@ main (int   argc,
 {
   gtk_test_init (&argc, &argv, NULL);
 
-  g_test_add_func ("/com/guthub/herzi/gutachter/dummy/fail", dummy_fail);
-  g_test_add_func ("/com/guthub/herzi/gutachter/dummy/pass", dummy_pass);
+  g_test_add_func ("/com/github/herzi/gutachter/pass", dummy_pass);
+  g_test_add_func ("/com/github/herzi/gutachter/fail", dummy_fail);
 
   return g_test_run ();
 }
