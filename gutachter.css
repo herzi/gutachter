@@ -1,0 +1,14 @@
+/* gutachter.css - color palette for the gutachter project */
+h1, h2, h3 {
+    color: #7e9a06;
+}
+
+a {
+    color: #8ae234; /* Tango Chameleon Bright */
+}
+
+a:hover {
+    color: #73d216; /* Tango Chameleon Medium */
+}
+
+/* vim:set et sw=4: */
