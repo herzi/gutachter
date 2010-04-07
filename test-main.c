@@ -23,6 +23,7 @@
 #include <gutachter.h>
 
 #include <string.h> /* memset() */
+#include "compat-gtk.h"
 
 #define gutachter_assert_cmppath(p1, cmp, p2)    do { \
                                                      if (gtk_tree_path_compare (p1, p2) cmp 0) ; \

@@ -20,6 +20,7 @@
 
 #include "gutachter-bar.h"
 
+#include "compat-gtk.h"
 #include "tango.h"
 
 struct _GutachterBarPrivate

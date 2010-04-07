@@ -42,6 +42,7 @@ lib_LTLIBRARIES+=libgutachter.la
 libgutachter_la_LDFLAGS=-release $(PACKAGE_VERSION)
 libgutachter_la_LIBADD=$(GUTACHTER_LIBS)
 libgutachter_la_SOURCES=\
+	compat-gtk.h \
 	gutachter-bar.c \
 	gutachter-hierarchy.c \
 	gutachter-runner.c \
