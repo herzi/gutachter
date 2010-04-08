@@ -54,6 +54,7 @@ typedef enum
 
 GType                 gutachter_suite_get_type       (void);
 GutachterSuite*       gutachter_suite_new            (GFile       * file);
+void                  gutachter_suite_execute        (GutachterSuite* self);
 GTestLogBuffer*       gutachter_suite_get_buffer     (GutachterSuite* self);
 GIOChannel*           gutachter_suite_get_channel    (GutachterSuite* self);
 guint64               gutachter_suite_get_executed   (GutachterSuite* self);
