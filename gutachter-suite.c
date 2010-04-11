@@ -31,13 +31,16 @@ struct _GutachterSuitePrivate
 {
   GTestLogBuffer      * buffer;
   GIOChannel          * channel;
+  guint32               child_watch;
   guint64               executed;
   guint64               failures;
   GFile               * file;
   GFileMonitor        * file_monitor;
   GutachterHierarchy  * hierarchy;
+  guint32               io_watch;
   GtkTreeIter           iter;
   guint                 passed : 1;
+  GPid                  pid;
   GutachterSuiteStatus  status;
   guint64               tests;
 };
@@ -169,7 +172,6 @@ gutachter_suite_class_init (GutachterSuiteClass* self_class)
 void
 gutachter_suite_execute (GutachterSuite* self)
 {
-  GPid           pid = 0;
   int            pipes[2];
 
   g_return_if_fail (GUTACHTER_IS_SUITE (self));
@@ -181,18 +183,19 @@ gutachter_suite_execute (GutachterSuite* self)
     }
 
   gutachter_suite_set_executed (self, 0);
-  if (!run_or_warn (&pid, pipes[1], MODE_TEST, self))
+  if (!run_or_warn (&PRIV (self)->pid, pipes[1], MODE_TEST, self))
     {
       close (pipes[0]);
     }
   else
     {
       GIOChannel* channel = g_io_channel_unix_new (pipes[0]);
+      g_io_channel_set_close_on_unref (channel, TRUE);
       g_io_channel_set_encoding (channel, NULL, NULL);
       g_io_channel_set_buffered (channel, FALSE);
       g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
-      g_io_add_watch (channel, G_IO_IN, io_func, self);
-      g_child_watch_add_full (G_PRIORITY_DEFAULT, pid, run_test_child_watch, self, NULL);
+      PRIV (self)->io_watch = g_io_add_watch (channel, G_IO_IN, io_func, self);
+      PRIV (self)->child_watch = g_child_watch_add_full (G_PRIORITY_DEFAULT, PRIV (self)->pid, run_test_child_watch, self, NULL);
 
       gutachter_suite_set_status (self, GUTACHTER_SUITE_RUNNING);
       gutachter_suite_set_channel (self, channel);
@@ -385,13 +388,17 @@ io_func (GIOChannel  * channel,
   GutachterSuite* suite = user_data;
   guchar          buf[512];
   gsize           read_bytes = 0;
+  GIOStatus       status;
 
-  while (G_IO_STATUS_NORMAL == g_io_channel_read_chars (channel, (gchar*)buf, sizeof (buf), &read_bytes, NULL))
+  for (status = g_io_channel_read_chars (channel, (gchar*)buf, sizeof (buf), &read_bytes, NULL);
+       status == G_IO_STATUS_NORMAL;
+       status = g_io_channel_read_chars (channel, (gchar*)buf, sizeof (buf), &read_bytes, NULL))
     {
       g_test_log_buffer_push (gutachter_suite_get_buffer (suite), read_bytes, buf);
     }
 
   gutachter_suite_read_available (suite);
+
   return TRUE;
 }
 
@@ -423,10 +430,20 @@ child_watch_cb (GPid      pid,
     }
   else
     {
-      gutachter_suite_read_available (suite);
-      gutachter_suite_set_channel (suite, NULL);
       gutachter_suite_set_status (suite, GUTACHTER_SUITE_LOADED);
     }
+
+  gutachter_suite_read_available (suite);
+  gutachter_suite_set_channel (suite, NULL);
+
+  if (PRIV (suite)->io_watch)
+    {
+      g_source_remove (PRIV (suite)->io_watch);
+      PRIV (suite)->io_watch = 0;
+    }
+
+  g_source_remove (PRIV (suite)->child_watch);
+  PRIV (suite)->child_watch = 0;
 }
 
 void
@@ -439,7 +456,6 @@ gutachter_suite_load (GutachterSuite* self)
 
   if (suite)
     {
-      GPid   pid = 0;
       int pipes[2];
 
       gutachter_suite_reset (suite);
@@ -450,7 +466,7 @@ gutachter_suite_load (GutachterSuite* self)
           return;
         }
 
-      if (!run_or_warn (&pid, pipes[1], MODE_LIST, suite))
+      if (!run_or_warn (&PRIV (self)->pid, pipes[1], MODE_LIST, suite))
         {
           close (pipes[0]);
           gutachter_suite_set_status (suite, GUTACHTER_SUITE_INDETERMINED);
@@ -458,11 +474,12 @@ gutachter_suite_load (GutachterSuite* self)
       else
         {
           GIOChannel* channel = g_io_channel_unix_new (pipes[0]);
+          g_io_channel_set_close_on_unref (channel, TRUE);
           g_io_channel_set_encoding (channel, NULL, NULL);
           g_io_channel_set_buffered (channel, FALSE);
           g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
-          g_io_add_watch (channel, G_IO_IN, io_func, suite);
-          g_child_watch_add_full (G_PRIORITY_DEFAULT, pid, child_watch_cb, suite, NULL);
+          PRIV (self)->io_watch = g_io_add_watch (channel, G_IO_IN, io_func, suite);
+          PRIV (self)->child_watch = g_child_watch_add_full (G_PRIORITY_DEFAULT, PRIV (self)->pid, child_watch_cb, suite, NULL);
           gutachter_suite_set_status (suite, GUTACHTER_SUITE_LOADING);
           gutachter_suite_set_channel (suite, channel);
           g_io_channel_unref (channel);
@@ -494,6 +511,18 @@ run_test_child_watch (GPid      pid,
     }
 
   gutachter_suite_set_status (suite, GUTACHTER_SUITE_FINISHED);
+
+  if (PRIV (suite)->io_watch)
+    {
+      g_source_remove (PRIV (suite)->io_watch);
+      PRIV (suite)->io_watch = 0;
+    }
+
+  gutachter_suite_read_available (suite);
+  gutachter_suite_set_channel (suite, NULL);
+
+  g_source_remove (PRIV (suite)->child_watch);
+  PRIV (suite)->child_watch = 0;
 }
 
 static void
