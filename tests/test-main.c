@@ -737,6 +737,7 @@ main (int   argc,
   /* signals/rows-reordered */
   /* "/com/github/herzi/gutachter/GutachterTreeList/path-to-child" */
 
+  add_tests_for_lookup ();
   add_tests_for_xvfb ();
 
   /* FIXME: test proper handling of this: "dummy/a", "/dummy/b" */

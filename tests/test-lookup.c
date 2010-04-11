@@ -20,21 +20,11 @@
  * if advised of the possibility of such damage.
  */
 
-#ifndef TEST_MAIN_H
-#define TEST_MAIN_H
+#include "test-main.h"
 
-#include <gutachter.h>
-
-G_BEGIN_DECLS
-
-#define NAMESPACE "/com/github/herzi/gutachter/"
-
-void add_tests_for_lookup (void);
-void add_tests_for_xvfb (void);
-void add_tests_for_suite (void);
-
-G_END_DECLS
-
-#endif /* !TEST_MAIN_H */
+void
+add_lookup_tests (void)
+{
+}
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
