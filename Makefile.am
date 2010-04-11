@@ -7,6 +7,7 @@ DISTCHECK_CONFIGURE_FLAGS=--enable-gtk-doc
 EXTRA_DIST=
 TESTS=
 SUBDIRS=. doc po
+TESTS_ENVIRONMENT=gtester -q
 
 AM_CPPFLAGS=-Wall -Wextra @GUTACHTER_CFLAGS@
 
@@ -67,17 +68,6 @@ CLEANFILES+=$(nodist_libgutachter_la_SOURCES)
 noinst_PROGRAMS+=test-dummy
 test_dummy_LDADD=libgutachter.la
 test_dummy_SOURCES=test-dummy.c
-
-noinst_PROGRAMS+=test-gutachter
-TESTS+=test-gutachter
-TESTS_ENVIRONMENT=gtester -q
-test_gutachter_LDADD=libgutachter.la
-test_gutachter_SOURCES=\
-	test-main.c \
-	tests/test-main.h \
-	tests/test-suite.c \
-	tests/test-xvfb.c \
-	$(NULL)
 
 gutachter-paths.h: Makefile
 	$(AM_V_GEN) echo "#define LOCALEDIR \"$(localedir)\"" > $@
