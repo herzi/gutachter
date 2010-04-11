@@ -22,9 +22,27 @@
 
 #include "test-main.h"
 
+#include <gutachter.h>
+
+static void
+test_n_windows (void)
+{
+  g_assert_cmpint (0, ==, gutachter_lookup_n_windows ());
+
+  gtk_test_create_widget (GTK_TYPE_WINDOW, NULL);
+
+  g_assert_cmpint (1, ==, gutachter_lookup_n_windows ());
+
+  gtk_test_create_widget (GTK_TYPE_WINDOW, NULL);
+
+  g_assert_cmpint (2, ==, gutachter_lookup_n_windows ());
+}
+
 void
 add_lookup_tests (void)
 {
+  g_test_add_func ("/com/github/herzi/gutachter/GutachterLookup/n-windows",
+                   test_n_windows);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

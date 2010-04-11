@@ -23,7 +23,11 @@
 guint32
 gutachter_lookup_n_windows (void)
 {
-  return 0;
+  GList  * windows = gtk_window_list_toplevels ();
+  guint32  result = g_list_length (windows);
+
+  g_list_free (windows);
+  return result;
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
