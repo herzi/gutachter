@@ -32,6 +32,7 @@ gutachter_HEADERS=\
 	gutachter.h \
 	gutachter-bar.h \
 	gutachter-hierarchy.h \
+	gutachter-lookup.h \
 	gutachter-runner.h \
 	gutachter-suite.h \
 	gutachter-tree-list.h \
@@ -48,6 +49,7 @@ libgutachter_la_SOURCES=\
 	compat-gtk.h \
 	gutachter-bar.c \
 	gutachter-hierarchy.c \
+	gutachter-lookup.c \
 	gutachter-runner.c \
 	gutachter-suite.c \
 	gutachter-tree-list.c \

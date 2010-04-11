@@ -18,20 +18,17 @@
  * USA
  */
 
-#ifndef GUTACHTER_H
-#define GUTACHTER_H
+#ifndef GUTACHTER_LOOKUP_H
+#define GUTACHTER_LOOKUP_H
 
-#include <gutachter-bar.h>
-#include <gutachter-hierarchy.h>
-#include <gutachter-lookup.h>
-#include <gutachter-runner.h>
-#include <gutachter-suite.h>
-#include <gutachter-tree-list.h>
-#include <gutachter-types.h>
-#include <gutachter-widget.h>
-#include <gutachter-window.h>
-#include <gutachter-xvfb.h>
+#include <gtk/gtk.h>
 
-#endif /* !GUTACHTER_H */
+G_BEGIN_DECLS
+
+guint32  gutachter_lookup_n_windows (void);
+
+G_END_DECLS
+
+#endif /* !GUTACHTER_LOOKUP_H */
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
