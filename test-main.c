@@ -736,6 +736,8 @@ main (int   argc,
   /* signals/rows-reordered */
   /* "/com/github/herzi/gutachter/GutachterTreeList/path-to-child" */
 
+  add_tests_for_xvfb ();
+
   /* FIXME: test proper handling of this: "dummy/a", "/dummy/b" */
   /* FIXME: test proper handling of this: "/com/github/herzi/gutachter/a", "com.github.herzi.gutachter.a" */
   /* FIXME: test proper handling of this: "/dummy", "/dummy" */

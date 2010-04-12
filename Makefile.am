@@ -69,7 +69,11 @@ test_dummy_SOURCES=test-dummy.c
 noinst_PROGRAMS+=test-gutachter
 TESTS+=test-gutachter
 test_gutachter_LDADD=libgutachter.la
-test_gutachter_SOURCES=test-main.c
+test_gutachter_SOURCES=\
+	test-main.c \
+	tests/test-main.h \
+	tests/test-xvfb.c \
+	$(NULL)
 
 gutachter-paths.h: Makefile
 	$(AM_V_GEN) echo "#define LOCALEDIR \"$(localedir)\"" > $@
