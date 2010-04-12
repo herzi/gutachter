@@ -11,6 +11,7 @@ AM_CPPFLAGS=-Wall -Wextra @GUTACHTER_CFLAGS@
 
 include data/Makefile.inc
 include pixmaps/Makefile.inc
+include tests/Makefile.inc
 
 bin_PROGRAMS+=gutachter
 gutachter_LDADD=libgutachter.la
