@@ -86,8 +86,6 @@ void                  gutachter_suite_set_executed   (GutachterSuite* self,
                                                       guint64         executed);
 void                  gutachter_suite_set_status     (GutachterSuite* self,
                                                       GutachterSuiteStatus     status);
-void                  gutachter_suite_set_tests      (GutachterSuite* self,
-                                                      guint64         tests);
 
 struct _GutachterSuite
 {
