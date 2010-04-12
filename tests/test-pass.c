@@ -22,11 +22,15 @@
 
 #include <glib.h>
 
+static void test1 (void) {}
+
 int
 main (int   argc,
       char**argv)
 {
   g_test_init (&argc, &argv, NULL);
+
+  g_test_add_func ("/com/github/herzi/gutachter/test-pass/test-1", test1);
 
   return g_test_run ();
 }
