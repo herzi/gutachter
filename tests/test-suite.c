@@ -22,9 +22,20 @@
 
 #include "test-main.h"
 
+static void
+test_init (void)
+{
+  GFile         * file = g_file_new_for_path ("test-pass");
+  GutachterSuite* suite = gutachter_suite_new (file);
+
+  g_object_unref (suite);
+  g_object_unref (file);
+}
+
 void
 add_tests_for_suite (void)
 {
+  g_test_add_func (NAMESPACE "GutachterSuite/initialize", test_init);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

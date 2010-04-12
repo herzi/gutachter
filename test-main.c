@@ -22,8 +22,6 @@
 
 #include "tests/test-main.h"
 
-#include <gutachter.h>
-
 #include <string.h> /* memset() */
 #include "compat-gtk.h"
 
