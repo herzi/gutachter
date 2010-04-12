@@ -69,10 +69,12 @@ test_dummy_SOURCES=test-dummy.c
 
 noinst_PROGRAMS+=test-gutachter
 TESTS+=test-gutachter
+TESTS_ENVIRONMENT=gtester -q
 test_gutachter_LDADD=libgutachter.la
 test_gutachter_SOURCES=\
 	test-main.c \
 	tests/test-main.h \
+	tests/test-suite.c \
 	tests/test-xvfb.c \
 	$(NULL)
 

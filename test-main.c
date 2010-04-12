@@ -20,6 +20,8 @@
  * if advised of the possibility of such damage.
  */
 
+#include "tests/test-main.h"
+
 #include <gutachter.h>
 
 #include <string.h> /* memset() */
@@ -709,6 +711,7 @@ main (int   argc,
   gtk_test_init (&argc, &argv, NULL);
 
   g_test_add_func ("/com/github/herzi/gutachter/GutachterBar/init", test_bar_init);
+  add_tests_for_suite ();
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/init", test_tree_list_init);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/type", test_tree_list_model_type);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/GtkTreeModel/API/get-flags", test_tree_list_model_get_flags);
