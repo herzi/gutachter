@@ -26,23 +26,35 @@ static void
 test_init (void)
 {
   GutachterXvfb* xvfb = gutachter_xvfb_get_instance ();
+  g_test_queue_unref (xvfb);
 
   g_assert (GUTACHTER_IS_XVFB (xvfb));
-
-  g_object_unref (xvfb);
 }
 
 static void
 test_wait (void)
 {
   GutachterXvfb* xvfb = gutachter_xvfb_get_instance ();
+  GdkDisplay   * display;
   GError       * error = NULL;
+  gchar        * name;
+
+  g_test_queue_unref (xvfb);
 
   g_assert (gutachter_xvfb_wait (xvfb, &error));
   g_assert_no_error (error);
   g_assert_cmpint (0, !=, gutachter_xvfb_get_pid (xvfb));
 
-  g_object_unref (xvfb);
+  /* FIXME: it looks like this is easier if we returned a string in the beginning */
+  name = g_strdup_printf (":%" G_GUINT64_FORMAT,
+                          gutachter_xvfb_get_display (xvfb));
+
+  g_test_queue_free (name);
+
+  display = gdk_display_open (name);
+  /* FIXME: try to even create a window on that screen */
+  /* FIXME: try to spawn a test on that screen */
+  gdk_display_close (display);
 }
 
 void
