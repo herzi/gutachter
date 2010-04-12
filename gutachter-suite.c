@@ -79,11 +79,16 @@ finalize (GObject* object)
 
 static void
 file_changed_cb (GFileMonitor     * monitor    G_GNUC_UNUSED,
-                 GFile            * file       G_GNUC_UNUSED,
+                 GFile            * file,
                  GFile            * other_file G_GNUC_UNUSED,
                  GFileMonitorEvent  event,
                  gpointer           user_data)
 {
+  if (!g_file_equal (file, PRIV (user_data)->file))
+    {
+      return;
+    }
+
   switch (event)
     {
     case G_FILE_MONITOR_EVENT_CHANGED:
@@ -130,6 +135,7 @@ set_property (GObject     * object,
               GParamSpec  * pspec)
 {
   GError* error = NULL;
+  GFile * folder;
 
   switch (prop_id)
     {
@@ -138,9 +144,15 @@ set_property (GObject     * object,
       g_return_if_fail (g_value_get_object (value));
       PRIV (object)->file = g_value_dup_object (value);
 
-      PRIV (object)->file_monitor = g_file_monitor (PRIV (object)->file, G_FILE_MONITOR_NONE, NULL, &error);
-      g_signal_connect (PRIV (object)->file_monitor, "changed",
-                        G_CALLBACK (file_changed_cb), object);
+      folder = g_file_get_parent (PRIV (object)->file);
+
+      PRIV (object)->file_monitor = g_file_monitor_directory (folder, G_FILE_MONITOR_NONE, NULL, &error);
+      if (PRIV (object)->file_monitor)
+        {
+          g_signal_connect (PRIV (object)->file_monitor, "changed",
+                            G_CALLBACK (file_changed_cb), object);
+        }
+      g_object_unref (folder);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
