@@ -32,10 +32,24 @@ test_init (void)
   g_object_unref (xvfb);
 }
 
+static void
+test_wait (void)
+{
+  GutachterXvfb* xvfb = gutachter_xvfb_get_instance ();
+  GError       * error = NULL;
+
+  g_assert (gutachter_xvfb_wait (xvfb, &error));
+  g_assert_no_error (error);
+  g_assert_cmpint (0, !=, gutachter_xvfb_get_pid (xvfb));
+
+  g_object_unref (xvfb);
+}
+
 void
 add_tests_for_xvfb (void)
 {
   g_test_add_func (NAMESPACE "Xvfb/init", test_init);
+  g_test_add_func (NAMESPACE "Xvfb/wait", test_wait);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

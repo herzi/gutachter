@@ -305,12 +305,12 @@ run_or_warn (GPid                     * pid,
              GutachterSuiteRunningMode  mode,
              GutachterSuite           * self)
 {
-  GutachterXvfb* xvfb = gutachter_xvfb_get_instance ();
+  GutachterXvfb* xvfb;
   gboolean       result = FALSE;
   GError       * error  = NULL;
-  GFile        * parent = g_file_get_parent (PRIV (self)->file);
+  GFile        * parent;
   gchar        * base;
-  gchar        * folder = g_file_get_path (parent);
+  gchar        * folder;
   gchar        * argv[] = {
           NULL,
           NULL,
@@ -318,16 +318,24 @@ run_or_warn (GPid                     * pid,
           NULL,
           NULL
   };
-  gchar** env = g_listenv ();
+  gchar** env;
   gchar** iter;
   gboolean found_display = FALSE;
 
-  base = g_file_get_basename (PRIV (self)->file);
+  xvfb = gutachter_xvfb_get_instance ();
 
-  while (!gutachter_xvfb_get_pid (xvfb))
+  if (!gutachter_xvfb_wait (xvfb, NULL))
     {
-      g_main_context_iteration (NULL, FALSE);
+      g_warning ("error while waiting for Xvfb: %s", error->message);
+      g_error_free (error);
+      g_object_unref (xvfb);
+      return FALSE;
     }
+
+  base = g_file_get_basename (PRIV (self)->file);
+  parent = g_file_get_parent (PRIV (self)->file);
+  folder = g_file_get_path (parent);
+  env = g_listenv ();
 
   /* FIXME: this is X11 specific */
   for (iter = env; iter && *iter; iter++)

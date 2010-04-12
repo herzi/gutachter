@@ -199,4 +199,19 @@ gutachter_xvfb_set_pid (GutachterXvfb* self,
   PRIV (self)->pid = pid;
 }
 
+gboolean
+gutachter_xvfb_wait (GutachterXvfb* self,
+                     GError       **error)
+{
+  g_return_val_if_fail (GUTACHTER_IS_XVFB (self), FALSE);
+  g_return_val_if_fail (!error || !*error, FALSE);
+
+  while (!gutachter_xvfb_get_pid (self))
+    {
+      g_main_context_iteration (NULL, FALSE);
+    }
+
+  return TRUE;
+}
+
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

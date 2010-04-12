@@ -44,6 +44,8 @@ void           gutachter_xvfb_set_display  (GutachterXvfb* self,
                                             guint64        display);
 void           gutachter_xvfb_set_pid      (GutachterXvfb* self,
                                             GPid           pid);
+gboolean       gutachter_xvfb_wait         (GutachterXvfb* self,
+                                            GError       **error);
 
 struct _GutachterXvfb
 {
