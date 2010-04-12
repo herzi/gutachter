@@ -1,0 +1,224 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GutachterHierarchy</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="gutachter Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="GutachterTreeList.html" title="GutachterTreeList">
+<link rel="next" href="GtkTestWindow.html" title="GtkTestWindow">
+<meta name="generator" content="GTK-Doc V1.11 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="chapter" href="ch01.html" title="[Insert title here]">
+<link rel="chapter" href="object-tree.html" title="Object Hierarchy">
+<link rel="index" href="api-index-full.html" title="API Index">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GutachterTreeList.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">gutachter Reference Manual</th>
+<td><a accesskey="n" href="GtkTestWindow.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#GutachterHierarchy.synopsis" class="shortcut">Top</a>
+                 | 
+                <a href="#GutachterHierarchy.description" class="shortcut">Description</a>
+                 | 
+                <a href="#GutachterHierarchy.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                 | 
+                <a href="#GutachterHierarchy.implemented-interfaces" class="shortcut">Implemented Interfaces</a>
+</td></tr>
+</table>
+<div class="refentry" title="GutachterHierarchy">
+<a name="GutachterHierarchy"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GutachterHierarchy.top_of_page"></a>GutachterHierarchy</span></h2>
+<p>GutachterHierarchy</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv" title="Synopsis">
+<a name="GutachterHierarchy.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">
+                    GutachterHierarchyPrivate;
+GutachterHierarchy* gutachter_hierarchy_new             (void);
+void                gutachter_hierarchy_clear           (GutachterHierarchy *self);
+<a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"
+>gchar</a>*              gutachter_hierarchy_get_full_path   (GutachterHierarchy *self,
+                                                         <a
+href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
+>GtkTreeIter</a> *iter);
+void                gutachter_hierarchy_get_iter        (GutachterHierarchy *self,
+                                                         <a
+href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
+>GtkTreeIter</a> *iter,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"
+>gchar</a> const *path);
+<a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"
+>gchar</a>*              gutachter_hierarchy_get_message     (GutachterHierarchy *self,
+                                                         <a
+href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
+>GtkTreeIter</a> *iter);
+<a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
+>gboolean</a>            gutachter_hierarchy_is_testcase     (GutachterHierarchy *self,
+                                                         <a
+href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
+>GtkTreeIter</a> *iter);
+<a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
+>gboolean</a>            gutachter_hierarchy_lookup_iter     (GutachterHierarchy *self,
+                                                         <a
+href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
+>GtkTreeIter</a> *iter,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"
+>gchar</a> const *path);
+void                gutachter_hierarchy_set_unsure      (GutachterHierarchy *self);
+void                gutachter_hierarchy_set_message     (GutachterHierarchy *self,
+                                                         <a
+href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
+>GtkTreeIter</a> *iter,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"
+>gchar</a> const *message);
+                    GutachterHierarchy;
+</pre>
+</div>
+<div class="refsect1" title="Object Hierarchy">
+<a name="GutachterHierarchy.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a
+href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"
+>GObject</a>
+   +----<a
+href="/usr/share/gtk-doc/html/gtk/GtkTreeStore.html"
+>GtkTreeStore</a>
+         +----GutachterHierarchy
+</pre>
+</div>
+<div class="refsect1" title="Implemented Interfaces">
+<a name="GutachterHierarchy.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
+<p>
+GutachterHierarchy implements
+ <a
+href="/usr/share/gtk-doc/html/gtk/gtk-gtkbuildable.html#GtkBuildable"
+>GtkBuildable</a>,  <a
+href="/usr/share/gtk-doc/html/gtk/GtkTreeSortable.html"
+>GtkTreeSortable</a>,  <a
+href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html"
+>GtkTreeModel</a>,  <a
+href="/usr/share/gtk-doc/html/gtk/gtk-GtkTreeView-drag-and-drop.html#GtkTreeDragSource"
+>GtkTreeDragSource</a> and  <a
+href="/usr/share/gtk-doc/html/gtk/gtk-GtkTreeView-drag-and-drop.html#GtkTreeDragDest"
+>GtkTreeDragDest</a>.</p>
+</div>
+<div class="refsect1" title="Description">
+<a name="GutachterHierarchy.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1" title="Details">
+<a name="GutachterHierarchy.details"></a><h2>Details</h2>
+<div class="refsect2" title="GutachterHierarchyPrivate">
+<a name="GutachterHierarchyPrivate"></a><h3>GutachterHierarchyPrivate</h3>
+<pre class="programlisting">typedef struct _GutachterHierarchyPrivate GutachterHierarchyPrivate;</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_hierarchy_new ()">
+<a name="gutachter-hierarchy-new"></a><h3>gutachter_hierarchy_new ()</h3>
+<pre class="programlisting">GutachterHierarchy* gutachter_hierarchy_new             (void);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_hierarchy_clear ()">
+<a name="gutachter-hierarchy-clear"></a><h3>gutachter_hierarchy_clear ()</h3>
+<pre class="programlisting">void                gutachter_hierarchy_clear           (GutachterHierarchy *self);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_hierarchy_get_full_path ()">
+<a name="gutachter-hierarchy-get-full-path"></a><h3>gutachter_hierarchy_get_full_path ()</h3>
+<pre class="programlisting"><a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"
+>gchar</a>*              gutachter_hierarchy_get_full_path   (GutachterHierarchy *self,
+                                                         <a
+href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
+>GtkTreeIter</a> *iter);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_hierarchy_get_iter ()">
+<a name="gutachter-hierarchy-get-iter"></a><h3>gutachter_hierarchy_get_iter ()</h3>
+<pre class="programlisting">void                gutachter_hierarchy_get_iter        (GutachterHierarchy *self,
+                                                         <a
+href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
+>GtkTreeIter</a> *iter,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"
+>gchar</a> const *path);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_hierarchy_get_message ()">
+<a name="gutachter-hierarchy-get-message"></a><h3>gutachter_hierarchy_get_message ()</h3>
+<pre class="programlisting"><a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"
+>gchar</a>*              gutachter_hierarchy_get_message     (GutachterHierarchy *self,
+                                                         <a
+href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
+>GtkTreeIter</a> *iter);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_hierarchy_is_testcase ()">
+<a name="gutachter-hierarchy-is-testcase"></a><h3>gutachter_hierarchy_is_testcase ()</h3>
+<pre class="programlisting"><a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
+>gboolean</a>            gutachter_hierarchy_is_testcase     (GutachterHierarchy *self,
+                                                         <a
+href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
+>GtkTreeIter</a> *iter);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_hierarchy_lookup_iter ()">
+<a name="gutachter-hierarchy-lookup-iter"></a><h3>gutachter_hierarchy_lookup_iter ()</h3>
+<pre class="programlisting"><a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
+>gboolean</a>            gutachter_hierarchy_lookup_iter     (GutachterHierarchy *self,
+                                                         <a
+href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
+>GtkTreeIter</a> *iter,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"
+>gchar</a> const *path);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_hierarchy_set_unsure ()">
+<a name="gutachter-hierarchy-set-unsure"></a><h3>gutachter_hierarchy_set_unsure ()</h3>
+<pre class="programlisting">void                gutachter_hierarchy_set_unsure      (GutachterHierarchy *self);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_hierarchy_set_message ()">
+<a name="gutachter-hierarchy-set-message"></a><h3>gutachter_hierarchy_set_message ()</h3>
+<pre class="programlisting">void                gutachter_hierarchy_set_message     (GutachterHierarchy *self,
+                                                         <a
+href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
+>GtkTreeIter</a> *iter,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"
+>gchar</a> const *message);</pre>
+</div>
+<hr>
+<div class="refsect2" title="GutachterHierarchy">
+<a name="GutachterHierarchy-struct"></a><h3>GutachterHierarchy</h3>
+<pre class="programlisting">typedef struct _GutachterHierarchy GutachterHierarchy;</pre>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.11</div>
+</body>
+</html>

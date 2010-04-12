@@ -1,0 +1,378 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GutachterSuite</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="gutachter Reference Manual">
+<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="prev" href="GtkTestWindow.html" title="GtkTestWindow">
+<link rel="next" href="GutachterBar.html" title="GutachterBar">
+<meta name="generator" content="GTK-Doc V1.11 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="chapter" href="ch01.html" title="[Insert title here]">
+<link rel="chapter" href="object-tree.html" title="Object Hierarchy">
+<link rel="index" href="api-index-full.html" title="API Index">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GtkTestWindow.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">gutachter Reference Manual</th>
+<td><a accesskey="n" href="GutachterBar.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#GutachterSuite.synopsis" class="shortcut">Top</a>
+                 | 
+                <a href="#GutachterSuite.description" class="shortcut">Description</a>
+                 | 
+                <a href="#GutachterSuite.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                 | 
+                <a href="#GutachterSuite.properties" class="shortcut">Properties</a>
+</td></tr>
+</table>
+<div class="refentry" title="GutachterSuite">
+<a name="GutachterSuite"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GutachterSuite.top_of_page"></a>GutachterSuite</span></h2>
+<p>GutachterSuite</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv" title="Synopsis">
+<a name="GutachterSuite.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">
+                    GutachterSuitePrivate;
+enum                GutachterSuiteRunningMode;
+enum                GutachterSuiteStatus;
+GutachterSuite*     gutachter_suite_new                 (<a
+href="/usr/share/gtk-doc/html/gio/GFile.html"
+>GFile</a> *file);
+void                gutachter_suite_execute             (GutachterSuite *self);
+GTestLogBuffer*     gutachter_suite_get_buffer          (GutachterSuite *self);
+<a
+href="/usr/share/gtk-doc/html/glib/glib-IO-Channels.html#GIOChannel"
+>GIOChannel</a>*         gutachter_suite_get_channel         (GutachterSuite *self);
+<a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"
+>guint64</a>             gutachter_suite_get_executed        (GutachterSuite *self);
+<a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"
+>guint64</a>             gutachter_suite_get_failures        (GutachterSuite *self);
+<a
+href="/usr/share/gtk-doc/html/gio/GFile.html"
+>GFile</a>*              gutachter_suite_get_file            (GutachterSuite *self);
+<a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
+>gboolean</a>            gutachter_suite_get_passed          (GutachterSuite *self);
+GutachterSuiteStatus  gutachter_suite_get_status        (GutachterSuite *self);
+<a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"
+>guint64</a>             gutachter_suite_get_tests           (GutachterSuite *self);
+<a
+href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html"
+>GtkTreeModel</a>*       gutachter_suite_get_tree            (GutachterSuite *self);
+<a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
+>gboolean</a>            io_func                             (<a
+href="/usr/share/gtk-doc/html/glib/glib-IO-Channels.html#GIOChannel"
+>GIOChannel</a> *channel,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-IO-Channels.html#GIOCondition"
+>GIOCondition</a> condition,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"
+>gpointer</a> data);
+void                run_test_child_watch                (<a
+href="/usr/share/gtk-doc/html/glib/glib-The-Main-Event-Loop.html#GPid"
+>GPid</a> pid,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"
+>gint</a> status,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"
+>gpointer</a> user_data);
+void                child_watch_cb                      (<a
+href="/usr/share/gtk-doc/html/glib/glib-The-Main-Event-Loop.html#GPid"
+>GPid</a> pid,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"
+>gint</a> status,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"
+>gpointer</a> data);
+<a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
+>gboolean</a>            run_or_warn                         (<a
+href="/usr/share/gtk-doc/html/glib/glib-The-Main-Event-Loop.html#GPid"
+>GPid</a> *pid,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"
+>guint</a> pipe_id,
+                                                         GutachterSuiteRunningMode mode,
+                                                         GutachterSuite *self);
+void                gutachter_suite_load                (GutachterSuite *self);
+void                gutachter_suite_read_available      (GutachterSuite *self);
+void                gutachter_suite_reset               (GutachterSuite *self);
+void                gutachter_suite_set_channel         (GutachterSuite *self,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-IO-Channels.html#GIOChannel"
+>GIOChannel</a> *channel);
+void                gutachter_suite_set_executed        (GutachterSuite *self,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"
+>guint64</a> executed);
+void                gutachter_suite_set_status          (GutachterSuite *self,
+                                                         GutachterSuiteStatus status);
+                    GutachterSuite;
+</pre>
+</div>
+<div class="refsect1" title="Object Hierarchy">
+<a name="GutachterSuite.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a
+href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"
+>GObject</a>
+   +----GutachterSuite
+</pre>
+</div>
+<div class="refsect1" title="Properties">
+<a name="GutachterSuite.properties"></a><h2>Properties</h2>
+<pre class="synopsis">
+  "file"                     <a
+href="/usr/share/gtk-doc/html/gio/GFile.html"
+>GFile</a>*                : Write / Construct Only
+  "status"                   GutachterSuiteStatus  : Read
+</pre>
+</div>
+<div class="refsect1" title="Description">
+<a name="GutachterSuite.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1" title="Details">
+<a name="GutachterSuite.details"></a><h2>Details</h2>
+<div class="refsect2" title="GutachterSuitePrivate">
+<a name="GutachterSuitePrivate"></a><h3>GutachterSuitePrivate</h3>
+<pre class="programlisting">typedef struct _GutachterSuitePrivate GutachterSuitePrivate;</pre>
+</div>
+<hr>
+<div class="refsect2" title="enum GutachterSuiteRunningMode">
+<a name="GutachterSuiteRunningMode"></a><h3>enum GutachterSuiteRunningMode</h3>
+<pre class="programlisting">typedef enum /*&lt; skip &gt;*/ /* FIXME: hide this one */
+{
+  MODE_LIST,
+  MODE_TEST
+} GutachterSuiteRunningMode;
+</pre>
+</div>
+<hr>
+<div class="refsect2" title="enum GutachterSuiteStatus">
+<a name="GutachterSuiteStatus"></a><h3>enum GutachterSuiteStatus</h3>
+<pre class="programlisting">typedef enum
+{
+  GUTACHTER_SUITE_INDETERMINED,
+  GUTACHTER_SUITE_LOADING,
+  GUTACHTER_SUITE_LOADED,
+  GUTACHTER_SUITE_RUNNING,
+  GUTACHTER_SUITE_FINISHED
+} GutachterSuiteStatus;
+</pre>
+<p>
+Represents the internal state of the <span class="type">GutachterSuite</span>.</p>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_suite_new ()">
+<a name="gutachter-suite-new"></a><h3>gutachter_suite_new ()</h3>
+<pre class="programlisting">GutachterSuite*     gutachter_suite_new                 (<a
+href="/usr/share/gtk-doc/html/gio/GFile.html"
+>GFile</a> *file);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_suite_execute ()">
+<a name="gutachter-suite-execute"></a><h3>gutachter_suite_execute ()</h3>
+<pre class="programlisting">void                gutachter_suite_execute             (GutachterSuite *self);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_suite_get_buffer ()">
+<a name="gutachter-suite-get-buffer"></a><h3>gutachter_suite_get_buffer ()</h3>
+<pre class="programlisting">GTestLogBuffer*     gutachter_suite_get_buffer          (GutachterSuite *self);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_suite_get_channel ()">
+<a name="gutachter-suite-get-channel"></a><h3>gutachter_suite_get_channel ()</h3>
+<pre class="programlisting"><a
+href="/usr/share/gtk-doc/html/glib/glib-IO-Channels.html#GIOChannel"
+>GIOChannel</a>*         gutachter_suite_get_channel         (GutachterSuite *self);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_suite_get_executed ()">
+<a name="gutachter-suite-get-executed"></a><h3>gutachter_suite_get_executed ()</h3>
+<pre class="programlisting"><a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"
+>guint64</a>             gutachter_suite_get_executed        (GutachterSuite *self);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_suite_get_failures ()">
+<a name="gutachter-suite-get-failures"></a><h3>gutachter_suite_get_failures ()</h3>
+<pre class="programlisting"><a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"
+>guint64</a>             gutachter_suite_get_failures        (GutachterSuite *self);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_suite_get_file ()">
+<a name="gutachter-suite-get-file"></a><h3>gutachter_suite_get_file ()</h3>
+<pre class="programlisting"><a
+href="/usr/share/gtk-doc/html/gio/GFile.html"
+>GFile</a>*              gutachter_suite_get_file            (GutachterSuite *self);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_suite_get_passed ()">
+<a name="gutachter-suite-get-passed"></a><h3>gutachter_suite_get_passed ()</h3>
+<pre class="programlisting"><a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
+>gboolean</a>            gutachter_suite_get_passed          (GutachterSuite *self);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_suite_get_status ()">
+<a name="gutachter-suite-get-status"></a><h3>gutachter_suite_get_status ()</h3>
+<pre class="programlisting">GutachterSuiteStatus  gutachter_suite_get_status        (GutachterSuite *self);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_suite_get_tests ()">
+<a name="gutachter-suite-get-tests"></a><h3>gutachter_suite_get_tests ()</h3>
+<pre class="programlisting"><a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"
+>guint64</a>             gutachter_suite_get_tests           (GutachterSuite *self);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_suite_get_tree ()">
+<a name="gutachter-suite-get-tree"></a><h3>gutachter_suite_get_tree ()</h3>
+<pre class="programlisting"><a
+href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html"
+>GtkTreeModel</a>*       gutachter_suite_get_tree            (GutachterSuite *self);</pre>
+</div>
+<hr>
+<div class="refsect2" title="io_func ()">
+<a name="io-func"></a><h3>io_func ()</h3>
+<pre class="programlisting"><a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
+>gboolean</a>            io_func                             (<a
+href="/usr/share/gtk-doc/html/glib/glib-IO-Channels.html#GIOChannel"
+>GIOChannel</a> *channel,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-IO-Channels.html#GIOCondition"
+>GIOCondition</a> condition,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"
+>gpointer</a> data);</pre>
+</div>
+<hr>
+<div class="refsect2" title="run_test_child_watch ()">
+<a name="run-test-child-watch"></a><h3>run_test_child_watch ()</h3>
+<pre class="programlisting">void                run_test_child_watch                (<a
+href="/usr/share/gtk-doc/html/glib/glib-The-Main-Event-Loop.html#GPid"
+>GPid</a> pid,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"
+>gint</a> status,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"
+>gpointer</a> user_data);</pre>
+</div>
+<hr>
+<div class="refsect2" title="child_watch_cb ()">
+<a name="child-watch-cb"></a><h3>child_watch_cb ()</h3>
+<pre class="programlisting">void                child_watch_cb                      (<a
+href="/usr/share/gtk-doc/html/glib/glib-The-Main-Event-Loop.html#GPid"
+>GPid</a> pid,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gint"
+>gint</a> status,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gpointer"
+>gpointer</a> data);</pre>
+</div>
+<hr>
+<div class="refsect2" title="run_or_warn ()">
+<a name="run-or-warn"></a><h3>run_or_warn ()</h3>
+<pre class="programlisting"><a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
+>gboolean</a>            run_or_warn                         (<a
+href="/usr/share/gtk-doc/html/glib/glib-The-Main-Event-Loop.html#GPid"
+>GPid</a> *pid,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint"
+>guint</a> pipe_id,
+                                                         GutachterSuiteRunningMode mode,
+                                                         GutachterSuite *self);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_suite_load ()">
+<a name="gutachter-suite-load"></a><h3>gutachter_suite_load ()</h3>
+<pre class="programlisting">void                gutachter_suite_load                (GutachterSuite *self);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_suite_read_available ()">
+<a name="gutachter-suite-read-available"></a><h3>gutachter_suite_read_available ()</h3>
+<pre class="programlisting">void                gutachter_suite_read_available      (GutachterSuite *self);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_suite_reset ()">
+<a name="gutachter-suite-reset"></a><h3>gutachter_suite_reset ()</h3>
+<pre class="programlisting">void                gutachter_suite_reset               (GutachterSuite *self);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_suite_set_channel ()">
+<a name="gutachter-suite-set-channel"></a><h3>gutachter_suite_set_channel ()</h3>
+<pre class="programlisting">void                gutachter_suite_set_channel         (GutachterSuite *self,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-IO-Channels.html#GIOChannel"
+>GIOChannel</a> *channel);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_suite_set_executed ()">
+<a name="gutachter-suite-set-executed"></a><h3>gutachter_suite_set_executed ()</h3>
+<pre class="programlisting">void                gutachter_suite_set_executed        (GutachterSuite *self,
+                                                         <a
+href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"
+>guint64</a> executed);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_suite_set_status ()">
+<a name="gutachter-suite-set-status"></a><h3>gutachter_suite_set_status ()</h3>
+<pre class="programlisting">void                gutachter_suite_set_status          (GutachterSuite *self,
+                                                         GutachterSuiteStatus status);</pre>
+</div>
+<hr>
+<div class="refsect2" title="GutachterSuite">
+<a name="GutachterSuite-struct"></a><h3>GutachterSuite</h3>
+<pre class="programlisting">typedef struct _GutachterSuite GutachterSuite;</pre>
+<p>
+A representation for a test binary.</p>
+</div>
+</div>
+<div class="refsect1" title="Property Details">
+<a name="GutachterSuite.property-details"></a><h2>Property Details</h2>
+<div class="refsect2" title='The "file" property'>
+<a name="GutachterSuite--file"></a><h3>The <code class="literal">"file"</code> property</h3>
+<pre class="programlisting">  "file"                     <a
+href="/usr/share/gtk-doc/html/gio/GFile.html"
+>GFile</a>*                : Write / Construct Only</pre>
+<p></p>
+</div>
+<hr>
+<div class="refsect2" title='The "status" property'>
+<a name="GutachterSuite--status"></a><h3>The <code class="literal">"status"</code> property</h3>
+<pre class="programlisting">  "status"                   GutachterSuiteStatus  : Read</pre>
+<p></p>
+<p>Default value: GUTACHTER_SUITE_INDETERMINED</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.11</div>
+</body>
+</html>
