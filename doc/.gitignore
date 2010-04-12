@@ -1,0 +1,10 @@
+gutachter.args
+gutachter.hierarchy
+gutachter.interfaces
+gutachter.prerequisites
+gutachter.signals
+gutachter.types
+html
+*.stamp
+*.txt
+xml

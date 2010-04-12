@@ -6,7 +6,8 @@ touch ChangeLog
 aclocal
 libtoolize --automake
 intltoolize --automake
+gtkdocize --flavour no-tmpl
 automake --add-missing
 autoconf
 
-./configure $@
+./configure --enable-gtk-doc $@

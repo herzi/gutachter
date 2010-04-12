@@ -9,6 +9,7 @@ depcomp
 .deps
 *.desktop
 *.desktop.in
+gtk-doc.make
 gutachter
 gutachter-*.tar.*
 gutachter-paths.h
