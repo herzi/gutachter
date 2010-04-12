@@ -28,6 +28,7 @@ struct _GutachterXvfbPrivate
 {
   guint64  display;
   GPid     pid;
+  gulong   child_watch;
 };
 
 #define PRIV(i) (((GutachterXvfb*)(i))->_private)
@@ -59,6 +60,7 @@ xvfb_child_watch (GPid      pid,
   g_assert_cmpint (pid, ==, PRIV (user_data)->pid);
 
   PRIV (user_data)->pid = 0;
+  PRIV (user_data)->child_watch = 0;
 }
 
 static gboolean
@@ -84,7 +86,7 @@ setup_xvfb (gpointer data)
                      NULL, NULL,
                      &PRIV (self)->pid, &error))
     {
-      g_child_watch_add (PRIV (self)->pid, xvfb_child_watch, self);
+      PRIV (self)->child_watch = g_child_watch_add (PRIV (self)->pid, xvfb_child_watch, self);
     }
   else
     {
@@ -122,8 +124,22 @@ constructor (GType                  type,
 }
 
 static void
+finalize_child_watch (GPid      pid,
+                      gint      status    G_GNUC_UNUSED,
+                      gpointer  user_data G_GNUC_UNUSED)
+{
+  g_spawn_close_pid (pid);
+}
+
+static void
 finalize (GObject* object)
 {
+  if (PRIV (object)->child_watch)
+    {
+      g_source_remove (PRIV (object)->child_watch);
+      PRIV (object)->child_watch = g_child_watch_add (PRIV (object)->pid, finalize_child_watch, NULL);
+    }
+
   if (PRIV (object)->pid)
     {
       if (kill (PRIV (object)->pid, SIGTERM) < 0)
