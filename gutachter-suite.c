@@ -188,6 +188,13 @@ gutachter_suite_class_init (GutachterSuiteClass* self_class)
   g_object_class_install_property (object_class, PROP_FILE,
                                    g_param_spec_object ("file", NULL, NULL,
                                                         G_TYPE_FILE, G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
+  /**
+   * GutachterSuite::status
+   *
+   * The internal state of the suite. It can be any of the
+   * #GutachterSuiteStatus values. You can wait for the status to be
+   * %GUTACHTER_SUITE_LOADED and then execute the test suite.
+   */
   g_object_class_install_property (object_class, PROP_STATUS,
                                    g_param_spec_enum ("status", NULL, NULL,
                                                       GUTACHTER_TYPE_SUITE_STATUS,
