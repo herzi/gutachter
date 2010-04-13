@@ -27,6 +27,22 @@
 
 #include <glib/gi18n.h>
 
+/**
+ * GutachterSuite
+ *
+ * A representation for a test binary.
+ */
+/**
+ * GutachterSuiteStatus:
+ * @GUTACHTER_SUITE_INDETERMINED: the suite is freshly created
+ * @GUTACHTER_SUITE_LOADING: the suite is currently loading the list of tests
+ * @GUTACHTER_SUITE_LOADED: the suite is done loading
+ * @GUTACHTER_SUITE_RUNNING: the suite is being executed right now
+ * @GUTACHTER_SUITE_FINISHED: the suite has been executed and is finished
+ *
+ * Represents the internal state of the #GutachterSuite.
+ */
+
 struct _GutachterSuitePrivate
 {
   GTestLogBuffer      * buffer;

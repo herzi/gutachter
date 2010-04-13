@@ -26,6 +26,8 @@
 
 #include <glib/gi18n.h>
 
+/* FIXME: add a gallery image for the documentation */
+
 struct _GtkTestWindowPrivate
 {
   guint        auto_update : 1;
