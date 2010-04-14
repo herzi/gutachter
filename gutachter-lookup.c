@@ -23,6 +23,112 @@
 #include <stdlib.h> /* strtol() */
 #include <string.h> /* strlen() */
 
+/**
+ * SECTION:gutachter-lookup
+ * @short_description: functions for looking up widgets
+ * @title: Widget Lookup
+ *
+ * These functions are useful to lookup widgets in tests. Imagine this widget structure:
+ *
+ * |[GtkWindow (title "main window")
+ *  + GtkHBox
+ *     + GtkLabel
+ *     + GtkEntry
+ *     + GtkButton]|
+ *
+ *  You can do these kinds of lookups:
+ *
+ *  <itemizedlist>
+ *    <listitem>
+ *      <para>
+ *        |[gutachter_lookup_child(NULL, "")]| will return %NULL
+ *      </para>
+ *    </listitem>
+ *    <listitem>
+ *      <para>
+ *        |[gutachter_lookup_child(NULL, "urn:gtk:")]| will return %NULL
+ *      </para>
+ *    </listitem>
+ *    <listitem>
+ *      <para>
+ *        |[gutachter_lookup_child(window, "")]| will return the GtkWindow
+ *      </para>
+ *    </listitem>
+ *    <listitem>
+ *      <para>
+ *        |[gutachter_lookup_child(window, "urn:gtk:")]| will return the GtkWindow
+ *      </para>
+ *    </listitem>
+ * <!--   <listitem>
+ *      <para>
+ *        |[gutachter_lookup_child(NULL,"urn:gtk:[0]")]| will return the #GtkWindow
+ *      </para>
+ *    </listitem> -->
+ * <!--   <listitem>
+ *      <para>
+ *        |[gutachter_lookup_child(NULL,"urn:gtk:GtkWidget[0]")]| will return the #GtkWindow
+ *      </para>
+ *    </listitem> -->
+ * <!--   <listitem>
+ *      <para>
+ *        |[gutachter_lookup_child(NULL,"urn:gtk:GtkWindow[0]")]| will return the #GtkWindow
+ *      </para>
+ *    </listitem> -->
+ * <!--   <listitem>
+ *      <para>
+ *        |[gutachter_lookup_child(NULL,"urn:gtk:GtkWindow")]| will return the #GtkWindow
+ *      </para>
+ *    </listitem> -->
+ *    <listitem>
+ *      <para>
+ *        |[gutachter_lookup_child(NULL,"urn:gtk:GtkWindow(\"main window\")")]| will return the #GtkWindow
+ *      </para>
+ *    </listitem>
+ *    <listitem>
+ *      <para>
+ *        |[gutachter_lookup_child(hbox, "")]| will return the #GtkHBox
+ *      </para>
+ *    </listitem>
+ *    <listitem>
+ *      <para>
+ *        |[gutachter_lookup_child(hbox, "urn:gtk:")]| will return the #GtkHBox
+ *      </para>
+ *    </listitem>
+ *    <listitem>
+ *      <para>
+ *        |[gutachter_lookup_child(window, "urn:gtk:GtkWidget[0]")]| will return the #GtkHBox
+ *      </para>
+ *    </listitem>
+ *    <!--<listitem>
+ *      <para>
+ *        |[gutachter_lookup_child(NULL, "urn:gtk:GtkWindow:GtkHBox")]| will return the #GtkHBox
+ *      </para>
+ *    </listitem>-->
+ *    <listitem>
+ *      <para>
+ *        |[gutachter_lookup_child(label, "")]| will return the #GtkLabel
+ *      </para>
+ *    </listitem>
+ *    <!--<listitem>
+ *      <para>
+ *        |[gutachter_lookup_child(NULL,"urn:gtk:GtkWindow:GtkHBox:GtkLabel")]| will return the #GtkLabel
+ *      </para>
+ *    </listitem>-->
+ *    <listitem>
+ *      <para>
+ *        |[gutachter_lookup_child(NULL,"urn:gtk:GtkWindow(\"main window\"):GtkWidget[0]:GtkWidget[2]")]| will return the #GtkButton
+ *      </para>
+ *    </listitem>
+ *  </itemizedlist>
+ */
+
+/**
+ * gutachter_lookup_n_windows:
+ *
+ * Find out how many windows there are.
+ *
+ * Returns: the number of alive #GtkWindow objects
+ */
 guint32
 gutachter_lookup_n_windows (void)
 {
@@ -33,6 +139,15 @@ gutachter_lookup_n_windows (void)
   return result;
 }
 
+/**
+ * gutachter_lookup_child:
+ * @widget: the parent #GtkWidget or %NULL
+ * @path: the path to the desired widget
+ *
+ * Lookup a child of @widget (or from the toplevel if @widget is %NULL).
+ *
+ * Returns: the child specified by @widget and @path or %NULL if not found.
+ */
 GtkWidget*
 gutachter_lookup_child (GtkWidget  * widget,
                         gchar const* path)
@@ -214,6 +329,15 @@ gutachter_lookup_child (GtkWidget  * widget,
   return result;
 }
 
+/**
+ * gutachter_lookup_widget:
+ * @path: the path (from the toplevel) to the child
+ *
+ * Look up a widget from the top level. This is the same as
+ * gutachter_lookup_child() with %NULL as the first parameter.
+ *
+ * Returns: a #GtkWidget if a child was found, %NULL otherwise.
+ */
 GtkWidget*
 gutachter_lookup_widget (gchar const* path)
 {

@@ -6,17 +6,17 @@
 ]>
 <book id="index">
   <bookinfo>
-    <title>gutachter Reference Manual</title>
+    <title>Gutachter Reference Manual</title>
     <releaseinfo>
-      for gutachter [VERSION]
+      for gutachter 0.0.2
       The latest version of this documentation can be found on-line at
-      <ulink role="online-location" url="http://[SERVER]/gutachter/index.html">http://[SERVER]/gutachter/</ulink>.
+      <ulink role="online-location" url="http://herzi.github.com/gutachter/reference/index.html">http://herzi.github.com/gutachter/reference/</ulink>.
     </releaseinfo>
   </bookinfo>
 
   <chapter>
-    <title>[Insert title here]</title>
-        <xi:include href="xml/gutachter-widget.xml"/>
+    <title>API Reference</title>
+    <xi:include href="xml/gutachter-widget.xml"/>
     <xi:include href="xml/gutachter-tree-list.xml"/>
     <xi:include href="xml/gutachter-hierarchy.xml"/>
     <xi:include href="xml/gutachter-window.xml"/>
@@ -24,11 +24,13 @@
     <xi:include href="xml/gutachter-bar.xml"/>
     <xi:include href="xml/gutachter-xvfb.xml"/>
     <xi:include href="xml/gutachter-runner.xml"/>
-    <xi:include href="xml/compat-gtk.xml"/>
     <xi:include href="xml/gutachter-paths.xml"/>
     <xi:include href="xml/gutachter-types.xml"/>
-    <xi:include href="xml/test-main.xml"/>
+  </chapter>
 
+  <chapter>
+    <title>Test Utilities</title>
+    <xi:include href="xml/gutachter-lookup.xml"/>
   </chapter>
   <chapter id="object-tree">
     <title>Object Hierarchy</title>
@@ -41,3 +43,4 @@
 
   <xi:include href="xml/annotation-glossary.xml"><xi:fallback /></xi:include>
 </book>
+<!-- vim:set et sw=2: -->
