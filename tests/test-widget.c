@@ -20,25 +20,11 @@
  * if advised of the possibility of such damage.
  */
 
-#ifndef TEST_MAIN_H
-#define TEST_MAIN_H
+#include "test-main.h"
 
-#include <gutachter.h>
-
-G_BEGIN_DECLS
-
-#define NAMESPACE "/com/github/herzi/gutachter/"
-
-void add_tests_for_lookup (void);
-void add_tests_for_xvfb (void);
-void add_tests_for_suite (void);
-void add_tests_for_widget (void);
-
-/* FIXME: make 64bit save and test this macro, too */
-#define gutachter_assert_cmpptr(p1,cmp,p2) g_assert_cmphex(GPOINTER_TO_INT (p1), cmp, GPOINTER_TO_INT (p2))
-
-G_END_DECLS
-
-#endif /* !TEST_MAIN_H */
+void
+add_tests_for_widget (void)
+{
+}
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

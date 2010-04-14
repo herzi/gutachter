@@ -9,6 +9,7 @@ test_gutachter_SOURCES=\
 	tests/test-main.c \
 	tests/test-main.h \
 	tests/test-suite.c \
+	tests/test-widget.c \
 	tests/test-xvfb.c \
 	$(NULL)
 

@@ -739,6 +739,7 @@ main (int   argc,
 
   add_tests_for_lookup ();
   add_tests_for_xvfb ();
+  add_tests_for_widget ();
 
   /* FIXME: test proper handling of this: "dummy/a", "/dummy/b" */
   /* FIXME: test proper handling of this: "/com/github/herzi/gutachter/a", "com.github.herzi.gutachter.a" */
