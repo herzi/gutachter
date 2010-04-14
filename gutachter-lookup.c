@@ -20,6 +20,8 @@
 
 #include "gutachter-lookup.h"
 
+#include <string.h> /* strlen() */
+
 guint32
 gutachter_lookup_n_windows (void)
 {
@@ -27,6 +29,74 @@ gutachter_lookup_n_windows (void)
   guint32  result = g_list_length (windows);
 
   g_list_free (windows);
+  return result;
+}
+
+GtkWidget*
+gutachter_lookup_widget (gchar const* path)
+{
+  GtkWidget  * result = NULL;
+  GList      * window;
+  GList      * windows;
+  gchar const* lookup;
+  gchar const* end;
+
+  g_return_val_if_fail (path && *path, NULL);
+
+  if (!g_str_has_prefix (path, "urn:"))
+    {
+      g_warning ("%s(%s): path is no URN: \"%s\" should start with \"urn:\"",
+                 G_STRFUNC, G_STRLOC,
+                 path);
+      return NULL;
+    }
+
+  path += 4; /* path points to 32bit word boundary */
+
+  if (!g_str_has_prefix (path, "gtk:"))
+    {
+      g_warning ("%s(%s): the URN doesn't match our namespace (it should now start with \"gtk\"): %s",
+                 G_STRFUNC, G_STRLOC,
+                 path);
+      return NULL;
+    }
+
+  path += 4; /* path points to 32bit and 64bit word boundary */
+
+  if (!g_str_has_prefix (path, "GtkWindow"))
+    {
+      g_warning ("the gtk namespace can only be used with GtkWindow functions");
+      return NULL;
+    }
+
+  lookup = path + strlen ("GtkWindow");
+
+  if (!g_str_has_prefix (lookup, "(\""))
+    {
+      g_warning ("GtkWindows can only be looked up by title right now (e.g. 'GtkWindow(\"window title\")'): %s",
+                 path);
+      return NULL;
+    }
+
+  lookup += 2;
+  end = strstr (lookup, "\")");
+  if (!end)
+    {
+      g_warning ("window title doesn't seem to be closed: %s", path);
+      return NULL;
+    }
+
+  for (window = windows = gtk_window_list_toplevels (); window; window = window->next)
+    {
+      gchar const* title = gtk_window_get_title (window->data);
+
+      if (g_str_has_prefix (lookup, title) && *(title + (end - lookup)) == '\0')
+        {
+          result = window->data;
+        }
+    }
+  g_list_free (windows);
+
   return result;
 }
 

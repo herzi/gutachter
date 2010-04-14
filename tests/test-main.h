@@ -33,6 +33,9 @@ void add_tests_for_lookup (void);
 void add_tests_for_xvfb (void);
 void add_tests_for_suite (void);
 
+/* FIXME: make 64bit save and test this macro, too */
+#define gutachter_assert_cmpptr(p1,cmp,p2) g_assert_cmphex(GPOINTER_TO_INT (p1), cmp, GPOINTER_TO_INT (p2))
+
 G_END_DECLS
 
 #endif /* !TEST_MAIN_H */

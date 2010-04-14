@@ -38,11 +38,40 @@ test_n_windows (void)
   g_assert_cmpint (2, ==, gutachter_lookup_n_windows ());
 }
 
+static void
+test_lookup_windows (void)
+{
+  GtkWidget* windows[3];
+  gchar    * titles[G_N_ELEMENTS (windows)] = {
+          "first window",
+          "second window",
+          "third window"
+  };
+  size_t i;
+
+  for (i = 0; i < G_N_ELEMENTS (windows); i++)
+    {
+      windows[i] = gtk_test_create_widget (GTK_TYPE_WINDOW,
+                                           "title", titles[i],
+                                           NULL);
+    }
+
+  for (i = 0; i < G_N_ELEMENTS (windows); i++)
+    {
+      gchar* search_path = g_strdup_printf ("urn:gtk:GtkWindow(\"%s\")", titles[i]);
+      g_test_queue_free (search_path);
+
+      gutachter_assert_cmpptr (windows[i], ==, gutachter_lookup_widget (search_path));
+    }
+}
+
 void
-add_lookup_tests (void)
+add_tests_for_lookup (void)
 {
   g_test_add_func ("/com/github/herzi/gutachter/GutachterLookup/n-windows",
                    test_n_windows);
+  g_test_add_func ("/com/github/herzi/gutachter/GutachterLookup/lookup/windows",
+                   test_lookup_windows);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

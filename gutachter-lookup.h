@@ -25,7 +25,8 @@
 
 G_BEGIN_DECLS
 
-guint32  gutachter_lookup_n_windows (void);
+guint32    gutachter_lookup_n_windows (void);
+GtkWidget* gutachter_lookup_widget    (gchar const* path);
 
 G_END_DECLS
 
