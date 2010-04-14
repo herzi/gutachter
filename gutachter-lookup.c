@@ -44,7 +44,9 @@ gutachter_lookup_widget (gchar const* path)
 
   g_return_val_if_fail (path && *path, NULL);
 
-  if (!g_str_has_prefix (path, "urn:"))
+  lookup = path;
+
+  if (!g_str_has_prefix (lookup, "urn:"))
     {
       g_warning ("%s(%s): path is no URN: \"%s\" should start with \"urn:\"",
                  G_STRFUNC, G_STRLOC,
@@ -52,25 +54,25 @@ gutachter_lookup_widget (gchar const* path)
       return NULL;
     }
 
-  path += 4; /* path points to 32bit word boundary */
+  lookup += 4; /* path points to 32bit word boundary */
 
-  if (!g_str_has_prefix (path, "gtk:"))
+  if (!g_str_has_prefix (lookup, "gtk:"))
     {
-      g_warning ("%s(%s): the URN doesn't match our namespace (it should now start with \"gtk\"): %s",
+      g_warning ("%s(%s): the URN's namespace doesn't match ours (\"gtk\"): %s",
                  G_STRFUNC, G_STRLOC,
                  path);
       return NULL;
     }
 
-  path += 4; /* path points to 32bit and 64bit word boundary */
+  lookup += 4; /* path points to 32bit and 64bit word boundary */
 
-  if (!g_str_has_prefix (path, "GtkWindow"))
+  if (!g_str_has_prefix (lookup, "GtkWindow"))
     {
       g_warning ("the gtk namespace can only be used with GtkWindow functions");
       return NULL;
     }
 
-  lookup = path + strlen ("GtkWindow");
+  lookup += strlen ("GtkWindow");
 
   if (!g_str_has_prefix (lookup, "(\""))
     {
@@ -148,7 +150,17 @@ gutachter_lookup_widget (gchar const* path)
           return NULL;
         }
 
-      /* FIXME: try with non-containers and catch */
+      if (!GTK_IS_CONTAINER (result))
+        {
+          gchar* result_end = g_strrstr_len (path, lookup - path, ":");
+          gchar* result_path = g_strndup (path, result_end - path);
+          g_warning ("the widget specified by \"%s\" is a %s (which is not a GtkContainer)",
+                     result_path,
+                     G_OBJECT_TYPE_NAME (result));
+          g_free (result_path);
+          return NULL;
+        }
+
       list = gtk_container_get_children (GTK_CONTAINER (result));
       iterator = g_list_nth (list, index);
       if (!iterator)

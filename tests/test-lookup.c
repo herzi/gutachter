@@ -54,7 +54,19 @@ test_lookup_windows (void)
       windows[i] = gtk_test_create_widget (GTK_TYPE_WINDOW,
                                            "title", titles[i],
                                            NULL);
-      gtk_container_add (GTK_CONTAINER (windows[i]), gtk_label_new (titles[i]));
+      if (i)
+        {
+          gtk_container_add (GTK_CONTAINER (windows[i]), gtk_label_new (titles[i]));
+        }
+      else
+        {
+          GtkWidget* box = gtk_hbox_new (FALSE, 6);
+
+          gtk_container_add (GTK_CONTAINER (box), gtk_label_new (titles[i]));
+          gtk_container_add (GTK_CONTAINER (box), gtk_entry_new ());
+          gtk_container_add (GTK_CONTAINER (box), gtk_button_new ());
+          gtk_container_add (GTK_CONTAINER (windows[i]), box);
+        }
     }
 
   for (i = 0; i < G_N_ELEMENTS (windows); i++)
@@ -73,7 +85,13 @@ test_lookup_windows (void)
       gutachter_assert_cmpptr (gtk_bin_get_child (GTK_BIN (windows[i])), ==, gutachter_lookup_widget (search_path));
     }
 
-  /* FIXME: implement filtered lookup with other containers */
+  /* FIXME: implement and test this: use "…:[0]:…" as a shortcut for any-child -- which is what we currently implement */
+  /* FIXME: change the following line to "urn:gtk:GtkWindow(\"third window\"):[0]:GtkLabel[0]" and compare with the current one */
+  g_assert (GTK_IS_LABEL (gutachter_lookup_widget ("urn:gtk:GtkWindow(\"first window\"):GtkWidget[0]:GtkWidget[0]")));
+  /* FIXME: change the following line to "urn:gtk:GtkWindow(\"third window\"):[0]:GtkEntry[0]" and compare with the current one */
+  g_assert (GTK_IS_ENTRY (gutachter_lookup_widget ("urn:gtk:GtkWindow(\"first window\"):GtkWidget[0]:GtkWidget[1]")));
+  /* FIXME: change the following line to "urn:gtk:GtkWindow(\"third window\"):[0]:GtkButton[0]" and compare with the current one */
+  g_assert (GTK_IS_BUTTON (gutachter_lookup_widget ("urn:gtk:GtkWindow(\"first window\"):GtkWidget[0]:GtkWidget[2]")));
 }
 
 void
