@@ -22,9 +22,20 @@
 
 #include "test-main.h"
 
+static void
+test_layout (void)
+{
+  GtkWidget* widget = gtk_test_create_widget (GUTACHTER_TYPE_WIDGET, NULL);
+
+  g_assert (GTK_IS_VBOX (widget));
+  g_assert (GTK_IS_NOTEBOOK (gutachter_lookup_child (widget, "urn:gtk:GtkWidget[2]")));
+  g_assert (GTK_IS_PANED (gutachter_lookup_child (widget, "urn:gtk:GtkWidget[2]:GtkWidget[0]")));
+}
+
 void
 add_tests_for_widget (void)
 {
+  g_test_add_func (NAMESPACE "GutachterWidget/layout", test_layout);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
