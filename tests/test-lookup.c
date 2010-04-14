@@ -94,6 +94,21 @@ test_lookup_windows (void)
   g_assert (GTK_IS_BUTTON (gutachter_lookup_widget ("urn:gtk:GtkWindow(\"first window\"):GtkWidget[0]:GtkWidget[2]")));
 }
 
+static void
+test_lookup_child (void)
+{
+  GtkWidget* hbox = gtk_test_create_widget (GTK_TYPE_HBOX, NULL);
+  gtk_container_add (GTK_CONTAINER (hbox), gtk_label_new (NULL));
+  gtk_container_add (GTK_CONTAINER (hbox), gtk_entry_new ());
+  gtk_container_add (GTK_CONTAINER (hbox), gtk_button_new ());
+
+  gutachter_assert_cmpptr (NULL, ==, gutachter_lookup_child (NULL, ""));
+  gutachter_assert_cmpptr (hbox, ==, gutachter_lookup_child (hbox, ""));
+  g_assert (GTK_IS_LABEL (gutachter_lookup_child (hbox, "urn:gtk:GtkWidget[0]")));
+  g_assert (GTK_IS_ENTRY (gutachter_lookup_child (hbox, "urn:gtk:GtkWidget[1]")));
+  g_assert (GTK_IS_BUTTON (gutachter_lookup_child (hbox, "urn:gtk:GtkWidget[2]")));
+}
+
 void
 add_tests_for_lookup (void)
 {
@@ -101,6 +116,8 @@ add_tests_for_lookup (void)
                    test_n_windows);
   g_test_add_func ("/com/github/herzi/gutachter/GutachterLookup/lookup",
                    test_lookup_windows);
+  g_test_add_func ("/com/github/herzi/gutachter/GutachterLookup/lookup-child",
+                   test_lookup_child);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

@@ -34,7 +34,8 @@ gutachter_lookup_n_windows (void)
 }
 
 GtkWidget*
-gutachter_lookup_widget (gchar const* path)
+gutachter_lookup_child (GtkWidget  * widget,
+                        gchar const* path)
 {
   GtkWidget  * result = NULL;
   GList      * list;
@@ -42,7 +43,11 @@ gutachter_lookup_widget (gchar const* path)
   gchar const* lookup;
   gchar const* end;
 
-  g_return_val_if_fail (path && *path, NULL);
+  g_return_val_if_fail (path, NULL);
+  if (!*path)
+    {
+      path = "urn:gtk:";
+    }
 
   lookup = path;
 
@@ -66,56 +71,71 @@ gutachter_lookup_widget (gchar const* path)
 
   lookup += 4; /* path points to 32bit and 64bit word boundary */
 
-  if (!g_str_has_prefix (lookup, "GtkWindow"))
+  if (widget)
     {
-      g_warning ("the gtk namespace can only be used with GtkWindow functions");
-      return NULL;
+      result = widget;
     }
-
-  lookup += strlen ("GtkWindow");
-
-  if (!g_str_has_prefix (lookup, "(\""))
+  else
     {
-      g_warning ("GtkWindows can only be looked up by title right now (e.g. 'GtkWindow(\"window title\")'): %s",
-                 path);
-      return NULL;
-    }
-
-  lookup += 2;
-  end = strstr (lookup, "\")");
-  if (!end)
-    {
-      g_warning ("window title doesn't seem to be closed: %s", path);
-      return NULL;
-    }
-
-  for (iterator = list = gtk_window_list_toplevels (); iterator; iterator = iterator->next)
-    {
-      gchar const* title = gtk_window_get_title (iterator->data);
-
-      if (g_str_has_prefix (lookup, title) && *(title + (end - lookup)) == '\0')
+      if (!*lookup)
         {
-          result = iterator->data;
-          break;
+          return NULL;
+        }
+
+      if (!g_str_has_prefix (lookup, "GtkWindow"))
+        {
+          g_warning ("the gtk namespace can only be used with GtkWindow functions");
+          return NULL;
+        }
+
+      lookup += strlen ("GtkWindow");
+
+      if (!g_str_has_prefix (lookup, "(\""))
+        {
+          g_warning ("GtkWindows can only be looked up by title right now (e.g. 'GtkWindow(\"window title\")'): %s",
+                     path);
+          return NULL;
+        }
+
+      lookup += 2;
+      end = strstr (lookup, "\")");
+      if (!end)
+        {
+          g_warning ("window title doesn't seem to be closed: %s", path);
+          return NULL;
+        }
+
+      for (iterator = list = gtk_window_list_toplevels (); iterator; iterator = iterator->next)
+        {
+          gchar const* title = gtk_window_get_title (iterator->data);
+
+          if (g_str_has_prefix (lookup, title) && *(title + (end - lookup)) == '\0')
+            {
+              result = iterator->data;
+              break;
+            }
+        }
+      g_list_free (list);
+
+      if (!result)
+        {
+          /* no window found */
+          return NULL;
+        }
+
+      lookup = end + 2; /* result holds the window now */
+
+      if (*lookup == ':')
+        {
+          lookup++;
         }
     }
-  g_list_free (list);
-
-  lookup = end + 2; /* result holds the window now */
 
   while (*lookup != '\0')
     {
       gchar* type_name;
       GType  type;
       int    index;
-
-      if (*lookup != ':')
-        {
-          g_warning ("unexpected character after widget lookup (column %d): expected dereferencing (\":\") or end: '%c'",
-                     lookup - path, *lookup);
-          return NULL;
-        }
-      lookup++;
 
       end = strstr (lookup, "[");
       if (!end)
@@ -174,9 +194,30 @@ gutachter_lookup_widget (gchar const* path)
       g_list_free (list);
 
       lookup = end + 1;
+      if (*lookup == '\0')
+        {
+          break;
+        }
+      else if (*lookup == ':')
+        {
+          lookup++;
+          continue;
+        }
+      else
+        {
+          g_warning ("unexpected character after widget lookup (column %d): expected dereferencing (\":\") or end: '%c'",
+                     lookup - path, *lookup);
+          return NULL;
+        }
     }
 
   return result;
+}
+
+GtkWidget*
+gutachter_lookup_widget (gchar const* path)
+{
+  return gutachter_lookup_child (NULL, path);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
