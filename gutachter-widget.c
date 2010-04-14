@@ -25,7 +25,7 @@
 
 /* FIXME: add a gallery image for the documentation */
 
-struct _GtkTestWidgetPrivate
+struct _GutachterWidgetPrivate
 {
   GtkWidget     * error_text_view;
   GtkWidget     * failure_view;
@@ -44,15 +44,15 @@ enum
   PROP_TEST_SUITE
 };
 
-#define PRIV(i) (((GtkTestWidget*)(i))->_private)
+#define PRIV(i) (((GutachterWidget*)(i))->_private)
 
 static void implement_gutachter_runner (GutachterRunnerIface* iface);
 
-G_DEFINE_TYPE_WITH_CODE (GtkTestWidget, gtk_test_widget, GTK_TYPE_VBOX,
+G_DEFINE_TYPE_WITH_CODE (GutachterWidget, gutachter_widget, GTK_TYPE_VBOX,
                          G_IMPLEMENT_INTERFACE (GUTACHTER_TYPE_RUNNER, implement_gutachter_runner));
 
 static void
-update_sensitivity (GtkTestWidget* self)
+update_sensitivity (GutachterWidget* self)
 {
   GtkProgressBar* progress = GTK_PROGRESS_BAR (PRIV (self)->progress);
 
@@ -128,9 +128,9 @@ static void
 failure_selection_changed (GtkTreeSelection* selection,
                            gpointer          user_data)
 {
-  GtkTestWidget* self = user_data;
-  GtkTreeModel * model;
-  GtkTreeIter    iter;
+  GutachterWidget* self = user_data;
+  GtkTreeModel   * model;
+  GtkTreeIter      iter;
 
   if (gtk_tree_selection_get_selected (selection, &model, &iter))
     {
@@ -155,14 +155,14 @@ failure_selection_changed (GtkTreeSelection* selection,
 }
 
 static void
-gtk_test_widget_init (GtkTestWidget* self)
+gutachter_widget_init (GutachterWidget* self)
 {
   GtkTreeViewColumn* column;
   GtkCellRenderer  * renderer;
   GtkWidget        * scrolled;
   GtkWidget        * paned;
 
-  PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WIDGET, GtkTestWidgetPrivate);
+  PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GUTACHTER_TYPE_WIDGET, GutachterWidgetPrivate);
   PRIV (self)->error_text_view = gtk_text_view_new ();
   PRIV (self)->failure_view = gtk_tree_view_new ();
   PRIV (self)->hierarchy_view = gtk_tree_view_new ();
@@ -251,10 +251,10 @@ dispose (GObject* object)
 {
   if (PRIV (object)->suite)
     {
-      gtk_test_widget_set_suite (GTK_TEST_WIDGET (object), NULL);
+      gutachter_widget_set_suite (GUTACHTER_WIDGET (object), NULL);
     }
 
-  G_OBJECT_CLASS (gtk_test_widget_parent_class)->dispose (object);
+  G_OBJECT_CLASS (gutachter_widget_parent_class)->dispose (object);
 }
 
 static void
@@ -275,7 +275,7 @@ get_property (GObject   * object,
 }
 
 static void
-gtk_test_widget_class_init (GtkTestWidgetClass* self_class)
+gutachter_widget_class_init (GutachterWidgetClass* self_class)
 {
   GObjectClass* object_class = G_OBJECT_CLASS (self_class);
 
@@ -284,7 +284,7 @@ gtk_test_widget_class_init (GtkTestWidgetClass* self_class)
 
   g_object_class_override_property (object_class, PROP_TEST_SUITE, "test-suite");
 
-  g_type_class_add_private (self_class, sizeof (GtkTestWidgetPrivate));
+  g_type_class_add_private (self_class, sizeof (GutachterWidgetPrivate));
 }
 
 static GFile*
@@ -316,12 +316,12 @@ set_file (GutachterRunner* runner,
   if (file)
     {
       GutachterSuite* suite = gutachter_suite_new (file);
-      gtk_test_widget_set_suite (GTK_TEST_WIDGET (runner), suite);
+      gutachter_widget_set_suite (GUTACHTER_WIDGET (runner), suite);
       g_object_unref (suite);
     }
   else
     {
-      gtk_test_widget_set_suite (GTK_TEST_WIDGET (runner), NULL);
+      gutachter_widget_set_suite (GUTACHTER_WIDGET (runner), NULL);
     }
 }
 
@@ -334,38 +334,38 @@ implement_gutachter_runner (GutachterRunnerIface* iface)
 }
 
 GtkWidget*
-gtk_test_widget_get_hierarchy (GtkTestWidget* self)
+gutachter_widget_get_hierarchy (GutachterWidget* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_WIDGET (self), NULL);
+  g_return_val_if_fail (GUTACHTER_IS_WIDGET (self), NULL);
 
   return PRIV (self)->hierarchy_view;
 }
 
 GtkWidget*
-gtk_test_widget_get_notebook (GtkTestWidget* self)
+gutachter_widget_get_notebook (GutachterWidget* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_WIDGET (self), NULL);
+  g_return_val_if_fail (GUTACHTER_IS_WIDGET (self), NULL);
 
   return PRIV (self)->notebook;
 }
 
 GtkWidget*
-gtk_test_widget_get_progress (GtkTestWidget* self)
+gutachter_widget_get_progress (GutachterWidget* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_WIDGET (self), NULL);
+  g_return_val_if_fail (GUTACHTER_IS_WIDGET (self), NULL);
 
   return PRIV (self)->progress;
 }
 
 GtkWidget*
-gtk_test_widget_new (void)
+gutachter_widget_new (void)
 {
-  return g_object_new (GTK_TEST_TYPE_WIDGET,
+  return g_object_new (GUTACHTER_TYPE_WIDGET,
                        NULL);
 }
 
 static void
-model_changed (GtkTestWidget* self)
+model_changed (GutachterWidget* self)
 {
   switch (gutachter_suite_get_status (PRIV (self)->suite))
     {
@@ -454,7 +454,7 @@ status_changed_cb (GObject   * suite     G_GNUC_UNUSED,
                    GParamSpec* pspec     G_GNUC_UNUSED,
                    gpointer    user_data)
 {
-  GtkTestWidget* self = user_data;
+  GutachterWidget* self = user_data;
 
   switch (gutachter_suite_get_status (PRIV (self)->suite))
     {
@@ -512,10 +512,10 @@ failure_visible_func (GtkTreeModel* model,
 }
 
 void
-gtk_test_widget_set_suite (GtkTestWidget * self,
-                           GutachterSuite* suite)
+gutachter_widget_set_suite (GutachterWidget * self,
+                            GutachterSuite  * suite)
 {
-  g_return_if_fail (GTK_TEST_IS_WIDGET (self));
+  g_return_if_fail (GUTACHTER_IS_WIDGET (self));
   g_return_if_fail (!suite || GUTACHTER_IS_SUITE (suite));
 
   if (PRIV (self)->suite == suite)

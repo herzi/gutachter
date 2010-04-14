@@ -18,48 +18,48 @@
  * USA
  */
 
-#ifndef GT_WIDGET_H
-#define GT_WIDGET_H
+#ifndef GUTACHTER_WIDGET_H
+#define GUTACHTER_WIDGET_H
 
 #include <gtk/gtk.h>
 #include <gutachter-suite.h>
 
 G_BEGIN_DECLS
 
-typedef struct _GtkTestWidget        GtkTestWidget;
-typedef struct _GtkTestWidgetClass   GtkTestWidgetClass;
-typedef struct _GtkTestWidgetPrivate GtkTestWidgetPrivate;
+typedef struct _GutachterWidget        GutachterWidget;
+typedef struct _GutachterWidgetClass   GutachterWidgetClass;
+typedef struct _GutachterWidgetPrivate GutachterWidgetPrivate;
 
-#define GTK_TEST_TYPE_WIDGET         (gtk_test_widget_get_type ())
-#define GTK_TEST_WIDGET(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), GTK_TEST_TYPE_WIDGET, GtkTestWidget))
-#define GTK_TEST_WIDGET_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c), GTK_TEST_TYPE_WIDGET, GtkTestWidgetClass))
-#define GTK_TEST_IS_WIDGET(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), GTK_TEST_TYPE_WIDGET))
-#define GTK_TEST_IS_WIDGET_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), GTK_TEST_TYPE_WIDGET))
-#define GTK_TEST_WIDGET_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), GTK_TEST_TYPE_WIDGET, GtkTestWidgetClass))
+#define GUTACHTER_TYPE_WIDGET         (gutachter_widget_get_type ())
+#define GUTACHTER_WIDGET(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), GUTACHTER_TYPE_WIDGET, GutachterWidget))
+#define GUTACHTER_WIDGET_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c), GUTACHTER_TYPE_WIDGET, GutachterWidgetClass))
+#define GUTACHTER_IS_WIDGET(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), GUTACHTER_TYPE_WIDGET))
+#define GUTACHTER_IS_WIDGET_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), GUTACHTER_TYPE_WIDGET))
+#define GUTACHTER_WIDGET_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), GUTACHTER_TYPE_WIDGET, GutachterWidgetClass))
 
-GType      gtk_test_widget_get_type      (void);
-GtkWidget* gtk_test_widget_new           (void);
+GType      gutachter_widget_get_type      (void);
+GtkWidget* gutachter_widget_new           (void);
 #ifndef REFACTORING_FINISHED
-GtkWidget* gtk_test_widget_get_hierarchy (GtkTestWidget* self);
-GtkWidget* gtk_test_widget_get_notebook  (GtkTestWidget* self);
-GtkWidget* gtk_test_widget_get_progress  (GtkTestWidget* self);
+GtkWidget* gutachter_widget_get_hierarchy (GutachterWidget* self);
+GtkWidget* gutachter_widget_get_notebook  (GutachterWidget* self);
+GtkWidget* gutachter_widget_get_progress  (GutachterWidget* self);
 #endif
-void       gtk_test_widget_set_suite     (GtkTestWidget * self,
-                                          GutachterSuite* suite); /* FIXME: consider moving to GtkTestRunner */
+void       gutachter_widget_set_suite     (GutachterWidget * self,
+                                           GutachterSuite* suite); /* FIXME: consider moving to GtkTestRunner */
 
-struct _GtkTestWidget
+struct _GutachterWidget
 {
-  GtkVBox               base_instance;
-  GtkTestWidgetPrivate* _private;
+  GtkVBox                 base_instance;
+  GutachterWidgetPrivate* _private;
 };
 
-struct _GtkTestWidgetClass
+struct _GutachterWidgetClass
 {
-  GtkVBoxClass          base_class;
+  GtkVBoxClass            base_class;
 };
 
 G_END_DECLS
 
-#endif /* !GT_WIDGET_H */
+#endif /* !GUTACHTER_WIDGET_H */
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

@@ -139,7 +139,7 @@ gtk_test_window_init (GtkTestWindow* self)
 
   PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WINDOW, GtkTestWindowPrivate);
   PRIV (self)->toolbar = gtk_toolbar_new ();
-  PRIV (self)->widget = gtk_test_widget_new ();
+  PRIV (self)->widget = gutachter_widget_new ();
   PRIV (self)->open_button = gtk_tool_button_new_from_stock (GTK_STOCK_OPEN);
   PRIV (self)->execute_button = gtk_tool_button_new_from_stock (GTK_STOCK_EXECUTE);
   PRIV (self)->box = gtk_vbox_new (FALSE, 0);
