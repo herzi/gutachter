@@ -20,6 +20,7 @@
 
 #include "gutachter-lookup.h"
 
+#include <stdlib.h> /* strtol() */
 #include <string.h> /* strlen() */
 
 guint32
@@ -36,8 +37,8 @@ GtkWidget*
 gutachter_lookup_widget (gchar const* path)
 {
   GtkWidget  * result = NULL;
-  GList      * window;
-  GList      * windows;
+  GList      * list;
+  GList      * iterator;
   gchar const* lookup;
   gchar const* end;
 
@@ -86,16 +87,82 @@ gutachter_lookup_widget (gchar const* path)
       return NULL;
     }
 
-  for (window = windows = gtk_window_list_toplevels (); window; window = window->next)
+  for (iterator = list = gtk_window_list_toplevels (); iterator; iterator = iterator->next)
     {
-      gchar const* title = gtk_window_get_title (window->data);
+      gchar const* title = gtk_window_get_title (iterator->data);
 
       if (g_str_has_prefix (lookup, title) && *(title + (end - lookup)) == '\0')
         {
-          result = window->data;
+          result = iterator->data;
+          break;
         }
     }
-  g_list_free (windows);
+  g_list_free (list);
+
+  lookup = end + 2; /* result holds the window now */
+
+  while (*lookup != '\0')
+    {
+      gchar* type_name;
+      GType  type;
+      int    index;
+
+      if (*lookup != ':')
+        {
+          g_warning ("unexpected character after widget lookup (column %d): expected dereferencing (\":\") or end: '%c'",
+                     lookup - path, *lookup);
+          return NULL;
+        }
+      lookup++;
+
+      end = strstr (lookup, "[");
+      if (!end)
+        {
+          g_warning ("the type starting at column %d doesn't have a lookup operator (\"[]\")",
+                     lookup - path);
+          return NULL;
+        }
+
+      type_name = g_strndup (lookup, end - lookup);
+      type = g_type_from_name (type_name);
+      if (!type)
+        {
+          g_warning ("couldn't lookup the type \"%s\". it is not registered. this "
+                     "usually means that you have a typo in your string as the "
+                     "creation of a widget would automatically register its type "
+                     "(and its parent types)", type_name);
+          g_free (type_name);
+          return NULL;
+        }
+      g_free (type_name);
+
+      lookup = end + 1;
+      index = strtol (lookup, &type_name, 10); /* FIXME: watch for ERANGE in errno */
+      end = type_name; /* use type_name because it is non-const */
+
+      if (!end || *end != ']')
+        {
+          g_warning ("the index starting at column %d doesn't seem to be properly terminated: expected ']', got '%c': %s",
+                     lookup - path, *end,
+                     path);
+          return NULL;
+        }
+
+      /* FIXME: try with non-containers and catch */
+      list = gtk_container_get_children (GTK_CONTAINER (result));
+      iterator = g_list_nth (list, index);
+      if (!iterator)
+        {
+          g_warning ("%s doesn't have a child with the index %d",
+                     G_OBJECT_TYPE_NAME (result), index);
+          g_list_free (list);
+          return NULL;
+        }
+      result = iterator->data;
+      g_list_free (list);
+
+      lookup = end + 1;
+    }
 
   return result;
 }

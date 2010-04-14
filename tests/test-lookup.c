@@ -54,6 +54,7 @@ test_lookup_windows (void)
       windows[i] = gtk_test_create_widget (GTK_TYPE_WINDOW,
                                            "title", titles[i],
                                            NULL);
+      gtk_container_add (GTK_CONTAINER (windows[i]), gtk_label_new (titles[i]));
     }
 
   for (i = 0; i < G_N_ELEMENTS (windows); i++)
@@ -63,6 +64,16 @@ test_lookup_windows (void)
 
       gutachter_assert_cmpptr (windows[i], ==, gutachter_lookup_widget (search_path));
     }
+
+  for (i = 0; i < G_N_ELEMENTS (windows); i++)
+    {
+      gchar* search_path = g_strdup_printf ("urn:gtk:GtkWindow(\"%s\"):GtkWidget[0]", titles[i]);
+      g_test_queue_free (search_path);
+
+      gutachter_assert_cmpptr (gtk_bin_get_child (GTK_BIN (windows[i])), ==, gutachter_lookup_widget (search_path));
+    }
+
+  /* FIXME: implement filtered lookup with other containers */
 }
 
 void
@@ -70,7 +81,7 @@ add_tests_for_lookup (void)
 {
   g_test_add_func ("/com/github/herzi/gutachter/GutachterLookup/n-windows",
                    test_n_windows);
-  g_test_add_func ("/com/github/herzi/gutachter/GutachterLookup/lookup/windows",
+  g_test_add_func ("/com/github/herzi/gutachter/GutachterLookup/lookup",
                    test_lookup_windows);
 }
 
