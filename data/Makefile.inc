@@ -12,5 +12,5 @@ gutachter.desktop.in: $(srcdir)/data/gutachter.desktop.in.in
 	$(AM_V_GEN) sed 's*@BINDIR@*$(bindir)*' $< > $@
 
 check-local: $(applications_DATA)
-	@echo "  TEST  " $@; desktop-file-validate $<
+	@echo "  TEST  " $<; desktop-file-validate $<
 
