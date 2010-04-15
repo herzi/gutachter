@@ -229,6 +229,11 @@ gutachter_suite_execute (GutachterSuite* self)
       g_io_channel_set_encoding (channel, NULL, NULL);
       g_io_channel_set_buffered (channel, FALSE);
       g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
+      if (PRIV (self)->io_watch)
+        {
+          g_warning ("eeeek! I want to die!");
+          g_source_remove (PRIV (self)->io_watch);
+        }
       PRIV (self)->io_watch = g_io_add_watch (channel, G_IO_IN, io_func, self);
       PRIV (self)->child_watch = g_child_watch_add_full (G_PRIORITY_DEFAULT, PRIV (self)->pid, run_test_child_watch, self, NULL);
 
@@ -518,6 +523,11 @@ gutachter_suite_load (GutachterSuite* self)
       g_io_channel_set_encoding (channel, NULL, NULL);
       g_io_channel_set_buffered (channel, FALSE);
       g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
+      if (PRIV (self)->io_watch)
+        {
+          g_warning ("eeeek! I want to die!");
+          g_source_remove (PRIV (self)->io_watch);
+        }
       PRIV (self)->io_watch = g_io_add_watch (channel, G_IO_IN, io_func, suite);
       PRIV (self)->child_watch = g_child_watch_add_full (G_PRIORITY_DEFAULT, PRIV (self)->pid, child_watch_cb, suite, NULL);
       gutachter_suite_set_status (suite, GUTACHTER_SUITE_LOADING);
