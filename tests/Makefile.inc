@@ -1,5 +1,9 @@
 # vim:set ft=automake:
 
+noinst_PROGRAMS+=test-fail
+test_fail_LDADD=$(GUTACHTER_LIBS)
+test_fail_SOURCES=tests/test-fail.c
+
 noinst_PROGRAMS+=test-gutachter
 TESTS+=test-gutachter
 test_gutachter_LDADD=libgutachter.la
@@ -14,5 +18,5 @@ test_gutachter_SOURCES=\
 	$(NULL)
 
 noinst_PROGRAMS+=test-pass
-test_pass_SOURCES=tests/test-pass.c
 test_pass_LDADD=$(GUTACHTER_LIBS)
+test_pass_SOURCES=tests/test-pass.c

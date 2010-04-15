@@ -67,10 +67,6 @@ nodist_libgutachter_la_SOURCES=\
 BUILT_SOURCES+=$(nodist_libgutachter_la_SOURCES)
 CLEANFILES+=$(nodist_libgutachter_la_SOURCES)
 
-noinst_PROGRAMS+=test-dummy
-test_dummy_LDADD=libgutachter.la
-test_dummy_SOURCES=test-dummy.c
-
 gutachter-paths.h: Makefile
 	$(AM_V_GEN) echo "#define LOCALEDIR \"$(localedir)\"" > $@
 gutachter-types.h: gutachter-suite.h Makefile
