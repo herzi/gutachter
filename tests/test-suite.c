@@ -126,12 +126,88 @@ test_load_missing (void)
   g_object_unref (file);
 }
 
+static gboolean
+quit_idle (gpointer user_data)
+{
+  g_main_loop_quit (user_data);
+
+  return FALSE;
+}
+
+static void
+test_auto_execute_cb1 (GObject   * object,
+                       GParamSpec* pspec     G_GNUC_UNUSED,
+                       gpointer    user_data)
+{
+  switch (gutachter_suite_get_status (GUTACHTER_SUITE (object)))
+    {
+    case GUTACHTER_SUITE_LOADING:
+    case GUTACHTER_SUITE_RUNNING:
+      /* expected and ignored */
+      break;
+    case GUTACHTER_SUITE_LOADED:
+      gutachter_suite_execute (GUTACHTER_SUITE (object));
+      break;
+    case GUTACHTER_SUITE_FINISHED:
+      g_idle_add (quit_idle, user_data);
+      break;
+    default:
+      g_warning ("unexpected suite status: %d", gutachter_suite_get_status (GUTACHTER_SUITE (object)));
+      break;
+    }
+}
+
+static gboolean
+test_auto_execute_cb2 (gpointer user_data)
+{
+  g_warn_if_reached ();
+
+  g_main_loop_quit (user_data);
+
+  return FALSE;
+}
+
+static gboolean
+test_auto_execute_cb3 (gpointer user_data)
+{
+  gutachter_suite_load (user_data);
+
+  return FALSE;
+}
+
+static void
+test_auto_execute (void)
+{
+  /* test to check whether the assertions within run_or_warn() get triggered */
+  GFile         * file = g_file_new_for_path ("test-pass");
+  GutachterSuite* suite = gutachter_suite_new (file);
+  GMainLoop     * loop = g_main_loop_new (NULL, FALSE);
+  gulong          tag;
+
+  g_signal_connect (suite, "notify::status",
+                    G_CALLBACK (test_auto_execute_cb1), loop);
+
+  g_idle_add (test_auto_execute_cb3, suite);
+  tag = g_timeout_add_seconds (5, test_auto_execute_cb2, NULL);
+  g_main_loop_run (loop);
+  g_assert (g_source_remove (tag));
+
+  g_assert_cmpint (1, ==, gutachter_suite_get_tests (suite));
+  g_assert_cmpint (1, ==, gutachter_suite_get_executed (suite));
+  g_assert_cmpint (0, ==, gutachter_suite_get_failures (suite));
+
+  g_main_loop_unref (loop);
+  g_object_unref (suite);
+  g_object_unref (file);
+}
+
 void
 add_tests_for_suite (void)
 {
   g_test_add_func (NAMESPACE "GutachterSuite/initialize", test_init);
   g_test_add_func (NAMESPACE "GutachterSuite/load", test_load);
   g_test_add_func (NAMESPACE "GutachterSuite/load-missing", test_load_missing);
+  g_test_add_func (NAMESPACE "GutachterSuite/auto-execute", test_auto_execute);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

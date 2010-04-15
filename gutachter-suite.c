@@ -235,11 +235,7 @@ gutachter_suite_execute (GutachterSuite* self)
       g_io_channel_set_encoding (channel, NULL, NULL);
       g_io_channel_set_buffered (channel, FALSE);
       g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
-      if (PRIV (self)->io_watch)
-        {
-          g_warning ("eeeek! I want to die!");
-          g_source_remove (PRIV (self)->io_watch);
-        }
+      g_assert (!PRIV (self)->io_watch);
       PRIV (self)->io_watch = g_io_add_watch (channel, G_IO_IN, io_func, self);
       PRIV (self)->child_watch = g_child_watch_add_full (G_PRIORITY_DEFAULT, PRIV (self)->pid, run_test_child_watch, self, NULL);
 
@@ -476,6 +472,18 @@ child_watch_cb (GPid      pid,
 
   g_spawn_close_pid (pid);
 
+  gutachter_suite_read_available (suite);
+  gutachter_suite_set_channel (suite, NULL);
+
+  if (PRIV (suite)->io_watch)
+    {
+      g_source_remove (PRIV (suite)->io_watch);
+      PRIV (suite)->io_watch = 0;
+    }
+
+  g_source_remove (PRIV (suite)->child_watch);
+  PRIV (suite)->child_watch = 0;
+
   if (WIFEXITED (status) && WEXITSTATUS (status) != 0)
     {
       g_warning ("child exited with error code: %d", WEXITSTATUS (status));
@@ -497,18 +505,6 @@ child_watch_cb (GPid      pid,
     {
       gutachter_suite_set_status (suite, GUTACHTER_SUITE_LOADED);
     }
-
-  gutachter_suite_read_available (suite);
-  gutachter_suite_set_channel (suite, NULL);
-
-  if (PRIV (suite)->io_watch)
-    {
-      g_source_remove (PRIV (suite)->io_watch);
-      PRIV (suite)->io_watch = 0;
-    }
-
-  g_source_remove (PRIV (suite)->child_watch);
-  PRIV (suite)->child_watch = 0;
 }
 
 void
@@ -539,11 +535,7 @@ gutachter_suite_load (GutachterSuite* self)
       g_io_channel_set_encoding (channel, NULL, NULL);
       g_io_channel_set_buffered (channel, FALSE);
       g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
-      if (PRIV (self)->io_watch)
-        {
-          g_warning ("eeeek! I want to die!");
-          g_source_remove (PRIV (self)->io_watch);
-        }
+      g_assert (!PRIV (self)->io_watch);
       PRIV (self)->io_watch = g_io_add_watch (channel, G_IO_IN, io_func, suite);
       PRIV (self)->child_watch = g_child_watch_add_full (G_PRIORITY_DEFAULT, PRIV (self)->pid, child_watch_cb, suite, NULL);
       gutachter_suite_set_status (suite, GUTACHTER_SUITE_LOADING);
