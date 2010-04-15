@@ -55,6 +55,8 @@ FIXXREF_OPTIONS=
 HFILE_GLOB=$(top_srcdir)/*.h
 CFILE_GLOB=$(top_srcdir)/*.c
 
+$(DOC_MODULES).types: $(H_FILE_GLOB)
+
 # Header files to ignore when scanning.
 # e.g. IGNORE_HFILES=gtkdebug.h gtkintl.h
 IGNORE_HFILES=compat-gtk.h tango.h test-main.h
