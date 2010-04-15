@@ -42,7 +42,8 @@ typedef enum
   GUTACHTER_SUITE_LOADING,
   GUTACHTER_SUITE_LOADED,
   GUTACHTER_SUITE_RUNNING,
-  GUTACHTER_SUITE_FINISHED
+  GUTACHTER_SUITE_FINISHED,
+  GUTACHTER_SUITE_ERROR
 } GutachterSuiteStatus;
 
 #define GUTACHTER_TYPE_SUITE         (gutachter_suite_get_type ())
@@ -57,6 +58,7 @@ GutachterSuite*       gutachter_suite_new            (GFile       * file);
 void                  gutachter_suite_execute        (GutachterSuite* self);
 GTestLogBuffer*       gutachter_suite_get_buffer     (GutachterSuite* self);
 GIOChannel*           gutachter_suite_get_channel    (GutachterSuite* self);
+GError*               gutachter_suite_get_error      (GutachterSuite* self);
 guint64               gutachter_suite_get_executed   (GutachterSuite* self);
 guint64               gutachter_suite_get_failures   (GutachterSuite* self);
 GFile*                gutachter_suite_get_file       (GutachterSuite* self);

@@ -48,6 +48,7 @@ struct _GutachterSuitePrivate
   GTestLogBuffer      * buffer;
   GIOChannel          * channel;
   guint32               child_watch;
+  GError              * error;
   guint64               executed;
   guint64               failures;
   GFile               * file;
@@ -85,6 +86,11 @@ gutachter_suite_init (GutachterSuite* self)
 static void
 finalize (GObject* object)
 {
+  if (PRIV (object)->error)
+    {
+      g_error_free (PRIV (object)->error);
+    }
+
   g_object_unref (PRIV (object)->hierarchy);
   g_object_unref (PRIV (object)->file_monitor);
   g_object_unref (PRIV (object)->file);
@@ -263,6 +269,16 @@ gutachter_suite_get_channel (GutachterSuite* self)
   return PRIV (self)->channel;
 }
 
+GError*
+gutachter_suite_get_error (GutachterSuite* self)
+{
+  g_return_val_if_fail (GUTACHTER_IS_SUITE (self), NULL);
+  g_return_val_if_fail (PRIV (self)->status == GUTACHTER_SUITE_ERROR, NULL);
+  g_return_val_if_fail (PRIV (self)->error, NULL);
+
+  return PRIV (self)->error;
+}
+
 guint64
 gutachter_suite_get_executed (GutachterSuite* self)
 {
@@ -414,9 +430,10 @@ run_or_warn (GPid                     * pid,
 
   if (!result)
     {
-      g_warning ("error executing \"%s\": %s",
-                 base, error->message); /* FIXME: use display name */
-      g_error_free (error);
+      gutachter_suite_set_status (self, GUTACHTER_SUITE_ERROR);
+
+      PRIV (self)->error = error;
+      error = NULL;
     }
 
   g_free (argv[1]);
@@ -514,7 +531,6 @@ gutachter_suite_load (GutachterSuite* self)
   if (!run_or_warn (&PRIV (self)->pid, pipes[1], MODE_LIST, suite))
     {
       close (pipes[0]);
-      gutachter_suite_set_status (suite, GUTACHTER_SUITE_INDETERMINED);
     }
   else
     {
@@ -759,18 +775,25 @@ gutachter_suite_set_status (GutachterSuite      * self,
 {
   g_return_if_fail (GUTACHTER_IS_SUITE (self));
   /* comparison of unsigned int with 0 is always true; FIXME: is there a way to glue this into a test case? */
-  g_return_if_fail (/*GTK_TEST_SUITE_INDETERMINED <= status && */ status <= GUTACHTER_SUITE_FINISHED);
+  g_return_if_fail (/*GTK_TEST_SUITE_INDETERMINED <= status && */ status <= GUTACHTER_SUITE_ERROR);
 
   if (PRIV (self)->status == status)
     {
       return;
     }
 
+  if (PRIV (self)->status == GUTACHTER_SUITE_ERROR)
+    {
+      g_error_free (PRIV (self)->error);
+      PRIV (self)->error = NULL;
+    }
+
   /* cannot switch from any status to any other */
   switch (status)
     {
     case GUTACHTER_SUITE_INDETERMINED:
-      /* we can fall into this state from every other */
+    case GUTACHTER_SUITE_ERROR:
+      /* we can fall into these states from every other */
       break;
     case GUTACHTER_SUITE_LOADING:
       g_return_if_fail (PRIV (self)->status == GUTACHTER_SUITE_INDETERMINED);

@@ -86,11 +86,52 @@ test_load (void)
   g_object_unref (file);
 }
 
+static void
+test_load_missing_cb1 (GObject   * object,
+                       GParamSpec* pspec     G_GNUC_UNUSED,
+                       gpointer    user_data)
+{
+  guint* n_runs = user_data;
+
+  g_assert_cmpint (GUTACHTER_SUITE_ERROR, ==, gutachter_suite_get_status (GUTACHTER_SUITE (object)));
+
+  (*n_runs)++;
+}
+
+static void
+test_load_missing (void)
+{
+  GFile         * file = g_file_new_for_path ("the-test-that-does-not-exist");
+  GutachterSuite* suite = gutachter_suite_new (file);
+  guint           n_runs = 0;
+
+  g_assert (!g_file_query_exists (file, NULL));
+
+  g_signal_connect (suite, "notify::status",
+                    G_CALLBACK (test_load_missing_cb1), &n_runs);
+
+  gutachter_suite_load (suite);
+
+  g_assert_cmpuint (n_runs, ==, 1);
+
+  g_assert_error (gutachter_suite_get_error (suite),
+                  G_SPAWN_ERROR,
+                  G_SPAWN_ERROR_NOENT);
+
+  g_assert_cmpint (0, ==, gutachter_suite_get_tests (suite));
+  g_assert_cmpint (0, ==, gutachter_suite_get_executed (suite));
+  g_assert_cmpint (0, ==, gutachter_suite_get_failures (suite));
+
+  g_object_unref (suite);
+  g_object_unref (file);
+}
+
 void
 add_tests_for_suite (void)
 {
   g_test_add_func (NAMESPACE "GutachterSuite/initialize", test_init);
   g_test_add_func (NAMESPACE "GutachterSuite/load", test_load);
+  g_test_add_func (NAMESPACE "GutachterSuite/load-missing", test_load_missing);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
