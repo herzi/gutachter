@@ -25,37 +25,37 @@
 
 G_BEGIN_DECLS
 
-typedef struct _GtkTestWindow        GtkTestWindow;
-typedef struct _GtkTestWindowClass   GtkTestWindowClass;
-typedef struct _GtkTestWindowPrivate GtkTestWindowPrivate;
+typedef struct _GutachterWindow        GutachterWindow;
+typedef struct _GutachterWindowClass   GutachterWindowClass;
+typedef struct _GutachterWindowPrivate GutachterWindowPrivate;
 
-#define GTK_TEST_TYPE_WINDOW         (gtk_test_window_get_type ())
-#define GTK_TEST_WINDOW(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), GTK_TEST_TYPE_WINDOW, GtkTestWindow))
-#define GTK_TEST_WINDOW_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c), GTK_TEST_TYPE_WINDOW, GtkTestWindowClass))
-#define GTK_TEST_IS_WINDOW(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), GTK_TEST_TYPE_WINDOW))
-#define GTK_TEST_IS_WINDOW_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), GTK_TEST_TYPE_WINDOW))
-#define GTK_TEST_WINDOW_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), GTK_TEST_TYPE_WINDOW, GtkTestWindowClass))
+#define GUTACHTER_TYPE_WINDOW         (gutachter_window_get_type ())
+#define GUTACHTER_WINDOW(i)           (G_TYPE_CHECK_INSTANCE_CAST ((i), GUTACHTER_TYPE_WINDOW, GutachterWindow))
+#define GUTACHTER_WINDOW_CLASS(c)     (G_TYPE_CHECK_CLASS_CAST ((c), GUTACHTER_TYPE_WINDOW, GutachterWindowClass))
+#define GUTACHTER_IS_WINDOW(i)        (G_TYPE_CHECK_INSTANCE_TYPE ((i), GUTACHTER_TYPE_WINDOW))
+#define GUTACHTER_IS_WINDOW_CLASS(c)  (G_TYPE_CHECK_CLASS_TYPE ((c), GUTACHTER_TYPE_WINDOW))
+#define GUTACHTER_WINDOW_GET_CLASS(i) (G_TYPE_INSTANCE_GET_CLASS ((i), GUTACHTER_TYPE_WINDOW, GutachterWindowClass))
 
-GType      gtk_test_window_get_type     (void);
-GtkWidget* gtk_test_window_new          (void);
+GType      gutachter_window_get_type     (void);
+GtkWidget* gutachter_window_new          (void);
 #ifndef REFACTORING_FINISHED
-GtkWidget* gtk_test_window_get_box      (GtkTestWindow* self);
-GtkWidget* gtk_test_window_get_exec     (GtkTestWindow* self);
-GtkWidget* gtk_test_window_get_open     (GtkTestWindow* self);
-GtkWidget* gtk_test_window_get_toolbar  (GtkTestWindow* self);
-GtkWidget* gtk_test_window_get_widget   (GtkTestWindow* self);
+GtkWidget* gutachter_window_get_box      (GutachterWindow* self);
+GtkWidget* gutachter_window_get_exec     (GutachterWindow* self);
+GtkWidget* gutachter_window_get_open     (GutachterWindow* self);
+GtkWidget* gutachter_window_get_toolbar  (GutachterWindow* self);
+GtkWidget* gutachter_window_get_widget   (GutachterWindow* self);
 #endif
-void       gtk_test_window_update_title (GtkTestWindow* self);
+void       gutachter_window_update_title (GutachterWindow* self);
 
-struct _GtkTestWindow
+struct _GutachterWindow
 {
-  GtkWindow             base_instance;
-  GtkTestWindowPrivate* _private;
+  GtkWindow               base_instance;
+  GutachterWindowPrivate* _private;
 };
 
-struct _GtkTestWindowClass
+struct _GutachterWindowClass
 {
-  GtkWindowClass        base_class;
+  GtkWindowClass          base_class;
 };
 
 G_END_DECLS

@@ -28,7 +28,7 @@
 
 /* FIXME: add a gallery image for the documentation */
 
-struct _GtkTestWindowPrivate
+struct _GutachterWindowPrivate
 {
   guint        auto_update : 1;
   GtkWidget  * box;
@@ -45,11 +45,11 @@ enum
   PROP_TEST_SUITE
 };
 
-#define PRIV(i) (((GtkTestWindow*)(i))->_private)
+#define PRIV(i) (((GutachterWindow*)(i))->_private)
 
 static void implement_gutachter_runner (GutachterRunnerIface* iface);
 
-G_DEFINE_TYPE_WITH_CODE (GtkTestWindow, gtk_test_window, GTK_TYPE_WINDOW,
+G_DEFINE_TYPE_WITH_CODE (GutachterWindow, gutachter_window, GTK_TYPE_WINDOW,
                          G_IMPLEMENT_INTERFACE (GUTACHTER_TYPE_RUNNER, implement_gutachter_runner));
 
 static void
@@ -59,7 +59,7 @@ forward_notify (GObject   * object G_GNUC_UNUSED,
 {
   GutachterSuite* suite;
 
-  gtk_test_window_update_title (user_data);
+  gutachter_window_update_title (user_data);
 
   suite = gutachter_runner_get_suite (GUTACHTER_RUNNER (PRIV (user_data)->widget));
   if (suite)
@@ -111,8 +111,8 @@ static void
 auto_update_toggled (GtkToggleToolButton* button,
                      gpointer             user_data)
 {
-  GtkTestWindow* self = user_data;
-  gboolean       new_value = gtk_toggle_tool_button_get_active (button);
+  GutachterWindow* self = user_data;
+  gboolean         new_value = gtk_toggle_tool_button_get_active (button);
 
   if (PRIV (self)->auto_update == new_value)
     {
@@ -133,11 +133,11 @@ auto_update_toggled (GtkToggleToolButton* button,
 }
 
 static void
-gtk_test_window_init (GtkTestWindow* self)
+gutachter_window_init (GutachterWindow* self)
 {
   GtkToolItem* item;
 
-  PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GTK_TEST_TYPE_WINDOW, GtkTestWindowPrivate);
+  PRIV (self) = G_TYPE_INSTANCE_GET_PRIVATE (self, GUTACHTER_TYPE_WINDOW, GutachterWindowPrivate);
   PRIV (self)->toolbar = gtk_toolbar_new ();
   PRIV (self)->widget = gutachter_widget_new ();
   PRIV (self)->open_button = gtk_tool_button_new_from_stock (GTK_STOCK_OPEN);
@@ -173,7 +173,7 @@ gtk_test_window_init (GtkTestWindow* self)
   g_signal_connect (PRIV (self)->widget, "notify::test-suite",
                     G_CALLBACK (forward_notify), self);
 
-  gtk_test_window_update_title (self);
+  gutachter_window_update_title (self);
 }
 
 static void
@@ -198,11 +198,11 @@ destroy (GtkObject* object)
 {
   PRIV (object)->execute_button = NULL;
 
-  GTK_OBJECT_CLASS (gtk_test_window_parent_class)->destroy (object);
+  GTK_OBJECT_CLASS (gutachter_window_parent_class)->destroy (object);
 }
 
 static void
-gtk_test_window_class_init (GtkTestWindowClass* self_class)
+gutachter_window_class_init (GutachterWindowClass* self_class)
 {
   GObjectClass* object_class = G_OBJECT_CLASS (self_class);
   GtkObjectClass* gtk_object_class = GTK_OBJECT_CLASS (self_class);
@@ -213,7 +213,7 @@ gtk_test_window_class_init (GtkTestWindowClass* self_class)
 
   gtk_object_class->destroy = destroy;
 
-  g_type_class_add_private (self_class, sizeof (GtkTestWindowPrivate));
+  g_type_class_add_private (self_class, sizeof (GutachterWindowPrivate));
 }
 
 static GFile*
@@ -282,59 +282,59 @@ implement_gutachter_runner (GutachterRunnerIface* iface)
 }
 
 GtkWidget*
-gtk_test_window_get_box (GtkTestWindow* self)
+gutachter_window_get_box (GutachterWindow* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_WINDOW (self), NULL);
+  g_return_val_if_fail (GUTACHTER_IS_WINDOW (self), NULL);
 
   return PRIV (self)->box;
 }
 
 GtkWidget*
-gtk_test_window_get_exec (GtkTestWindow* self)
+gutachter_window_get_exec (GutachterWindow* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_WINDOW (self), NULL);
+  g_return_val_if_fail (GUTACHTER_IS_WINDOW (self), NULL);
 
   return GTK_WIDGET (PRIV (self)->execute_button);
 }
 
 GtkWidget*
-gtk_test_window_get_open (GtkTestWindow* self)
+gutachter_window_get_open (GutachterWindow* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_WINDOW (self), NULL);
+  g_return_val_if_fail (GUTACHTER_IS_WINDOW (self), NULL);
 
   return GTK_WIDGET (PRIV (self)->open_button);
 }
 
 GtkWidget*
-gtk_test_window_get_toolbar (GtkTestWindow* self)
+gutachter_window_get_toolbar (GutachterWindow* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_WINDOW (self), NULL);
+  g_return_val_if_fail (GUTACHTER_IS_WINDOW (self), NULL);
 
   return PRIV (self)->toolbar;
 }
 
 GtkWidget*
-gtk_test_window_get_widget (GtkTestWindow* self)
+gutachter_window_get_widget (GutachterWindow* self)
 {
-  g_return_val_if_fail (GTK_TEST_IS_WINDOW (self), NULL);
+  g_return_val_if_fail (GUTACHTER_IS_WINDOW (self), NULL);
 
   return PRIV (self)->widget;
 }
 
 GtkWidget*
-gtk_test_window_new (void)
+gutachter_window_new (void)
 {
-  return g_object_new (GTK_TEST_TYPE_WINDOW,
+  return g_object_new (GUTACHTER_TYPE_WINDOW,
                        NULL);
 }
 
 void
-gtk_test_window_update_title (GtkTestWindow* self)
+gutachter_window_update_title (GutachterWindow* self)
 {
   GFile* testcase;
   gchar* title = NULL;
 
-  g_return_if_fail (GTK_TEST_IS_WINDOW (self));
+  g_return_if_fail (GUTACHTER_IS_WINDOW (self));
 
   testcase = gutachter_runner_get_file (GUTACHTER_RUNNER (PRIV (self)->widget));
   if (testcase)

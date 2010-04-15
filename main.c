@@ -49,7 +49,7 @@ main (int   argc,
 
   xvfb = gutachter_xvfb_get_instance ();
 
-  window = gtk_test_window_new ();
+  window = gutachter_window_new ();
   if (files && *files)
     {
       GFile* file = g_file_new_for_commandline_arg (*files);
