@@ -29,6 +29,7 @@ struct _GutachterXvfbPrivate
   guint64  display;
   GPid     pid;
   gulong   child_watch;
+  gulong   idle_id;
 };
 
 #define PRIV(i) (((GutachterXvfb*)(i))->_private)
@@ -50,7 +51,7 @@ xvfb_child_watch (GPid      pid,
     {
       if (WEXITSTATUS (status))
         {
-          g_idle_add (setup_xvfb, user_data);
+          PRIV (user_data)->idle_id = g_idle_add (setup_xvfb, user_data);
         }
     }
   else if (WIFSIGNALED (status))
@@ -61,6 +62,8 @@ xvfb_child_watch (GPid      pid,
 
   PRIV (user_data)->pid = 0;
   PRIV (user_data)->child_watch = 0;
+
+  g_object_unref (user_data);
 }
 
 static gboolean
@@ -75,6 +78,8 @@ setup_xvfb (gpointer data)
   };
   GError* error = NULL;
 
+  g_return_val_if_fail (GUTACHTER_IS_XVFB (self), FALSE);
+
   g_assert_cmpint (PRIV (self)->pid, ==, 0);
 
   display = g_strdup_printf (":%" G_GUINT64_FORMAT, ++PRIV (self)->display);
@@ -86,7 +91,7 @@ setup_xvfb (gpointer data)
                      NULL, NULL,
                      &PRIV (self)->pid, &error))
     {
-      PRIV (self)->child_watch = g_child_watch_add (PRIV (self)->pid, xvfb_child_watch, self);
+      PRIV (self)->child_watch = g_child_watch_add (PRIV (self)->pid, xvfb_child_watch, g_object_ref (self));
     }
   else
     {
@@ -95,6 +100,7 @@ setup_xvfb (gpointer data)
     }
 
   g_free (display);
+  g_object_unref (self);
   return FALSE;
 }
 
@@ -113,7 +119,7 @@ constructor (GType                  type,
     {
       instance = G_OBJECT_CLASS (gutachter_xvfb_parent_class)->constructor (type, n_params, params);
 
-      g_idle_add (setup_xvfb, instance);
+      PRIV (instance)->idle_id = g_idle_add (setup_xvfb, g_object_ref (instance));
     }
   else
     {
@@ -134,6 +140,11 @@ finalize_child_watch (GPid      pid,
 static void
 finalize (GObject* object)
 {
+  if (PRIV (object)->idle_id)
+    {
+      g_source_remove (PRIV (object)->idle_id);
+    }
+
   if (PRIV (object)->child_watch)
     {
       g_source_remove (PRIV (object)->child_watch);

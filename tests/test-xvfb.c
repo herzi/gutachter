@@ -57,11 +57,34 @@ test_wait (void)
   gdk_display_close (display);
 }
 
+static gboolean
+test_quick_unref_cb (gpointer user_data)
+{
+  g_main_loop_quit (user_data);
+
+  return FALSE;
+}
+
+static void
+test_quick_unref (void)
+{
+  GutachterXvfb* xvfb = gutachter_xvfb_get_instance ();
+  GMainLoop    * loop = g_main_loop_new (NULL, FALSE);
+
+  g_test_queue_destroy ((GDestroyNotify)g_main_loop_unref, loop);
+  g_object_unref (xvfb);
+
+  g_timeout_add (100, test_quick_unref_cb, loop);
+  g_main_loop_run (loop);
+}
+
 void
 add_tests_for_xvfb (void)
 {
   g_test_add_func (NAMESPACE "Xvfb/init", test_init);
+  /* singleton */
   g_test_add_func (NAMESPACE "Xvfb/wait", test_wait);
+  g_test_add_func (NAMESPACE "Xvfb/quick-unref", test_quick_unref);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
