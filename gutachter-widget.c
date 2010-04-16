@@ -186,6 +186,8 @@ gutachter_widget_init (GutachterWidget* self)
                                            NULL);
   gtk_tree_view_insert_column (GTK_TREE_VIEW (PRIV (self)->failure_view), column, -1);
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (PRIV (self)->failure_view), FALSE);
+  gtk_tree_selection_set_mode (gtk_tree_view_get_selection (GTK_TREE_VIEW (PRIV (self)->failure_view)),
+                               GTK_SELECTION_BROWSE);
 
   column = gtk_tree_view_column_new ();
   gtk_tree_view_column_set_expand (column, TRUE);
@@ -471,6 +473,14 @@ status_changed_cb (GObject   * suite     G_GNUC_UNUSED,
 
       if (!gutachter_suite_get_passed (PRIV (self)->suite))
         {
+          GtkTreeIter  iter;
+
+          if (gtk_tree_model_iter_children (GTK_TREE_MODEL (gtk_tree_view_get_model (GTK_TREE_VIEW (PRIV (self)->failure_view))),
+                                            &iter, NULL))
+            {
+              GtkTreeSelection* selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (PRIV (self)->failure_view));
+              gtk_tree_selection_select_iter (selection, &iter);
+            }
           gtk_notebook_set_current_page (GTK_NOTEBOOK (PRIV (self)->notebook), 0);
         }
       else

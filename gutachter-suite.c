@@ -560,7 +560,7 @@ run_test_child_watch (GPid      pid,
     }
   else if (WIFSIGNALED (status))
     {
-      g_warning ("FIXME: exited with signal %d, trigger restart", WTERMSIG (status));
+      g_message ("FIXME: exited with signal %d, trigger restart", WTERMSIG (status));
     }
   else if (WIFEXITED (status))
     {
