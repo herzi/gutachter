@@ -9,7 +9,7 @@ TESTS=
 SUBDIRS=. doc po
 TESTS_ENVIRONMENT=gtester -q
 
-AM_CPPFLAGS=-Wall -Wextra @GUTACHTER_CFLAGS@
+AM_CPPFLAGS=-Wall -Wextra -Wmissing-prototypes @GUTACHTER_CFLAGS@
 
 include data/Makefile.inc
 include pixmaps/Makefile.inc

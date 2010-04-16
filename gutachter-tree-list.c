@@ -187,19 +187,19 @@ gutachter_tree_list_class_init (GutachterTreeListClass* self_class)
   g_type_class_add_private (self_class, sizeof (GutachterTreeList));
 }
 
-GtkTreeModelFlags
+static GtkTreeModelFlags
 get_flags (GtkTreeModel* model G_GNUC_UNUSED)
 {
   return GTK_TREE_MODEL_LIST_ONLY;
 }
 
-gint
+static gint
 get_n_columns (GtkTreeModel* model)
 {
   return gtk_tree_model_get_n_columns (PRIV (model)->model);
 }
 
-GType
+static GType
 get_column_type (GtkTreeModel* model, gint index)
 {
   return gtk_tree_model_get_column_type (PRIV (model)->model, index);
@@ -224,7 +224,7 @@ find_glist_for_tree_path (GQueue     * queue,
   return g_queue_find_custom (queue, path, compare_reference_with_path);
 }
 
-gboolean
+static gboolean
 get_iter (GtkTreeModel* model,
           GtkTreeIter * iter,
           GtkTreePath * path)
@@ -238,7 +238,7 @@ get_iter (GtkTreeModel* model,
   return initialize_iter (GUTACHTER_TREE_LIST (model), iter, gtk_tree_path_get_indices (path)[0]);
 }
 
-GtkTreePath*
+static GtkTreePath*
 get_path (GtkTreeModel* model,
           GtkTreeIter * iter)
 {
