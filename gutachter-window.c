@@ -47,7 +47,8 @@ enum
 
 #define PRIV(i) (((GutachterWindow*)(i))->_private)
 
-static void implement_gutachter_runner (GutachterRunnerIface* iface);
+static void implement_gutachter_runner    (GutachterRunnerIface* iface);
+static void gutachter_window_update_title (GutachterWindow     * self);
 
 G_DEFINE_TYPE_WITH_CODE (GutachterWindow, gutachter_window, GTK_TYPE_WINDOW,
                          G_IMPLEMENT_INTERFACE (GUTACHTER_TYPE_RUNNER, implement_gutachter_runner));
@@ -279,46 +280,6 @@ implement_gutachter_runner (GutachterRunnerIface* iface)
   iface->get_file  = get_file;
   iface->get_suite = get_suite;
   iface->set_file  = set_file;
-}
-
-GtkWidget*
-gutachter_window_get_box (GutachterWindow* self)
-{
-  g_return_val_if_fail (GUTACHTER_IS_WINDOW (self), NULL);
-
-  return PRIV (self)->box;
-}
-
-GtkWidget*
-gutachter_window_get_exec (GutachterWindow* self)
-{
-  g_return_val_if_fail (GUTACHTER_IS_WINDOW (self), NULL);
-
-  return GTK_WIDGET (PRIV (self)->execute_button);
-}
-
-GtkWidget*
-gutachter_window_get_open (GutachterWindow* self)
-{
-  g_return_val_if_fail (GUTACHTER_IS_WINDOW (self), NULL);
-
-  return GTK_WIDGET (PRIV (self)->open_button);
-}
-
-GtkWidget*
-gutachter_window_get_toolbar (GutachterWindow* self)
-{
-  g_return_val_if_fail (GUTACHTER_IS_WINDOW (self), NULL);
-
-  return PRIV (self)->toolbar;
-}
-
-GtkWidget*
-gutachter_window_get_widget (GutachterWindow* self)
-{
-  g_return_val_if_fail (GUTACHTER_IS_WINDOW (self), NULL);
-
-  return PRIV (self)->widget;
 }
 
 GtkWidget*

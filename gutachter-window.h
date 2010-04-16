@@ -38,14 +38,6 @@ typedef struct _GutachterWindowPrivate GutachterWindowPrivate;
 
 GType      gutachter_window_get_type     (void);
 GtkWidget* gutachter_window_new          (void);
-#ifndef REFACTORING_FINISHED
-GtkWidget* gutachter_window_get_box      (GutachterWindow* self);
-GtkWidget* gutachter_window_get_exec     (GutachterWindow* self);
-GtkWidget* gutachter_window_get_open     (GutachterWindow* self);
-GtkWidget* gutachter_window_get_toolbar  (GutachterWindow* self);
-GtkWidget* gutachter_window_get_widget   (GutachterWindow* self);
-#endif
-void       gutachter_window_update_title (GutachterWindow* self);
 
 struct _GutachterWindow
 {
