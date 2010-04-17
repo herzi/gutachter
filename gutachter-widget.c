@@ -336,30 +336,6 @@ implement_gutachter_runner (GutachterRunnerIface* iface)
 }
 
 GtkWidget*
-gutachter_widget_get_hierarchy (GutachterWidget* self)
-{
-  g_return_val_if_fail (GUTACHTER_IS_WIDGET (self), NULL);
-
-  return PRIV (self)->hierarchy_view;
-}
-
-GtkWidget*
-gutachter_widget_get_notebook (GutachterWidget* self)
-{
-  g_return_val_if_fail (GUTACHTER_IS_WIDGET (self), NULL);
-
-  return PRIV (self)->notebook;
-}
-
-GtkWidget*
-gutachter_widget_get_progress (GutachterWidget* self)
-{
-  g_return_val_if_fail (GUTACHTER_IS_WIDGET (self), NULL);
-
-  return PRIV (self)->progress;
-}
-
-GtkWidget*
 gutachter_widget_new (void)
 {
   return g_object_new (GUTACHTER_TYPE_WIDGET,

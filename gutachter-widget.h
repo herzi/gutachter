@@ -39,13 +39,8 @@ typedef struct _GutachterWidgetPrivate GutachterWidgetPrivate;
 
 GType      gutachter_widget_get_type      (void);
 GtkWidget* gutachter_widget_new           (void);
-#ifndef REFACTORING_FINISHED
-GtkWidget* gutachter_widget_get_hierarchy (GutachterWidget* self);
-GtkWidget* gutachter_widget_get_notebook  (GutachterWidget* self);
-GtkWidget* gutachter_widget_get_progress  (GutachterWidget* self);
-#endif
 void       gutachter_widget_set_suite     (GutachterWidget * self,
-                                           GutachterSuite* suite); /* FIXME: consider moving to GtkTestRunner */
+                                           GutachterSuite  * suite); /* FIXME: consider moving to GtkTestRunner */
 
 struct _GutachterWidget
 {
