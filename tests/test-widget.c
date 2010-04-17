@@ -80,7 +80,7 @@ test_display_failure (void)
   GutachterSuite* suite = gutachter_suite_new (file);
   GtkTextIter     end_iter;
   GtkTextIter     start_iter;
-  //gchar         * text;
+  gchar         * text;
 
   g_signal_connect (suite, "notify::status",
                     G_CALLBACK (test_display_failure_cb1), loop);
@@ -112,14 +112,13 @@ test_display_failure (void)
                                   &start_iter);
   gtk_text_buffer_get_end_iter   (gtk_text_view_get_buffer (GTK_TEXT_VIEW (gutachter_lookup_child (widget, PATH_TO_TEXTVIEW))),
                                   &end_iter);
-#if 0
   text = gtk_text_buffer_get_text (gtk_text_view_get_buffer (GTK_TEXT_VIEW (gutachter_lookup_child (widget, PATH_TO_TEXTVIEW))),
                                    &start_iter,
                                    &end_iter,
                                    TRUE);
   g_test_queue_free (text);
-  g_assert_cmpstr ("", ==, text);
-#endif
+  g_assert_cmpstr ("ERROR:tests/test-fail.c:28:dummy_fail: assertion failed: (FALSE)",
+                   ==, text);
 }
 
 void
