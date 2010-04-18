@@ -210,6 +210,167 @@ gutachter_suite_class_init (GutachterSuiteClass* self_class)
   g_type_class_add_private (self_class, sizeof (GutachterSuitePrivate));
 }
 
+static gboolean
+run_or_warn (GPid                     * pid,
+             guint                      pipe_id,
+             GutachterSuiteRunningMode  mode,
+             GutachterSuite           * self)
+{
+  GutachterXvfb* xvfb;
+  gboolean       result = FALSE;
+  GError       * error  = NULL;
+  GFile        * parent;
+  gchar        * base;
+  gchar        * folder;
+  gchar        * argv[] = {
+          NULL,
+          NULL,
+          "-q",
+          NULL,
+          NULL
+  };
+  gchar** env;
+  gchar** iter;
+  gboolean found_display = FALSE;
+
+  xvfb = gutachter_xvfb_get_instance ();
+
+  if (!gutachter_xvfb_wait (xvfb, NULL))
+    {
+      g_warning ("error while waiting for Xvfb: %s", error->message);
+      g_error_free (error);
+      g_object_unref (xvfb);
+      return FALSE;
+    }
+
+  base = g_file_get_basename (PRIV (self)->file);
+  parent = g_file_get_parent (PRIV (self)->file);
+  folder = g_file_get_path (parent);
+  env = g_listenv ();
+
+  /* FIXME: this is X11 specific */
+  for (iter = env; iter && *iter; iter++)
+    {
+      if (!g_str_has_prefix (*iter, "DISPLAY="))
+        {
+          g_free (*iter);
+          *iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT,
+                                   gutachter_xvfb_get_display (xvfb));
+          found_display = TRUE;
+          break;
+        }
+    }
+
+  if (!found_display)
+    {
+      gchar** new_env = g_new (gchar*, g_strv_length (env) + 2);
+      gchar** new_iter = new_env;
+
+      *new_iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT, gutachter_xvfb_get_display (xvfb));
+      for (new_iter++, iter = env; iter && *iter; iter++, new_iter++)
+        {
+          *new_iter = *iter;
+        }
+      *new_iter = NULL;
+
+      g_free (env);
+      env = new_env;
+    }
+
+  switch (mode)
+    {
+    case MODE_TEST:
+      break;
+    case MODE_LIST:
+      argv[3] = "-l";
+      break;
+    }
+
+  /* FIXME: should only be necessary on UNIX */
+  argv[0] = g_strdup_printf ("./%s", base);
+  argv[1] = g_strdup_printf ("--GTestLogFD=%u", pipe_id);
+
+  result = g_spawn_async (folder, argv, env,
+                          G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_LEAVE_DESCRIPTORS_OPEN |
+                          G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
+                          NULL, NULL, pid, &error);
+
+  if (!result)
+    {
+      gutachter_suite_set_status (self, GUTACHTER_SUITE_ERROR);
+
+      PRIV (self)->error = error;
+      error = NULL;
+    }
+
+  g_free (argv[1]);
+  g_free (argv[0]);
+  g_free (folder);
+  g_object_unref (parent);
+  g_object_unref (xvfb);
+
+  return result;
+}
+
+static gboolean
+io_func (GIOChannel  * channel,
+         GIOCondition  condition G_GNUC_UNUSED,
+         gpointer      user_data)
+{
+  GutachterSuite* suite = user_data;
+  guchar          buf[512];
+  gsize           read_bytes = 0;
+  GIOStatus       status;
+
+  for (status = g_io_channel_read_chars (channel, (gchar*)buf, sizeof (buf), &read_bytes, NULL);
+       status == G_IO_STATUS_NORMAL;
+       status = g_io_channel_read_chars (channel, (gchar*)buf, sizeof (buf), &read_bytes, NULL))
+    {
+      g_test_log_buffer_push (gutachter_suite_get_buffer (suite), read_bytes, buf);
+    }
+
+  gutachter_suite_read_available (suite);
+
+  return TRUE;
+}
+
+static void
+run_test_child_watch (GPid      pid,
+                      gint      status,
+                      gpointer  user_data)
+{
+  GutachterSuite* suite = user_data;
+
+  g_spawn_close_pid (pid);
+
+  if (WIFEXITED (status) && WEXITSTATUS (status))
+    {
+      g_warning (_("exited with exit code %d"), WEXITSTATUS (status));
+    }
+  else if (WIFSIGNALED (status))
+    {
+      g_message ("FIXME: exited with signal %d, trigger restart", WTERMSIG (status));
+    }
+  else if (WIFEXITED (status))
+    {
+      gutachter_suite_read_available (suite);
+    }
+
+  gutachter_suite_set_status (suite, GUTACHTER_SUITE_FINISHED);
+
+  if (PRIV (suite)->io_watch)
+    {
+      g_source_remove (PRIV (suite)->io_watch);
+      PRIV (suite)->io_watch = 0;
+    }
+
+  gutachter_suite_read_available (suite);
+  gutachter_suite_set_channel (suite, NULL);
+
+  g_source_remove (PRIV (suite)->child_watch);
+  PRIV (suite)->child_watch = 0;
+}
+
 void
 gutachter_suite_execute (GutachterSuite* self)
 {
@@ -339,131 +500,7 @@ gutachter_suite_new (GFile* file)
                        NULL);
 }
 
-gboolean
-run_or_warn (GPid                     * pid,
-             guint                      pipe_id,
-             GutachterSuiteRunningMode  mode,
-             GutachterSuite           * self)
-{
-  GutachterXvfb* xvfb;
-  gboolean       result = FALSE;
-  GError       * error  = NULL;
-  GFile        * parent;
-  gchar        * base;
-  gchar        * folder;
-  gchar        * argv[] = {
-          NULL,
-          NULL,
-          "-q",
-          NULL,
-          NULL
-  };
-  gchar** env;
-  gchar** iter;
-  gboolean found_display = FALSE;
-
-  xvfb = gutachter_xvfb_get_instance ();
-
-  if (!gutachter_xvfb_wait (xvfb, NULL))
-    {
-      g_warning ("error while waiting for Xvfb: %s", error->message);
-      g_error_free (error);
-      g_object_unref (xvfb);
-      return FALSE;
-    }
-
-  base = g_file_get_basename (PRIV (self)->file);
-  parent = g_file_get_parent (PRIV (self)->file);
-  folder = g_file_get_path (parent);
-  env = g_listenv ();
-
-  /* FIXME: this is X11 specific */
-  for (iter = env; iter && *iter; iter++)
-    {
-      if (!g_str_has_prefix (*iter, "DISPLAY="))
-        {
-          g_free (*iter);
-          *iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT,
-                                   gutachter_xvfb_get_display (xvfb));
-          found_display = TRUE;
-          break;
-        }
-    }
-
-  if (!found_display)
-    {
-      gchar** new_env = g_new (gchar*, g_strv_length (env) + 2);
-      gchar** new_iter = new_env;
-
-      *new_iter = g_strdup_printf ("DISPLAY=:%" G_GUINT64_FORMAT, gutachter_xvfb_get_display (xvfb));
-      for (new_iter++, iter = env; iter && *iter; iter++, new_iter++)
-        {
-          *new_iter = *iter;
-        }
-      *new_iter = NULL;
-
-      g_free (env);
-      env = new_env;
-    }
-
-  switch (mode)
-    {
-    case MODE_TEST:
-      break;
-    case MODE_LIST:
-      argv[3] = "-l";
-      break;
-    }
-
-  /* FIXME: should only be necessary on UNIX */
-  argv[0] = g_strdup_printf ("./%s", base);
-  argv[1] = g_strdup_printf ("--GTestLogFD=%u", pipe_id);
-
-  result = g_spawn_async (folder, argv, env,
-                          G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_LEAVE_DESCRIPTORS_OPEN |
-                          G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
-                          NULL, NULL, pid, &error);
-
-  if (!result)
-    {
-      gutachter_suite_set_status (self, GUTACHTER_SUITE_ERROR);
-
-      PRIV (self)->error = error;
-      error = NULL;
-    }
-
-  g_free (argv[1]);
-  g_free (argv[0]);
-  g_free (folder);
-  g_object_unref (parent);
-  g_object_unref (xvfb);
-
-  return result;
-}
-
-gboolean
-io_func (GIOChannel  * channel,
-         GIOCondition  condition G_GNUC_UNUSED,
-         gpointer      user_data)
-{
-  GutachterSuite* suite = user_data;
-  guchar          buf[512];
-  gsize           read_bytes = 0;
-  GIOStatus       status;
-
-  for (status = g_io_channel_read_chars (channel, (gchar*)buf, sizeof (buf), &read_bytes, NULL);
-       status == G_IO_STATUS_NORMAL;
-       status = g_io_channel_read_chars (channel, (gchar*)buf, sizeof (buf), &read_bytes, NULL))
-    {
-      g_test_log_buffer_push (gutachter_suite_get_buffer (suite), read_bytes, buf);
-    }
-
-  gutachter_suite_read_available (suite);
-
-  return TRUE;
-}
-
-void
+static void
 child_watch_cb (GPid      pid,
                 gint      status,
                 gpointer  data)
@@ -543,43 +580,6 @@ gutachter_suite_load (GutachterSuite* self)
       g_io_channel_unref (channel);
     }
   close (pipes[1]);
-}
-
-void
-run_test_child_watch (GPid      pid,
-                      gint      status,
-                      gpointer  user_data)
-{
-  GutachterSuite* suite = user_data;
-
-  g_spawn_close_pid (pid);
-
-  if (WIFEXITED (status) && WEXITSTATUS (status))
-    {
-      g_warning (_("exited with exit code %d"), WEXITSTATUS (status));
-    }
-  else if (WIFSIGNALED (status))
-    {
-      g_message ("FIXME: exited with signal %d, trigger restart", WTERMSIG (status));
-    }
-  else if (WIFEXITED (status))
-    {
-      gutachter_suite_read_available (suite);
-    }
-
-  gutachter_suite_set_status (suite, GUTACHTER_SUITE_FINISHED);
-
-  if (PRIV (suite)->io_watch)
-    {
-      g_source_remove (PRIV (suite)->io_watch);
-      PRIV (suite)->io_watch = 0;
-    }
-
-  gutachter_suite_read_available (suite);
-  gutachter_suite_set_channel (suite, NULL);
-
-  g_source_remove (PRIV (suite)->child_watch);
-  PRIV (suite)->child_watch = 0;
 }
 
 static void

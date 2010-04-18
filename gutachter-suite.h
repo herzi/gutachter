@@ -66,19 +66,6 @@ gboolean              gutachter_suite_get_passed     (GutachterSuite* self);
 GutachterSuiteStatus  gutachter_suite_get_status     (GutachterSuite* self);
 guint64               gutachter_suite_get_tests      (GutachterSuite* self);
 GtkTreeModel*         gutachter_suite_get_tree       (GutachterSuite* self);
-gboolean              io_func                        (GIOChannel    * channel,
-                                                      GIOCondition    condition,
-                                                      gpointer        data);
-void                run_test_child_watch             (GPid            pid,
-                                                      gint            status,
-                                                      gpointer        user_data);
-void                child_watch_cb                   (GPid            pid,
-                                                      gint            status,
-                                                      gpointer        data);
-gboolean            run_or_warn                      (GPid                   * pid,
-                                                      guint                    pipe_id,
-                                                      GutachterSuiteRunningMode  mode,
-                                                      GutachterSuite           * self);
 void                  gutachter_suite_load           (GutachterSuite* self);
 void                  gutachter_suite_read_available (GutachterSuite* self);
 void                  gutachter_suite_reset          (GutachterSuite* self);
