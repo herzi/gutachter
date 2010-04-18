@@ -429,17 +429,21 @@ status_changed_cb (GObject   * suite     G_GNUC_UNUSED,
                    GParamSpec* pspec     G_GNUC_UNUSED,
                    gpointer    user_data)
 {
-  GutachterWidget* self = user_data;
+  GutachterSuiteStatus  status;
+  GutachterWidget     * self = user_data;
 
-  switch (gutachter_suite_get_status (PRIV (self)->suite))
+  status = gutachter_suite_get_status (PRIV (self)->suite);
+
+  if (status == GUTACHTER_SUITE_LOADED)
     {
-    case GUTACHTER_SUITE_LOADED:
       gtk_tree_view_expand_all (GTK_TREE_VIEW (PRIV (self)->hierarchy_view));
 
       gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (PRIV (self)->progress), 0.0);
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (PRIV (self)->progress), _("not tested yet"));
-      break;
-    case GUTACHTER_SUITE_FINISHED:
+    }
+
+  if (status == GUTACHTER_SUITE_FINISHED)
+    {
       /* let the bar be green in the beginning */
       gutachter_bar_set_okay (GUTACHTER_BAR (PRIV (self)->indicator_bar),
                               gutachter_suite_get_passed (PRIV (self)->suite));
@@ -460,9 +464,6 @@ status_changed_cb (GObject   * suite     G_GNUC_UNUSED,
         {
           gtk_notebook_set_current_page (GTK_NOTEBOOK (PRIV (self)->notebook), 1);
         }
-      break;
-    default:
-      break;
     }
 }
 
