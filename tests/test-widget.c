@@ -26,6 +26,7 @@
 #define PATH_TO_NOTEBOOK       PATH_TO_PANED ":GtkWidget[0]"
 #define PATH_TO_TEXTVIEW       PATH_TO_PANED ":GtkWidget[1]:GtkWidget[0]"
 #define PATH_TO_TREEVIEW_FAILS PATH_TO_NOTEBOOK ":GtkWidget[0]:GtkWidget[0]"
+#define PATH_TO_TREEVIEW_TESTS PATH_TO_NOTEBOOK ":GtkWidget[1]:GtkWidget[0]"
 
 static void
 test_layout (void)
@@ -37,6 +38,7 @@ test_layout (void)
   gutachter_assert_child (widget, PATH_TO_NOTEBOOK, GTK_TYPE_NOTEBOOK);
   g_assert (GTK_IS_PANED (gutachter_lookup_child (widget, PATH_TO_PANED)));
   g_assert (GTK_IS_TREE_VIEW (gutachter_lookup_child (widget, PATH_TO_TREEVIEW_FAILS)));
+  gutachter_assert_child (widget, PATH_TO_TREEVIEW_TESTS, GTK_TYPE_TREE_VIEW);
   gutachter_assert_child (widget, PATH_TO_TEXTVIEW, GTK_TYPE_TEXT_VIEW);
 }
 
