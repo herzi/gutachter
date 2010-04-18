@@ -22,10 +22,10 @@
 
 #include "test-main.h"
 
-#define PATH_TO_NOTEBOOK       "urn:gtk:GtkWidget[2]"
-#define PATH_TO_PANED          PATH_TO_NOTEBOOK ":GtkWidget[0]"
-#define PATH_TO_TREEVIEW_FAILS PATH_TO_PANED ":GtkWidget[0]:GtkWidget[0]"
+#define PATH_TO_PANED          "urn:gtk:GtkWidget[2]"
+#define PATH_TO_NOTEBOOK       PATH_TO_PANED ":GtkWidget[0]"
 #define PATH_TO_TEXTVIEW       PATH_TO_PANED ":GtkWidget[1]:GtkWidget[0]"
+#define PATH_TO_TREEVIEW_FAILS PATH_TO_NOTEBOOK ":GtkWidget[0]:GtkWidget[0]"
 
 static void
 test_layout (void)
@@ -33,10 +33,11 @@ test_layout (void)
   GtkWidget* widget = gtk_test_create_widget (GUTACHTER_TYPE_WIDGET, NULL);
 
   g_assert (GTK_IS_VBOX (widget));
-  g_assert (GTK_IS_NOTEBOOK (gutachter_lookup_child (widget, PATH_TO_NOTEBOOK)));
+  gutachter_assert_child (widget, PATH_TO_PANED, GTK_TYPE_PANED);
+  gutachter_assert_child (widget, PATH_TO_NOTEBOOK, GTK_TYPE_NOTEBOOK);
   g_assert (GTK_IS_PANED (gutachter_lookup_child (widget, PATH_TO_PANED)));
   g_assert (GTK_IS_TREE_VIEW (gutachter_lookup_child (widget, PATH_TO_TREEVIEW_FAILS)));
-  g_assert (GTK_IS_TEXT_VIEW (gutachter_lookup_child (widget, PATH_TO_TEXTVIEW)));
+  gutachter_assert_child (widget, PATH_TO_TEXTVIEW, GTK_TYPE_TEXT_VIEW);
 }
 
 static void
@@ -98,7 +99,7 @@ test_display_failure (void)
   g_main_loop_run (loop);
 
   /* ensure that we switched the active page to the failure list */
-  gutachter_assert_cmpptr (gutachter_lookup_child (widget, PATH_TO_PANED),
+  gutachter_assert_cmpptr (gutachter_lookup_child (widget, PATH_TO_NOTEBOOK ":GtkWidget[0]"),
                            ==,
                            gtk_notebook_get_nth_page (GTK_NOTEBOOK (gutachter_lookup_child (widget, PATH_TO_NOTEBOOK)),
                                                       gtk_notebook_get_current_page (GTK_NOTEBOOK (gutachter_lookup_child (widget, PATH_TO_NOTEBOOK)))));

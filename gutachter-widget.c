@@ -170,6 +170,7 @@ gutachter_widget_init (GutachterWidget* self)
   PRIV (self)->label_failures = gtk_label_new (NULL);
   PRIV (self)->notebook = gtk_notebook_new ();
   PRIV (self)->progress = gtk_progress_bar_new ();
+  paned = gtk_vpaned_new ();
 
   g_signal_connect (gtk_tree_view_get_selection (GTK_TREE_VIEW (PRIV (self)->failure_view)), "changed",
                     G_CALLBACK (failure_selection_changed), self);
@@ -217,18 +218,7 @@ gutachter_widget_init (GutachterWidget* self)
   scrolled = gtk_scrolled_window_new (NULL, NULL);
   gtk_container_add (GTK_CONTAINER (scrolled), PRIV (self)->failure_view);
   gtk_widget_show (scrolled);
-  paned = gtk_vpaned_new ();
-  gtk_paned_pack1 (GTK_PANED (paned), scrolled,
-                   TRUE, FALSE);
-  scrolled = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_show (PRIV (self)->error_text_view);
-  gtk_container_add (GTK_CONTAINER (scrolled), PRIV (self)->error_text_view);
-  gtk_widget_show (scrolled);
-  gtk_paned_pack2 (GTK_PANED (paned),
-                   scrolled,
-                   FALSE, FALSE);
-  gtk_widget_show (paned);
-  gtk_container_add_with_properties (GTK_CONTAINER (PRIV (self)->notebook), paned,
+  gtk_container_add_with_properties (GTK_CONTAINER (PRIV (self)->notebook), scrolled,
                                      "tab-label", _("Failures"),
                                      NULL);
 
@@ -239,11 +229,18 @@ gutachter_widget_init (GutachterWidget* self)
   gtk_container_add_with_properties (GTK_CONTAINER (PRIV (self)->notebook), scrolled,
                                      "tab-label", _("Hierarchy"),
                                      NULL);
-
   gtk_notebook_set_current_page (GTK_NOTEBOOK (PRIV (self)->notebook), 1);
-  gtk_widget_show_all (PRIV (self)->notebook);
 
-  gtk_container_add (GTK_CONTAINER (self), PRIV (self)->notebook);
+  gtk_paned_pack1 (GTK_PANED (paned), PRIV (self)->notebook,
+                   TRUE, FALSE);
+  scrolled = gtk_scrolled_window_new (NULL, NULL);
+  gtk_widget_show (PRIV (self)->error_text_view);
+  gtk_container_add (GTK_CONTAINER (scrolled), PRIV (self)->error_text_view);
+  gtk_widget_show (scrolled);
+  gtk_paned_pack2 (GTK_PANED (paned), scrolled, FALSE, FALSE);
+  gtk_widget_show_all (paned);
+
+  gtk_container_add (GTK_CONTAINER (self), paned);
 
   update_sensitivity (self);
 }

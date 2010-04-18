@@ -35,7 +35,8 @@ void add_tests_for_suite (void);
 void add_tests_for_widget (void);
 
 /* FIXME: make 64bit save and test this macro, too */
-#define gutachter_assert_cmpptr(p1,cmp,p2) g_assert_cmphex(GPOINTER_TO_INT (p1), cmp, GPOINTER_TO_INT (p2))
+#define gutachter_assert_cmpptr(p1,cmp,p2)       g_assert_cmphex(GPOINTER_TO_INT (p1), cmp, GPOINTER_TO_INT (p2))
+#define gutachter_assert_child(parent,path,type) if (!G_TYPE_CHECK_INSTANCE_TYPE (gutachter_lookup_child (parent,path), type)) {gchar* message = g_strdup_printf ("the widget at \"%s\" is a %s (expected was a %s)", path, G_OBJECT_TYPE_NAME (gutachter_lookup_child (parent,path)), g_type_name (type)); g_assertion_message (G_LOG_DOMAIN, __FILE__, __LINE__, G_STRFUNC, message);}
 
 G_END_DECLS
 
