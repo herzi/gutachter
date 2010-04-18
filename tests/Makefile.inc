@@ -8,6 +8,7 @@ noinst_PROGRAMS+=test-gutachter
 TESTS+=test-gutachter
 test_gutachter_LDADD=libgutachter.la
 test_gutachter_SOURCES=\
+	tests/test-hierarchy.c \
 	tests/test-lookup.c \
 	tests/test-main.h \
 	tests/test-main.c \

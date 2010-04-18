@@ -708,6 +708,8 @@ main (int   argc,
 {
   gtk_test_init (&argc, &argv, NULL);
 
+  add_tests_for_hierarchy ();
+  add_tests_for_lookup ();
   g_test_add_func ("/com/github/herzi/gutachter/GutachterBar/init", test_bar_init);
   add_tests_for_suite ();
   g_test_add_func ("/com/github/herzi/gutachter/GutachterTreeList/init", test_tree_list_init);
@@ -737,7 +739,6 @@ main (int   argc,
   /* signals/rows-reordered */
   /* "/com/github/herzi/gutachter/GutachterTreeList/path-to-child" */
 
-  add_tests_for_lookup ();
   add_tests_for_xvfb ();
   add_tests_for_widget ();
 
