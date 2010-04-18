@@ -201,6 +201,55 @@ test_auto_execute (void)
   g_object_unref (file);
 }
 
+static void
+test_start_execute_cb1 (GObject   * suite,
+                        GParamSpec* pspec     G_GNUC_UNUSED,
+                        gpointer    user_data)
+{
+  switch (gutachter_suite_get_status (GUTACHTER_SUITE (suite)))
+    {
+    case GUTACHTER_SUITE_LOADING:
+    case GUTACHTER_SUITE_RUNNING:
+      /* expected, ignore */
+      break;
+    case GUTACHTER_SUITE_LOADED:
+      gutachter_suite_execute (GUTACHTER_SUITE (suite));
+      g_main_loop_quit (user_data);
+      break;
+    default:
+      g_assert_not_reached ();
+      break;
+    }
+}
+
+static void
+test_start_execute (void)
+{
+  /* this test turns a suite into the running mode to check if unreferencing
+   * leads to still-running io watches, etc. */
+  GutachterSuite* cut;
+  GMainLoop     * loop;
+  GFile         * file = g_file_new_for_commandline_arg ("test-pass");
+
+  g_test_queue_unref (file);
+  loop = g_main_loop_new (NULL, FALSE);
+  g_test_queue_destroy ((GDestroyNotify) g_main_loop_unref, loop);
+
+  cut = gutachter_suite_new (file);
+  g_signal_connect (cut, "notify::status",
+                    G_CALLBACK (test_start_execute_cb1), loop);
+
+  gutachter_suite_load (cut);
+
+  g_main_loop_run (loop);
+  g_assert_cmpint (GUTACHTER_SUITE_RUNNING, ==, gutachter_suite_get_status (cut));
+  g_object_unref (cut);
+
+  /* and now try running the main loop for a short while again */
+  g_timeout_add (100, (GSourceFunc)g_main_loop_quit, loop);
+  g_main_loop_run (loop);
+}
+
 void
 add_tests_for_suite (void)
 {
@@ -208,6 +257,7 @@ add_tests_for_suite (void)
   g_test_add_func (NAMESPACE "GutachterSuite/load", test_load);
   g_test_add_func (NAMESPACE "GutachterSuite/load-missing", test_load_missing);
   g_test_add_func (NAMESPACE "GutachterSuite/auto-execute", test_auto_execute);
+  g_test_add_func (NAMESPACE "GutachterSuite/start-execute", test_start_execute);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

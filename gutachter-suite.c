@@ -84,11 +84,29 @@ gutachter_suite_init (GutachterSuite* self)
 }
 
 static void
+cleanup_func (GPid      pid,
+              gint      status G_GNUC_UNUSED,
+              gpointer  user_data G_GNUC_UNUSED)
+{
+  g_spawn_close_pid (pid);
+}
+
+static void
 finalize (GObject* object)
 {
   if (PRIV (object)->error)
     {
       g_error_free (PRIV (object)->error);
+    }
+
+  if (PRIV (object)->io_watch)
+    {
+      g_source_remove (PRIV (object)->io_watch);
+    }
+  if (PRIV (object)->child_watch)
+    {
+      g_source_remove (PRIV (object)->child_watch);
+      g_child_watch_add (PRIV (object)->pid, cleanup_func, NULL);
     }
 
   g_object_unref (PRIV (object)->hierarchy);
