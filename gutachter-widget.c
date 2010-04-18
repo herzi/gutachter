@@ -434,7 +434,7 @@ status_changed_cb (GObject   * suite     G_GNUC_UNUSED,
 
   status = gutachter_suite_get_status (PRIV (self)->suite);
 
-  if (status == GUTACHTER_SUITE_LOADED)
+  if (status == GUTACHTER_SUITE_LOADED || (!pspec && status > GUTACHTER_SUITE_LOADED))
     {
       gtk_tree_view_expand_all (GTK_TREE_VIEW (PRIV (self)->hierarchy_view));
 
