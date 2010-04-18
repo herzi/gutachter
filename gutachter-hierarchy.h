@@ -45,24 +45,27 @@ enum
 };
 
 GType               gutachter_hierarchy_get_type      (void);
-GutachterHierarchy* gutachter_hierarchy_new           (void);
-void                gutachter_hierarchy_clear         (GutachterHierarchy* self);
-gchar*              gutachter_hierarchy_get_full_path (GutachterHierarchy* self,
-                                                       GtkTreeIter       * iter);
-void                gutachter_hierarchy_get_iter      (GutachterHierarchy* self,
-                                                       GtkTreeIter       * iter,
-                                                       gchar const       * path);
-gchar*              gutachter_hierarchy_get_message   (GutachterHierarchy* self,
-                                                       GtkTreeIter       * iter);
-gboolean            gutachter_hierarchy_is_testcase   (GutachterHierarchy* self,
-                                                       GtkTreeIter       * iter);
-gboolean            gutachter_hierarchy_lookup_iter   (GutachterHierarchy* self,
-                                                       GtkTreeIter       * iter,
-                                                       gchar const       * path);
-void                gutachter_hierarchy_reset         (GutachterHierarchy* self);
-void                gutachter_hierarchy_set_message   (GutachterHierarchy* self,
-                                                       GtkTreeIter       * iter,
-                                                       gchar const       * message);
+GutachterHierarchy* gutachter_hierarchy_new            (void);
+void                gutachter_hierarchy_append_message (GutachterHierarchy* self,
+                                                        GtkTreeIter       * iter,
+                                                        gchar const       * message);
+void                gutachter_hierarchy_clear          (GutachterHierarchy* self);
+gchar*              gutachter_hierarchy_get_full_path  (GutachterHierarchy* self,
+                                                        GtkTreeIter       * iter);
+void                gutachter_hierarchy_get_iter       (GutachterHierarchy* self,
+                                                        GtkTreeIter       * iter,
+                                                        gchar const       * path);
+gchar*              gutachter_hierarchy_get_message    (GutachterHierarchy* self,
+                                                        GtkTreeIter       * iter);
+gboolean            gutachter_hierarchy_is_testcase    (GutachterHierarchy* self,
+                                                        GtkTreeIter       * iter);
+gboolean            gutachter_hierarchy_lookup_iter    (GutachterHierarchy* self,
+                                                        GtkTreeIter       * iter,
+                                                        gchar const       * path);
+void                gutachter_hierarchy_reset          (GutachterHierarchy* self);
+void                gutachter_hierarchy_set_message    (GutachterHierarchy* self,
+                                                        GtkTreeIter       * iter,
+                                                        gchar const       * message);
 
 struct _GutachterHierarchy
 {

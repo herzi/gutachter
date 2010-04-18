@@ -44,10 +44,33 @@ test_clear (void)
   g_assert_cmpstr (NULL, ==, gutachter_hierarchy_get_message (cut, &iter));
 }
 
+static void
+test_append (void)
+{
+  GutachterHierarchy* cut = gutachter_hierarchy_new ();
+  GtkTreeIter         iter;
+  gchar             * msg;
+
+  g_test_queue_unref (cut);
+
+  gutachter_hierarchy_get_iter (cut, &iter, "/com/github/herzi/gutachter/dummy");
+  gutachter_assert_cmpptr (NULL, ==, gutachter_hierarchy_get_message (cut, &iter));
+
+  gutachter_hierarchy_append_message (cut, &iter, "test message A");
+  msg = gutachter_hierarchy_get_message (cut, &iter);
+  g_test_queue_free (msg);
+
+  g_assert_cmpstr (msg, ==, "test message A");
+  gutachter_hierarchy_append_message (cut, &iter, "test message B");
+  msg = gutachter_hierarchy_get_message (cut, &iter);
+  g_assert_cmpstr (msg, ==, "test message A\ntest message B");
+}
+
 void
 add_tests_for_hierarchy (void)
 {
   g_test_add_func (NAMESPACE "Hierarchy/clear", test_clear);
+  g_test_add_func (NAMESPACE "Hierarchy/append", test_append);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

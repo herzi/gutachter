@@ -73,6 +73,51 @@ gutachter_hierarchy_class_init (GutachterHierarchyClass* self_class)
 }
 
 /**
+ * gutachter_hierarchy_append_message:
+ * @self: a #GutachterHierarchy
+ * @iter: a valid #GtkTreeIter for @self
+ * @message: the message to be appended
+ *
+ * Append a message to the current output for a test. If @message is %NULL,
+ * the empty string ("") will be appended.
+ */
+void
+gutachter_hierarchy_append_message (GutachterHierarchy* self,
+                                    GtkTreeIter       * iter,
+                                    gchar const       * message)
+{
+  GString* stored = NULL;
+
+  g_return_if_fail (GUTACHTER_IS_HIERARCHY (self));
+  g_return_if_fail (gtk_tree_store_iter_is_valid (GTK_TREE_STORE (self), iter));
+
+  gtk_tree_model_get (GTK_TREE_MODEL (self), iter,
+                      COL_MESSAGE, &stored,
+                      -1);
+
+  if (!message)
+    {
+      message = "";
+    }
+
+  if (!stored)
+    {
+      stored = g_string_new (message);
+    }
+  else
+    {
+      g_string_append (stored, "\n");
+      g_string_append (stored, message);
+    }
+
+  gtk_tree_store_set (GTK_TREE_STORE (self), iter,
+                      COL_MESSAGE, stored,
+                      -1);
+
+  g_string_free (stored, TRUE);
+}
+
+/**
  * gutachter_hierarchy_clear:
  * @self: a #GutachterHierarchy
  *
