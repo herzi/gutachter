@@ -24,6 +24,8 @@
 #include <string.h>   /* strerror() */
 #include <sys/wait.h> /* WIFEXITED() */
 
+/* FIXME: make sure we kill Xvfb when a signal handler gets triggered */
+
 struct _GutachterXvfbPrivate
 {
   guint64  display;

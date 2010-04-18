@@ -22,7 +22,11 @@
 
 #include <glib.h>
 
-static void test1 (void) {}
+static void
+test1 (void)
+{
+  g_test_message ("successfully passed the test");
+}
 
 int
 main (int   argc,

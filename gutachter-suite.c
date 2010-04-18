@@ -725,6 +725,9 @@ gutachter_suite_read_available (GutachterSuite* self)
               gutachter_hierarchy_append_message (PRIV (self)->hierarchy, &PRIV (self)->iter, msg->strings[0]);
               update_parent (store, &PRIV (self)->iter);
               break;
+            case G_TEST_LOG_MESSAGE:
+              gutachter_hierarchy_append_message (PRIV (self)->hierarchy, &PRIV (self)->iter, msg->strings[0]);
+              break;
             default:
               g_warning ("%s(%s): unexpected message type: %d",
                          G_STRFUNC, G_STRLOC,

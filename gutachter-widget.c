@@ -125,12 +125,48 @@ full_path_data_func (GtkTreeViewColumn* column    G_GNUC_UNUSED,
 }
 
 static void
+hierarchy_selection_changed (GtkTreeSelection* selection,
+                             gpointer          user_data)
+{
+  GutachterWidget* self = user_data;
+  GtkTreeModel   * model;
+  GtkTreeIter      iter;
+
+  if (selection == gtk_tree_view_get_selection (GTK_TREE_VIEW (PRIV (self)->hierarchy_view)) &&
+      gtk_notebook_get_current_page (GTK_NOTEBOOK (PRIV (self)->notebook)) == 0)
+    {
+      /* hierarchy selection changed, errors are displayed */
+      return;
+    }
+
+  if (gtk_tree_selection_get_selected (selection, &model, &iter))
+    {
+      gchar* error_message = gutachter_hierarchy_get_message (GUTACHTER_HIERARCHY (model), &iter);
+      gtk_text_buffer_set_text (gtk_text_view_get_buffer (GTK_TEXT_VIEW (PRIV (self)->error_text_view)),
+                                error_message ? error_message : "", -1);
+      g_free (error_message);
+    }
+  else
+    {
+      gtk_text_buffer_set_text (gtk_text_view_get_buffer (GTK_TEXT_VIEW (PRIV (self)->error_text_view)),
+                                "", -1);
+    }
+}
+
+static void
 failure_selection_changed (GtkTreeSelection* selection,
                            gpointer          user_data)
 {
   GutachterWidget* self = user_data;
   GtkTreeModel   * model;
   GtkTreeIter      iter;
+
+  if (selection == gtk_tree_view_get_selection (GTK_TREE_VIEW (PRIV (self)->failure_view)) &&
+      gtk_notebook_get_current_page (GTK_NOTEBOOK (PRIV (self)->notebook)) == 1)
+    {
+      /* failures selection changed, hierarchy is displayed */
+      return;
+    }
 
   if (gtk_tree_selection_get_selected (selection, &model, &iter))
     {
@@ -155,6 +191,33 @@ failure_selection_changed (GtkTreeSelection* selection,
 }
 
 static void
+notebook_page_changed (GObject   * notebook,
+                       GParamSpec* pspec     G_GNUC_UNUSED,
+                       gpointer    user_data)
+{
+  GtkWidget* treeview = NULL;
+  void (*callback) (GtkTreeSelection*, gpointer) = NULL;
+
+  switch (gtk_notebook_get_current_page (GTK_NOTEBOOK (notebook)))
+    {
+    case 0:
+      treeview = PRIV (user_data)->failure_view;
+      callback = failure_selection_changed;
+      break;
+    case 1:
+      treeview = PRIV (user_data)->hierarchy_view;
+      callback = hierarchy_selection_changed;
+      break;
+    default:
+      g_assert_not_reached ();
+      break;
+    }
+
+  callback (gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview)),
+            user_data);
+}
+
+static void
 gutachter_widget_init (GutachterWidget* self)
 {
   GtkTreeViewColumn* column;
@@ -172,8 +235,12 @@ gutachter_widget_init (GutachterWidget* self)
   PRIV (self)->progress = gtk_progress_bar_new ();
   paned = gtk_vpaned_new ();
 
+  g_signal_connect (gtk_tree_view_get_selection (GTK_TREE_VIEW (PRIV (self)->hierarchy_view)), "changed",
+                    G_CALLBACK (hierarchy_selection_changed), self);
   g_signal_connect (gtk_tree_view_get_selection (GTK_TREE_VIEW (PRIV (self)->failure_view)), "changed",
                     G_CALLBACK (failure_selection_changed), self);
+  g_signal_connect (PRIV (self)->notebook, "notify::page",
+                    G_CALLBACK (notebook_page_changed), self);
 
   column = gtk_tree_view_column_new ();
   gtk_tree_view_column_set_expand (column, TRUE);
@@ -203,8 +270,9 @@ gutachter_widget_init (GutachterWidget* self)
                                        "text", GUTACHTER_HIERARCHY_COLUMN_NAME,
                                        NULL);
   gtk_tree_view_insert_column (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), column, -1);
-
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (PRIV (self)->hierarchy_view), FALSE);
+  gtk_tree_selection_set_mode (gtk_tree_view_get_selection (GTK_TREE_VIEW (PRIV (self)->failure_view)),
+                               GTK_SELECTION_BROWSE);
 
   gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (PRIV (self)->error_text_view), GTK_WRAP_WORD_CHAR);
 
@@ -425,8 +493,8 @@ rows_reordered_cb (GtkTreeModel* model     G_GNUC_UNUSED,
 }
 
 static void
-status_changed_cb (GObject   * suite     G_GNUC_UNUSED,
-                   GParamSpec* pspec     G_GNUC_UNUSED,
+status_changed_cb (GObject   * object    G_GNUC_UNUSED,
+                   GParamSpec* pspec,
                    gpointer    user_data)
 {
   GutachterSuiteStatus  status;
@@ -434,7 +502,8 @@ status_changed_cb (GObject   * suite     G_GNUC_UNUSED,
 
   status = gutachter_suite_get_status (PRIV (self)->suite);
 
-  if (status == GUTACHTER_SUITE_LOADED || (!pspec && status > GUTACHTER_SUITE_LOADED))
+  if (status == GUTACHTER_SUITE_LOADED ||
+      (!pspec && status > GUTACHTER_SUITE_LOADED && status < GUTACHTER_SUITE_ERROR))
     {
       gtk_tree_view_expand_all (GTK_TREE_VIEW (PRIV (self)->hierarchy_view));
 
