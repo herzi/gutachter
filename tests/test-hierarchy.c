@@ -41,7 +41,7 @@ test_clear (void)
   g_assert_cmpstr (msg, ==, "test message A");
 
   gutachter_hierarchy_reset (cut);
-  gutachter_assert_cmpptr (NULL, ==, gutachter_hierarchy_get_message (cut, &iter));
+  g_assert_cmpstr (NULL, ==, gutachter_hierarchy_get_message (cut, &iter));
 }
 
 void

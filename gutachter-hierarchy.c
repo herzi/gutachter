@@ -45,7 +45,7 @@ gutachter_hierarchy_init (GutachterHierarchy* self)
           G_TYPE_BOOLEAN,
           G_TYPE_BOOLEAN,
           G_TYPE_STRING,
-          G_TYPE_STRING,
+          G_TYPE_GSTRING,
           G_TYPE_BOOLEAN
   };
 
@@ -172,14 +172,21 @@ gchar*
 gutachter_hierarchy_get_message (GutachterHierarchy* self,
                                  GtkTreeIter       * iter)
 {
-  gchar* result = NULL;
+  GString* stored = NULL;
+  gchar  * result = NULL;
 
   g_return_val_if_fail (GUTACHTER_IS_HIERARCHY (self), NULL);
   g_return_val_if_fail (gtk_tree_store_iter_is_valid (GTK_TREE_STORE (self), iter), NULL);
 
   gtk_tree_model_get (GTK_TREE_MODEL (self), iter,
-                      COL_MESSAGE, &result,
+                      COL_MESSAGE, &stored,
                       -1);
+
+  if (stored)
+    {
+      result = stored->str;
+      g_string_free (stored, FALSE);
+    }
 
   return result;
 }
@@ -260,11 +267,29 @@ gutachter_hierarchy_set_message (GutachterHierarchy* self,
                                  GtkTreeIter       * iter,
                                  gchar const       * message)
 {
+  GString* stored = NULL;
+
   g_return_if_fail (GUTACHTER_IS_HIERARCHY (self));
   g_return_if_fail (gtk_tree_store_iter_is_valid (GTK_TREE_STORE (self), iter));
 
+  if (message)
+    {
+      gtk_tree_model_get (GTK_TREE_MODEL (self), iter,
+                          COL_MESSAGE, &stored,
+                          -1);
+
+      if (stored)
+        {
+          g_string_assign (stored, message);
+        }
+      else
+        {
+          stored = g_string_new (message);
+        }
+    }
+
   gtk_tree_store_set (GTK_TREE_STORE (self), iter,
-                      COL_MESSAGE, message,
+                      COL_MESSAGE, stored,
                       -1);
 }
 
