@@ -703,7 +703,8 @@ gutachter_suite_read_available (GutachterSuite* self)
                                   GUTACHTER_HIERARCHY_COLUMN_UNSURE, FALSE,
                                   GUTACHTER_HIERARCHY_COLUMN_PASSED, FALSE,
                                   -1);
-              gutachter_hierarchy_set_message (PRIV (self)->hierarchy, &PRIV (self)->iter, msg->strings[0]);
+              /* FIXME: maybe use append_error() -- we could use markup then… */
+              gutachter_hierarchy_append_message (PRIV (self)->hierarchy, &PRIV (self)->iter, msg->strings[0]);
               update_parent (store, &PRIV (self)->iter);
               break;
             default:

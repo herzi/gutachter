@@ -63,9 +63,6 @@ gboolean            gutachter_hierarchy_lookup_iter    (GutachterHierarchy* self
                                                         GtkTreeIter       * iter,
                                                         gchar const       * path);
 void                gutachter_hierarchy_reset          (GutachterHierarchy* self);
-void                gutachter_hierarchy_set_message    (GutachterHierarchy* self,
-                                                        GtkTreeIter       * iter,
-                                                        gchar const       * message);
 
 struct _GutachterHierarchy
 {

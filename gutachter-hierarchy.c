@@ -286,9 +286,8 @@ set_unsure (GtkTreeModel* model,
 {
   gtk_tree_store_set (GTK_TREE_STORE (model), iter,
                       GUTACHTER_HIERARCHY_COLUMN_UNSURE, TRUE,
+                      COL_MESSAGE, NULL,
                       -1);
-  gutachter_hierarchy_set_message ((GutachterHierarchy*) model,
-                                   iter, NULL);
 
   return FALSE;
 }
@@ -305,37 +304,6 @@ gutachter_hierarchy_reset (GutachterHierarchy* self)
   g_return_if_fail (GUTACHTER_IS_HIERARCHY (self));
 
   gtk_tree_model_foreach (GTK_TREE_MODEL (self), set_unsure, NULL);
-}
-
-void
-gutachter_hierarchy_set_message (GutachterHierarchy* self,
-                                 GtkTreeIter       * iter,
-                                 gchar const       * message)
-{
-  GString* stored = NULL;
-
-  g_return_if_fail (GUTACHTER_IS_HIERARCHY (self));
-  g_return_if_fail (gtk_tree_store_iter_is_valid (GTK_TREE_STORE (self), iter));
-
-  if (message)
-    {
-      gtk_tree_model_get (GTK_TREE_MODEL (self), iter,
-                          COL_MESSAGE, &stored,
-                          -1);
-
-      if (stored)
-        {
-          g_string_assign (stored, message);
-        }
-      else
-        {
-          stored = g_string_new (message);
-        }
-    }
-
-  gtk_tree_store_set (GTK_TREE_STORE (self), iter,
-                      COL_MESSAGE, stored,
-                      -1);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */
