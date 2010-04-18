@@ -235,6 +235,8 @@ set_unsure (GtkTreeModel* model,
   gtk_tree_store_set (GTK_TREE_STORE (model), iter,
                       GUTACHTER_HIERARCHY_COLUMN_UNSURE, TRUE,
                       -1);
+  gutachter_hierarchy_set_message ((GutachterHierarchy*) model,
+                                   iter, NULL);
 
   return FALSE;
 }
