@@ -404,7 +404,7 @@ gutachter_suite_execute (GutachterSuite* self)
       gutachter_suite_set_channel (self, channel);
       g_io_channel_unref (channel);
 
-      gutachter_hierarchy_set_unsure (GUTACHTER_HIERARCHY (gutachter_suite_get_tree (self)));
+      gutachter_hierarchy_reset (GUTACHTER_HIERARCHY (gutachter_suite_get_tree (self)));
     }
 
   close (pipes[1]);

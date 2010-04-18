@@ -72,6 +72,12 @@ gutachter_hierarchy_class_init (GutachterHierarchyClass* self_class)
   g_type_class_add_private (self_class, sizeof (GutachterHierarchyPrivate));
 }
 
+/**
+ * gutachter_hierarchy_clear:
+ * @self: a #GutachterHierarchy
+ *
+ * Remove all children of the hierarchy.
+ */
 void
 gutachter_hierarchy_clear (GutachterHierarchy* self)
 {
@@ -229,11 +235,18 @@ set_unsure (GtkTreeModel* model,
   gtk_tree_store_set (GTK_TREE_STORE (model), iter,
                       GUTACHTER_HIERARCHY_COLUMN_UNSURE, TRUE,
                       -1);
+
   return FALSE;
 }
 
+/**
+ * gutachter_hierarchy_reset:
+ * @self: a #GutachterHierarchy
+ *
+ * Reset the test results of this hierarchy.
+ */
 void
-gutachter_hierarchy_set_unsure (GutachterHierarchy* self)
+gutachter_hierarchy_reset (GutachterHierarchy* self)
 {
   g_return_if_fail (GUTACHTER_IS_HIERARCHY (self));
 
