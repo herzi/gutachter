@@ -6,11 +6,6 @@ AUTOMAKE_OPTIONS = 1.6
 # tell GNU make that we don't like anything but "make -j1"
 .NOTPARALLEL:
 
-# This is a blank Makefile.am for using gtk-doc.
-# Copy this to your project's API docs directory and modify the variables to
-# suit your project. See the GTK+ Makefiles in gtk+/docs/reference for examples
-# of using the various options.
-
 # The name of the module, e.g. 'glib'.
 DOC_MODULE=gutachter
 
@@ -55,7 +50,7 @@ FIXXREF_OPTIONS=
 HFILE_GLOB=$(top_srcdir)/*.h
 CFILE_GLOB=$(top_srcdir)/*.c
 
-$(DOC_MODULES).types: $(H_FILE_GLOB)
+$(DOC_MODULE).types: $(H_FILE_GLOB)
 
 # Header files to ignore when scanning.
 # e.g. IGNORE_HFILES=gtkdebug.h gtkintl.h
