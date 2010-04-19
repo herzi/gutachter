@@ -255,7 +255,7 @@ gutachter_lookup_child (GtkWidget  * widget,
       end = strstr (lookup, "[");
       if (!end)
         {
-          g_warning ("the type starting at column %d doesn't have a lookup operator (\"[]\")",
+          g_warning ("the type starting at column %" G_GUINTPTR_FORMAT " doesn't have a lookup operator (\"[]\")",
                      lookup - path);
           return NULL;
         }
@@ -279,7 +279,7 @@ gutachter_lookup_child (GtkWidget  * widget,
 
       if (!end || *end != ']')
         {
-          g_warning ("the index starting at column %d doesn't seem to be properly terminated: expected ']', got '%c': %s",
+          g_warning ("the index starting at column %" G_GUINTPTR_FORMAT " doesn't seem to be properly terminated: expected ']', got '%c': %s",
                      lookup - path, *end,
                      path);
           return NULL;
@@ -320,7 +320,7 @@ gutachter_lookup_child (GtkWidget  * widget,
         }
       else
         {
-          g_warning ("unexpected character after widget lookup (column %d): expected dereferencing (\":\") or end: '%c'",
+          g_warning ("unexpected character after widget lookup (column %" G_GUINTPTR_FORMAT "): expected dereferencing (\":\") or end: '%c'",
                      lookup - path, *lookup);
           return NULL;
         }
