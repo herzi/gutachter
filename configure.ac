@@ -1,4 +1,4 @@
-AC_INIT(gutachter,0.0.1,http://github.com/herzi/gutachter/issues)
+AC_INIT(gutachter,0.0.2,http://github.com/herzi/gutachter/issues)
 AM_INIT_AUTOMAKE([no-define dist-bzip2])
 
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])

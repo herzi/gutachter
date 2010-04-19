@@ -1,3 +1,19 @@
+Gutachter 0.0.2
+===============
+This release focused on implementing some requested features and stabilizing
+the code. Many tests have been added to ensure that this code works.
+
+* Display messages for passed tests, too; fixes:
+  http://github.com/herzi/gutachter/issues/closed#issue/4
+* manage the GSource ids to ensure that we're not leaking sources; fixes:
+  http://github.com/herzi/gutachter/issues/closed#issue/5
+* added Galician translation (from nacho)
+* support older GTK+ versions
+* add an initial version of the API reference
+  (online at http://herzi.github.com/gutachter/reference/index.html)
+* clean up the API: rename the window and the widget; drop some private
+  functions
+
 Gutachter 0.0.1
 ===============
 This is the initial release. It provides a simple user interface for running

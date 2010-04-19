@@ -209,8 +209,9 @@ test_display_failure (void)
                                    &end_iter,
                                    TRUE);
   g_test_queue_free (text);
-  g_assert_cmpstr ("ERROR:tests/test-fail.c:28:dummy_fail: assertion failed: (FALSE)",
-                   ==, text);
+  /* during distcheck the error looks like this "ERROR:../tests/test-fail.c:…" */
+  g_assert (g_str_has_prefix (text, "ERROR:"));
+  g_assert (g_str_has_suffix (text, "tests/test-fail.c:28:dummy_fail: assertion failed: (FALSE)"));
 }
 
 static void
