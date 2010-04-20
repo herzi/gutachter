@@ -250,14 +250,71 @@ test_start_execute (void)
   g_main_loop_run (loop);
 }
 
+static void
+test_finish_message_cb (GObject   * suite,
+                        GParamSpec* pspec     G_GNUC_UNUSED,
+                        gpointer    user_data)
+{
+  switch (gutachter_suite_get_status (GUTACHTER_SUITE (suite)))
+    {
+    case GUTACHTER_SUITE_LOADING:
+    case GUTACHTER_SUITE_RUNNING:
+      /* expected, ignore */
+      break;
+    case GUTACHTER_SUITE_LOADED:
+      gutachter_suite_execute (GUTACHTER_SUITE (suite));
+      break;
+    case GUTACHTER_SUITE_FINISHED:
+      g_main_loop_quit (user_data);
+      break;
+    default:
+      g_assert_not_reached ();
+      break;
+    }
+}
+
+static void
+test_finish_message (void)
+{
+  /* GLib versions prior to 2.26 trigger ERROR messages when g_message() was used */
+  GutachterSuite* cut;
+  GMainLoop     * loop;
+  GFile         * file = g_file_new_for_commandline_arg ("test-message");
+
+  g_test_queue_unref (file);
+  loop = g_main_loop_new (NULL, FALSE);
+  g_test_queue_destroy ((GDestroyNotify) g_main_loop_unref, loop);
+
+  cut = gutachter_suite_new (file);
+  g_signal_connect (cut, "notify::status",
+                    G_CALLBACK (test_finish_message_cb), loop);
+
+  gutachter_suite_load (cut);
+
+  g_main_loop_run (loop);
+  g_assert_cmpint (GUTACHTER_SUITE_FINISHED, ==, gutachter_suite_get_status (cut));
+
+  g_assert_cmpint (1, ==, gutachter_suite_get_tests (cut));
+  g_assert_cmpint (1, ==, gutachter_suite_get_executed (cut));
+  if (FALSE && GLIB_CHECK_VERSION (0, 0, 0)) /* see gnome bug 616280 */
+    {
+      g_assert_cmpint (0, ==, gutachter_suite_get_failures (cut));
+    }
+  else
+    {
+      g_assert_cmpint (1, ==, gutachter_suite_get_failures (cut));
+    }
+}
+
 void
 add_tests_for_suite (void)
 {
   g_test_add_func (NAMESPACE "GutachterSuite/initialize", test_init);
   g_test_add_func (NAMESPACE "GutachterSuite/load", test_load);
   g_test_add_func (NAMESPACE "GutachterSuite/load-missing", test_load_missing);
-  g_test_add_func (NAMESPACE "GutachterSuite/auto-execute", test_auto_execute);
-  g_test_add_func (NAMESPACE "GutachterSuite/start-execute", test_start_execute);
+  g_test_add_func (NAMESPACE "GutachterSuite/execute-immediately", test_auto_execute);
+  g_test_add_func (NAMESPACE "GutachterSuite/execute-and-unref", test_start_execute);
+  g_test_add_func (NAMESPACE "GutachterSuite/finish-with-message", test_finish_message);
 }
 
 /* vim:set et sw=2 cino=t0,f0,(0,{s,>2s,n-1s,^-1s,e2s: */

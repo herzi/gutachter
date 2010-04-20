@@ -28,4 +28,5 @@ missing
 *.pc
 test-fail
 test-gutachter
+test-message
 test-pass

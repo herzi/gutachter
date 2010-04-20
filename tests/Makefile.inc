@@ -18,6 +18,10 @@ test_gutachter_SOURCES=\
 	tests/test-xvfb.c \
 	$(NULL)
 
+noinst_PROGRAMS+=test-message
+test_message_LDADD=$(GUTACHTER_LIBS)
+test_message_SOURCES=tests/test-message.c
+
 noinst_PROGRAMS+=test-pass
 test_pass_LDADD=$(GUTACHTER_LIBS)
 test_pass_SOURCES=tests/test-pass.c

@@ -57,6 +57,7 @@ struct _GutachterSuitePrivate
   guint32               io_watch;
   GtkTreeIter           iter;
   guint                 passed : 1;
+  guint                 passes_current_test : 1;
   GPid                  pid;
   GutachterSuiteStatus  status;
   guint64               tests;
@@ -374,8 +375,6 @@ run_test_child_watch (GPid      pid,
       gutachter_suite_read_available (suite);
     }
 
-  gutachter_suite_set_status (suite, GUTACHTER_SUITE_FINISHED);
-
   if (PRIV (suite)->io_watch)
     {
       g_source_remove (PRIV (suite)->io_watch);
@@ -385,8 +384,21 @@ run_test_child_watch (GPid      pid,
   gutachter_suite_read_available (suite);
   gutachter_suite_set_channel (suite, NULL);
 
+  if (gtk_tree_store_iter_is_valid (GTK_TREE_STORE (PRIV (suite)->hierarchy), &PRIV (suite)->iter))
+    {
+      /* FIXME: move into the hierarchy */
+      PRIV (suite)->passed = FALSE;
+      PRIV (suite)->failures++;
+      gtk_tree_store_set (GTK_TREE_STORE (PRIV (suite)->hierarchy), &PRIV (suite)->iter,
+                          GUTACHTER_HIERARCHY_COLUMN_UNSURE, FALSE,
+                          GUTACHTER_HIERARCHY_COLUMN_PASSED, FALSE,
+                          -1);
+    }
+
   g_source_remove (PRIV (suite)->child_watch);
   PRIV (suite)->child_watch = 0;
+
+  gutachter_suite_set_status (suite, GUTACHTER_SUITE_FINISHED);
 }
 
 void
@@ -416,7 +428,7 @@ gutachter_suite_execute (GutachterSuite* self)
       g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
       g_assert (!PRIV (self)->io_watch);
       PRIV (self)->io_watch = g_io_add_watch (channel, G_IO_IN, io_func, self);
-      PRIV (self)->child_watch = g_child_watch_add_full (G_PRIORITY_DEFAULT, PRIV (self)->pid, run_test_child_watch, self, NULL);
+      PRIV (self)->child_watch = g_child_watch_add (PRIV (self)->pid, run_test_child_watch, self);
 
       gutachter_suite_set_status (self, GUTACHTER_SUITE_RUNNING);
       gutachter_suite_set_channel (self, channel);
@@ -592,7 +604,7 @@ gutachter_suite_load (GutachterSuite* self)
       g_io_channel_set_flags (channel, G_IO_FLAG_NONBLOCK, NULL);
       g_assert (!PRIV (self)->io_watch);
       PRIV (self)->io_watch = g_io_add_watch (channel, G_IO_IN, io_func, suite);
-      PRIV (self)->child_watch = g_child_watch_add_full (G_PRIORITY_DEFAULT, PRIV (self)->pid, child_watch_cb, suite, NULL);
+      PRIV (self)->child_watch = g_child_watch_add (PRIV (self)->pid, child_watch_cb, suite);
       gutachter_suite_set_status (suite, GUTACHTER_SUITE_LOADING);
       gutachter_suite_set_channel (suite, channel);
       g_io_channel_unref (channel);
@@ -699,28 +711,32 @@ gutachter_suite_read_available (GutachterSuite* self)
               break;
             case G_TEST_LOG_START_CASE:
               gutachter_hierarchy_lookup_iter (PRIV (self)->hierarchy, &PRIV (self)->iter, msg->strings[0]);
+              PRIV (self)->executed++;
+              PRIV (self)->passes_current_test = TRUE;
               break;
             case G_TEST_LOG_STOP_CASE:
-              PRIV (self)->executed++;
+              /* FIXME: move into the hierarchy */
               gtk_tree_store_set (store, &PRIV (self)->iter,
                                   GUTACHTER_HIERARCHY_COLUMN_UNSURE, FALSE,
-                                  GUTACHTER_HIERARCHY_COLUMN_PASSED, msg->nums[0] == 0,
+                                  GUTACHTER_HIERARCHY_COLUMN_PASSED, PRIV (self)->passes_current_test && msg->nums[0] == 0,
                                   -1);
+              if (!PRIV (self)->passes_current_test)
+                {
+                  PRIV (self)->passed = FALSE;
+                  PRIV (self)->failures++;
+                }
               update_parent (store, &PRIV (self)->iter);
 #if 0
               g_message ("status %d; nforks %d; elapsed %Lf",
                          (int)msg->nums[0], (int)msg->nums[1], msg->nums[2]);
 #endif
+              PRIV (self)->iter.stamp = 0;
+              PRIV (self)->iter.user_data = NULL;
+              PRIV (self)->iter.user_data2 = NULL;
+              PRIV (self)->iter.user_data3 = NULL;
               break;
             case G_TEST_LOG_ERROR:
-              PRIV (self)->executed++;
-              PRIV (self)->passed = FALSE;
-              PRIV (self)->failures++;
-              /* FIXME: move into the hierarchy */
-              gtk_tree_store_set (store, &PRIV (self)->iter,
-                                  GUTACHTER_HIERARCHY_COLUMN_UNSURE, FALSE,
-                                  GUTACHTER_HIERARCHY_COLUMN_PASSED, FALSE,
-                                  -1);
+              PRIV (self)->passes_current_test = FALSE;
               /* FIXME: maybe use append_error() -- we could use markup then… */
               gutachter_hierarchy_append_message (PRIV (self)->hierarchy, &PRIV (self)->iter, msg->strings[0]);
               update_parent (store, &PRIV (self)->iter);
