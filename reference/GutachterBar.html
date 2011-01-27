@@ -4,15 +4,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GutachterBar</title>
 <meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
-<link rel="home" href="index.html" title="gutachter Reference Manual">
-<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="home" href="index.html" title="Gutachter Reference Manual">
+<link rel="up" href="ch01.html" title="API Reference">
 <link rel="prev" href="GutachterSuite.html" title="GutachterSuite">
 <link rel="next" href="GutachterXvfb.html" title="GutachterXvfb">
-<meta name="generator" content="GTK-Doc V1.11 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="[Insert title here]">
-<link rel="chapter" href="object-tree.html" title="Object Hierarchy">
-<link rel="index" href="api-index-full.html" title="API Index">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -20,17 +17,17 @@
 <td><a accesskey="p" href="GutachterSuite.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
 <td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
-<th width="100%" align="center">gutachter Reference Manual</th>
+<th width="100%" align="center">Gutachter Reference Manual</th>
 <td><a accesskey="n" href="GutachterXvfb.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
 </tr>
 <tr><td colspan="5" class="shortcuts">
 <a href="#GutachterBar.synopsis" class="shortcut">Top</a>
-                 | 
-                <a href="#GutachterBar.description" class="shortcut">Description</a>
-                 | 
-                <a href="#GutachterBar.object-hierarchy" class="shortcut">Object Hierarchy</a>
-                 | 
-                <a href="#GutachterBar.implemented-interfaces" class="shortcut">Implemented Interfaces</a>
+                   | 
+                  <a href="#GutachterBar.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GutachterBar.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GutachterBar.implemented-interfaces" class="shortcut">Implemented Interfaces</a>
 </td></tr>
 </table>
 <div class="refentry" title="GutachterBar">
@@ -44,39 +41,23 @@
 </tr></table></div>
 <div class="refsynopsisdiv" title="Synopsis">
 <a name="GutachterBar.synopsis"></a><h2>Synopsis</h2>
-<pre class="synopsis">
-                    GutachterBarPrivate;
-<a
-href="/usr/share/gtk-doc/html/gtk/GtkWidget.html"
->GtkWidget</a>*          gutachter_bar_new                   (void);
-void                gutachter_bar_set_okay              (GutachterBar *self,
-                                                         <a
-href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
->gboolean</a> okay);
-                    GutachterBar;
+<pre class="synopsis">                    <a class="link" href="GutachterBar.html#GutachterBar-struct" title="GutachterBar">GutachterBar</a>;
+                    <a class="link" href="GutachterBar.html#GutachterBarClass" title="GutachterBarClass">GutachterBarClass</a>;
+                    <a class="link" href="GutachterBar.html#GutachterBarPrivate" title="GutachterBarPrivate">GutachterBarPrivate</a>;
+<span class="returnvalue">GtkWidget</span>*          <a class="link" href="GutachterBar.html#gutachter-bar-new" title="gutachter_bar_new ()">gutachter_bar_new</a>                   (<em class="parameter"><code><span class="type">void</span></code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GutachterBar.html#gutachter-bar-set-okay" title="gutachter_bar_set_okay ()">gutachter_bar_set_okay</a>              (<em class="parameter"><code><a class="link" href="GutachterBar.html" title="GutachterBar"><span class="type">GutachterBar</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> okay</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
 <a name="GutachterBar.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a
-href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"
->GObject</a>
-   +----<a
-href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GInitiallyUnowned"
->GInitiallyUnowned</a>
-         +----<a
-href="/usr/share/gtk-doc/html/gtk/GtkObject.html"
->GtkObject</a>
-               +----<a
-href="/usr/share/gtk-doc/html/gtk/GtkWidget.html"
->GtkWidget</a>
-                     +----<a
-href="/usr/share/gtk-doc/html/gtk/GtkContainer.html"
->GtkContainer</a>
-                           +----<a
-href="/usr/share/gtk-doc/html/gtk/GtkBin.html"
->GtkBin</a>
+  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GInitiallyUnowned">GInitiallyUnowned</a>
+         +----GtkObject
+               +----GtkWidget
+                     +----GtkContainer
+                           +----GtkBin
                                  +----GutachterBar
 </pre>
 </div>
@@ -84,15 +65,26 @@ href="/usr/share/gtk-doc/html/gtk/GtkBin.html"
 <a name="GutachterBar.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GutachterBar implements
- <a
-href="/usr/share/gtk-doc/html/gtk/gtk-gtkbuildable.html#GtkBuildable"
->GtkBuildable</a> and  AtkImplementorIface.</p>
+ AtkImplementorIface and  GtkBuildable.</p>
 </div>
 <div class="refsect1" title="Description">
 <a name="GutachterBar.description"></a><h2>Description</h2>
 </div>
 <div class="refsect1" title="Details">
 <a name="GutachterBar.details"></a><h2>Details</h2>
+<div class="refsect2" title="GutachterBar">
+<a name="GutachterBar-struct"></a><h3>GutachterBar</h3>
+<pre class="programlisting">typedef struct _GutachterBar GutachterBar;</pre>
+</div>
+<hr>
+<div class="refsect2" title="GutachterBarClass">
+<a name="GutachterBarClass"></a><h3>GutachterBarClass</h3>
+<pre class="programlisting">typedef struct {
+  GtkBinClass          base_class;
+} GutachterBarClass;
+</pre>
+</div>
+<hr>
 <div class="refsect2" title="GutachterBarPrivate">
 <a name="GutachterBarPrivate"></a><h3>GutachterBarPrivate</h3>
 <pre class="programlisting">typedef struct _GutachterBarPrivate GutachterBarPrivate;</pre>
@@ -100,27 +92,18 @@ href="/usr/share/gtk-doc/html/gtk/gtk-gtkbuildable.html#GtkBuildable"
 <hr>
 <div class="refsect2" title="gutachter_bar_new ()">
 <a name="gutachter-bar-new"></a><h3>gutachter_bar_new ()</h3>
-<pre class="programlisting"><a
-href="/usr/share/gtk-doc/html/gtk/GtkWidget.html"
->GtkWidget</a>*          gutachter_bar_new                   (void);</pre>
+<pre class="programlisting"><span class="returnvalue">GtkWidget</span>*          gutachter_bar_new                   (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 </div>
 <hr>
 <div class="refsect2" title="gutachter_bar_set_okay ()">
 <a name="gutachter-bar-set-okay"></a><h3>gutachter_bar_set_okay ()</h3>
-<pre class="programlisting">void                gutachter_bar_set_okay              (GutachterBar *self,
-                                                         <a
-href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
->gboolean</a> okay);</pre>
-</div>
-<hr>
-<div class="refsect2" title="GutachterBar">
-<a name="GutachterBar-struct"></a><h3>GutachterBar</h3>
-<pre class="programlisting">typedef struct _GutachterBar GutachterBar;</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gutachter_bar_set_okay              (<em class="parameter"><code><a class="link" href="GutachterBar.html" title="GutachterBar"><span class="type">GutachterBar</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> okay</code></em>);</pre>
 </div>
 </div>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.11</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

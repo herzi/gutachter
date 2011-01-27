@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GutachterWidget</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="Gutachter Reference Manual">
+<link rel="up" href="ch01.html" title="API Reference">
+<link rel="prev" href="ch01.html" title="API Reference">
+<link rel="next" href="GutachterTreeList.html" title="GutachterTreeList">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="ch01.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">Gutachter Reference Manual</th>
+<td><a accesskey="n" href="GutachterTreeList.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#GutachterWidget.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GutachterWidget.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GutachterWidget.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GutachterWidget.implemented-interfaces" class="shortcut">Implemented Interfaces</a>
+</td></tr>
+</table>
+<div class="refentry" title="GutachterWidget">
+<a name="GutachterWidget"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GutachterWidget.top_of_page"></a>GutachterWidget</span></h2>
+<p>GutachterWidget</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv" title="Synopsis">
+<a name="GutachterWidget.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">                    <a class="link" href="GutachterWidget.html#GutachterWidget-struct" title="GutachterWidget">GutachterWidget</a>;
+                    <a class="link" href="GutachterWidget.html#GutachterWidgetClass" title="GutachterWidgetClass">GutachterWidgetClass</a>;
+                    <a class="link" href="GutachterWidget.html#GutachterWidgetPrivate" title="GutachterWidgetPrivate">GutachterWidgetPrivate</a>;
+<span class="returnvalue">GtkWidget</span>*          <a class="link" href="GutachterWidget.html#gutachter-widget-new" title="gutachter_widget_new ()">gutachter_widget_new</a>                (<em class="parameter"><code><span class="type">void</span></code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GutachterWidget.html#gutachter-widget-set-suite" title="gutachter_widget_set_suite ()">gutachter_widget_set_suite</a>          (<em class="parameter"><code><a class="link" href="GutachterWidget.html" title="GutachterWidget"><span class="type">GutachterWidget</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GutachterSuite.html" title="GutachterSuite"><span class="type">GutachterSuite</span></a> *suite</code></em>);
+</pre>
+</div>
+<div class="refsect1" title="Object Hierarchy">
+<a name="GutachterWidget.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GInitiallyUnowned">GInitiallyUnowned</a>
+         +----GtkObject
+               +----GtkWidget
+                     +----GtkContainer
+                           +----GtkBox
+                                 +----GtkVBox
+                                       +----GutachterWidget
+</pre>
+</div>
+<div class="refsect1" title="Implemented Interfaces">
+<a name="GutachterWidget.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
+<p>
+GutachterWidget implements
+ AtkImplementorIface,  GtkBuildable,  GtkOrientable and  <a class="link" href="GutachterRunner.html" title="GutachterRunner">GutachterRunner</a>.</p>
+</div>
+<div class="refsect1" title="Description">
+<a name="GutachterWidget.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1" title="Details">
+<a name="GutachterWidget.details"></a><h2>Details</h2>
+<div class="refsect2" title="GutachterWidget">
+<a name="GutachterWidget-struct"></a><h3>GutachterWidget</h3>
+<pre class="programlisting">typedef struct _GutachterWidget GutachterWidget;</pre>
+</div>
+<hr>
+<div class="refsect2" title="GutachterWidgetClass">
+<a name="GutachterWidgetClass"></a><h3>GutachterWidgetClass</h3>
+<pre class="programlisting">typedef struct {
+  GtkVBoxClass            base_class;
+} GutachterWidgetClass;
+</pre>
+</div>
+<hr>
+<div class="refsect2" title="GutachterWidgetPrivate">
+<a name="GutachterWidgetPrivate"></a><h3>GutachterWidgetPrivate</h3>
+<pre class="programlisting">typedef struct _GutachterWidgetPrivate GutachterWidgetPrivate;</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_widget_new ()">
+<a name="gutachter-widget-new"></a><h3>gutachter_widget_new ()</h3>
+<pre class="programlisting"><span class="returnvalue">GtkWidget</span>*          gutachter_widget_new                (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_widget_set_suite ()">
+<a name="gutachter-widget-set-suite"></a><h3>gutachter_widget_set_suite ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>                gutachter_widget_set_suite          (<em class="parameter"><code><a class="link" href="GutachterWidget.html" title="GutachterWidget"><span class="type">GutachterWidget</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a class="link" href="GutachterSuite.html" title="GutachterSuite"><span class="type">GutachterSuite</span></a> *suite</code></em>);</pre>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.15</div>
+</body>
+</html>

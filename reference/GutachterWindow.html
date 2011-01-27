@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>GutachterWindow</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="Gutachter Reference Manual">
+<link rel="up" href="ch01.html" title="API Reference">
+<link rel="prev" href="GutachterHierarchy.html" title="GutachterHierarchy">
+<link rel="next" href="GutachterSuite.html" title="GutachterSuite">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="GutachterHierarchy.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">Gutachter Reference Manual</th>
+<td><a accesskey="n" href="GutachterSuite.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#GutachterWindow.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#GutachterWindow.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GutachterWindow.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GutachterWindow.implemented-interfaces" class="shortcut">Implemented Interfaces</a>
+</td></tr>
+</table>
+<div class="refentry" title="GutachterWindow">
+<a name="GutachterWindow"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="GutachterWindow.top_of_page"></a>GutachterWindow</span></h2>
+<p>GutachterWindow</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv" title="Synopsis">
+<a name="GutachterWindow.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis">                    <a class="link" href="GutachterWindow.html#GutachterWindow-struct" title="GutachterWindow">GutachterWindow</a>;
+                    <a class="link" href="GutachterWindow.html#GutachterWindowClass" title="GutachterWindowClass">GutachterWindowClass</a>;
+                    <a class="link" href="GutachterWindow.html#GutachterWindowPrivate" title="GutachterWindowPrivate">GutachterWindowPrivate</a>;
+<span class="returnvalue">GtkWidget</span>*          <a class="link" href="GutachterWindow.html#gutachter-window-new" title="gutachter_window_new ()">gutachter_window_new</a>                (<em class="parameter"><code><span class="type">void</span></code></em>);
+</pre>
+</div>
+<div class="refsect1" title="Object Hierarchy">
+<a name="GutachterWindow.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="synopsis">
+  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+   +----<a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GInitiallyUnowned">GInitiallyUnowned</a>
+         +----GtkObject
+               +----GtkWidget
+                     +----GtkContainer
+                           +----GtkBin
+                                 +----GtkWindow
+                                       +----GutachterWindow
+</pre>
+</div>
+<div class="refsect1" title="Implemented Interfaces">
+<a name="GutachterWindow.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
+<p>
+GutachterWindow implements
+ AtkImplementorIface,  GtkBuildable and  <a class="link" href="GutachterRunner.html" title="GutachterRunner">GutachterRunner</a>.</p>
+</div>
+<div class="refsect1" title="Description">
+<a name="GutachterWindow.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1" title="Details">
+<a name="GutachterWindow.details"></a><h2>Details</h2>
+<div class="refsect2" title="GutachterWindow">
+<a name="GutachterWindow-struct"></a><h3>GutachterWindow</h3>
+<pre class="programlisting">typedef struct _GutachterWindow GutachterWindow;</pre>
+</div>
+<hr>
+<div class="refsect2" title="GutachterWindowClass">
+<a name="GutachterWindowClass"></a><h3>GutachterWindowClass</h3>
+<pre class="programlisting">typedef struct {
+  GtkWindowClass          base_class;
+} GutachterWindowClass;
+</pre>
+</div>
+<hr>
+<div class="refsect2" title="GutachterWindowPrivate">
+<a name="GutachterWindowPrivate"></a><h3>GutachterWindowPrivate</h3>
+<pre class="programlisting">typedef struct _GutachterWindowPrivate GutachterWindowPrivate;</pre>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_window_new ()">
+<a name="gutachter-window-new"></a><h3>gutachter_window_new ()</h3>
+<pre class="programlisting"><span class="returnvalue">GtkWidget</span>*          gutachter_window_new                (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.15</div>
+</body>
+</html>

@@ -4,15 +4,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GutachterXvfb</title>
 <meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
-<link rel="home" href="index.html" title="gutachter Reference Manual">
-<link rel="up" href="ch01.html" title="[Insert title here]">
+<link rel="home" href="index.html" title="Gutachter Reference Manual">
+<link rel="up" href="ch01.html" title="API Reference">
 <link rel="prev" href="GutachterBar.html" title="GutachterBar">
-<link rel="next" href="gutachter-gutachter-runner.html" title="gutachter-runner">
-<meta name="generator" content="GTK-Doc V1.11 (XML mode)">
+<link rel="next" href="GutachterRunner.html" title="GutachterRunner">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="[Insert title here]">
-<link rel="chapter" href="object-tree.html" title="Object Hierarchy">
-<link rel="index" href="api-index-full.html" title="API Index">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
@@ -20,15 +17,15 @@
 <td><a accesskey="p" href="GutachterBar.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
 <td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
-<th width="100%" align="center">gutachter Reference Manual</th>
-<td><a accesskey="n" href="gutachter-gutachter-runner.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+<th width="100%" align="center">Gutachter Reference Manual</th>
+<td><a accesskey="n" href="GutachterRunner.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
 </tr>
 <tr><td colspan="5" class="shortcuts">
 <a href="#GutachterXvfb.synopsis" class="shortcut">Top</a>
-                 | 
-                <a href="#GutachterXvfb.description" class="shortcut">Description</a>
-                 | 
-                <a href="#GutachterXvfb.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GutachterXvfb.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GutachterXvfb.object-hierarchy" class="shortcut">Object Hierarchy</a>
 </td></tr>
 </table>
 <div class="refentry" title="GutachterXvfb">
@@ -42,38 +39,24 @@
 </tr></table></div>
 <div class="refsynopsisdiv" title="Synopsis">
 <a name="GutachterXvfb.synopsis"></a><h2>Synopsis</h2>
-<pre class="synopsis">
-                    GutachterXvfbPrivate;
-GutachterXvfb*      gutachter_xvfb_get_instance         (void);
-<a
-href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"
->guint64</a>             gutachter_xvfb_get_display          (GutachterXvfb *self);
-<a
-href="/usr/share/gtk-doc/html/glib/glib-The-Main-Event-Loop.html#GPid"
->GPid</a>                gutachter_xvfb_get_pid              (GutachterXvfb *self);
-void                gutachter_xvfb_set_display          (GutachterXvfb *self,
-                                                         <a
-href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"
->guint64</a> display);
-void                gutachter_xvfb_set_pid              (GutachterXvfb *self,
-                                                         <a
-href="/usr/share/gtk-doc/html/glib/glib-The-Main-Event-Loop.html#GPid"
->GPid</a> pid);
-<a
-href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
->gboolean</a>            gutachter_xvfb_wait                 (GutachterXvfb *self,
-                                                         <a
-href="/usr/share/gtk-doc/html/glib/glib-Error-Reporting.html#GError"
->GError</a> **error);
-                    GutachterXvfb;
+<pre class="synopsis">                    <a class="link" href="GutachterXvfb.html#GutachterXvfb-struct" title="GutachterXvfb">GutachterXvfb</a>;
+                    <a class="link" href="GutachterXvfb.html#GutachterXvfbClass" title="GutachterXvfbClass">GutachterXvfbClass</a>;
+                    <a class="link" href="GutachterXvfb.html#GutachterXvfbPrivate" title="GutachterXvfbPrivate">GutachterXvfbPrivate</a>;
+<a class="link" href="GutachterXvfb.html" title="GutachterXvfb"><span class="returnvalue">GutachterXvfb</span></a>*      <a class="link" href="GutachterXvfb.html#gutachter-xvfb-get-instance" title="gutachter_xvfb_get_instance ()">gutachter_xvfb_get_instance</a>         (<em class="parameter"><code><span class="type">void</span></code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="returnvalue">guint64</span></a>             <a class="link" href="GutachterXvfb.html#gutachter-xvfb-get-display" title="gutachter_xvfb_get_display ()">gutachter_xvfb_get_display</a>          (<em class="parameter"><code><a class="link" href="GutachterXvfb.html" title="GutachterXvfb"><span class="type">GutachterXvfb</span></a> *self</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-The-Main-Event-Loop.html#GPid"><span class="returnvalue">GPid</span></a>                <a class="link" href="GutachterXvfb.html#gutachter-xvfb-get-pid" title="gutachter_xvfb_get_pid ()">gutachter_xvfb_get_pid</a>              (<em class="parameter"><code><a class="link" href="GutachterXvfb.html" title="GutachterXvfb"><span class="type">GutachterXvfb</span></a> *self</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GutachterXvfb.html#gutachter-xvfb-set-display" title="gutachter_xvfb_set_display ()">gutachter_xvfb_set_display</a>          (<em class="parameter"><code><a class="link" href="GutachterXvfb.html" title="GutachterXvfb"><span class="type">GutachterXvfb</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> display</code></em>);
+<span class="returnvalue">void</span>                <a class="link" href="GutachterXvfb.html#gutachter-xvfb-set-pid" title="gutachter_xvfb_set_pid ()">gutachter_xvfb_set_pid</a>              (<em class="parameter"><code><a class="link" href="GutachterXvfb.html" title="GutachterXvfb"><span class="type">GutachterXvfb</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-The-Main-Event-Loop.html#GPid"><span class="type">GPid</span></a> pid</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GutachterXvfb.html#gutachter-xvfb-wait" title="gutachter_xvfb_wait ()">gutachter_xvfb_wait</a>                 (<em class="parameter"><code><a class="link" href="GutachterXvfb.html" title="GutachterXvfb"><span class="type">GutachterXvfb</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
 <a name="GutachterXvfb.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a
-href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"
->GObject</a>
+  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
    +----GutachterXvfb
 </pre>
 </div>
@@ -82,6 +65,19 @@ href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"
 </div>
 <div class="refsect1" title="Details">
 <a name="GutachterXvfb.details"></a><h2>Details</h2>
+<div class="refsect2" title="GutachterXvfb">
+<a name="GutachterXvfb-struct"></a><h3>GutachterXvfb</h3>
+<pre class="programlisting">typedef struct _GutachterXvfb GutachterXvfb;</pre>
+</div>
+<hr>
+<div class="refsect2" title="GutachterXvfbClass">
+<a name="GutachterXvfbClass"></a><h3>GutachterXvfbClass</h3>
+<pre class="programlisting">typedef struct {
+  GObjectClass          base_class;
+} GutachterXvfbClass;
+</pre>
+</div>
+<hr>
 <div class="refsect2" title="GutachterXvfbPrivate">
 <a name="GutachterXvfbPrivate"></a><h3>GutachterXvfbPrivate</h3>
 <pre class="programlisting">typedef struct _GutachterXvfbPrivate GutachterXvfbPrivate;</pre>
@@ -89,57 +85,40 @@ href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"
 <hr>
 <div class="refsect2" title="gutachter_xvfb_get_instance ()">
 <a name="gutachter-xvfb-get-instance"></a><h3>gutachter_xvfb_get_instance ()</h3>
-<pre class="programlisting">GutachterXvfb*      gutachter_xvfb_get_instance         (void);</pre>
+<pre class="programlisting"><a class="link" href="GutachterXvfb.html" title="GutachterXvfb"><span class="returnvalue">GutachterXvfb</span></a>*      gutachter_xvfb_get_instance         (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 </div>
 <hr>
 <div class="refsect2" title="gutachter_xvfb_get_display ()">
 <a name="gutachter-xvfb-get-display"></a><h3>gutachter_xvfb_get_display ()</h3>
-<pre class="programlisting"><a
-href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"
->guint64</a>             gutachter_xvfb_get_display          (GutachterXvfb *self);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="returnvalue">guint64</span></a>             gutachter_xvfb_get_display          (<em class="parameter"><code><a class="link" href="GutachterXvfb.html" title="GutachterXvfb"><span class="type">GutachterXvfb</span></a> *self</code></em>);</pre>
 </div>
 <hr>
 <div class="refsect2" title="gutachter_xvfb_get_pid ()">
 <a name="gutachter-xvfb-get-pid"></a><h3>gutachter_xvfb_get_pid ()</h3>
-<pre class="programlisting"><a
-href="/usr/share/gtk-doc/html/glib/glib-The-Main-Event-Loop.html#GPid"
->GPid</a>                gutachter_xvfb_get_pid              (GutachterXvfb *self);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-The-Main-Event-Loop.html#GPid"><span class="returnvalue">GPid</span></a>                gutachter_xvfb_get_pid              (<em class="parameter"><code><a class="link" href="GutachterXvfb.html" title="GutachterXvfb"><span class="type">GutachterXvfb</span></a> *self</code></em>);</pre>
 </div>
 <hr>
 <div class="refsect2" title="gutachter_xvfb_set_display ()">
 <a name="gutachter-xvfb-set-display"></a><h3>gutachter_xvfb_set_display ()</h3>
-<pre class="programlisting">void                gutachter_xvfb_set_display          (GutachterXvfb *self,
-                                                         <a
-href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"
->guint64</a> display);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gutachter_xvfb_set_display          (<em class="parameter"><code><a class="link" href="GutachterXvfb.html" title="GutachterXvfb"><span class="type">GutachterXvfb</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> display</code></em>);</pre>
 </div>
 <hr>
 <div class="refsect2" title="gutachter_xvfb_set_pid ()">
 <a name="gutachter-xvfb-set-pid"></a><h3>gutachter_xvfb_set_pid ()</h3>
-<pre class="programlisting">void                gutachter_xvfb_set_pid              (GutachterXvfb *self,
-                                                         <a
-href="/usr/share/gtk-doc/html/glib/glib-The-Main-Event-Loop.html#GPid"
->GPid</a> pid);</pre>
+<pre class="programlisting"><span class="returnvalue">void</span>                gutachter_xvfb_set_pid              (<em class="parameter"><code><a class="link" href="GutachterXvfb.html" title="GutachterXvfb"><span class="type">GutachterXvfb</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-The-Main-Event-Loop.html#GPid"><span class="type">GPid</span></a> pid</code></em>);</pre>
 </div>
 <hr>
 <div class="refsect2" title="gutachter_xvfb_wait ()">
 <a name="gutachter-xvfb-wait"></a><h3>gutachter_xvfb_wait ()</h3>
-<pre class="programlisting"><a
-href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
->gboolean</a>            gutachter_xvfb_wait                 (GutachterXvfb *self,
-                                                         <a
-href="/usr/share/gtk-doc/html/glib/glib-Error-Reporting.html#GError"
->GError</a> **error);</pre>
-</div>
-<hr>
-<div class="refsect2" title="GutachterXvfb">
-<a name="GutachterXvfb-struct"></a><h3>GutachterXvfb</h3>
-<pre class="programlisting">typedef struct _GutachterXvfb GutachterXvfb;</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gutachter_xvfb_wait                 (<em class="parameter"><code><a class="link" href="GutachterXvfb.html" title="GutachterXvfb"><span class="type">GutachterXvfb</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 </div>
 </div>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.11</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>

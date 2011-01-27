@@ -1,59 +1,57 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!DOCTYPE book PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "">
-<book xmlns="http://www.devhelp.net/book" title="gutachter Reference Manual" link="index.html" author="" name="gutachter" version="2" language="c">
+<book xmlns="http://www.devhelp.net/book" title="Gutachter Reference Manual" link="index.html" author="" name="gutachter" version="2" language="c">
   <chapters>
-    <sub name="[Insert title here]" link="ch01.html">
-      <sub name="GtkTestWidget" link="GtkTestWidget.html"/>
+    <sub name="API Reference" link="ch01.html">
+      <sub name="GutachterWidget" link="GutachterWidget.html"/>
       <sub name="GutachterTreeList" link="GutachterTreeList.html"/>
       <sub name="GutachterHierarchy" link="GutachterHierarchy.html"/>
-      <sub name="GtkTestWindow" link="GtkTestWindow.html"/>
+      <sub name="GutachterWindow" link="GutachterWindow.html"/>
       <sub name="GutachterSuite" link="GutachterSuite.html"/>
       <sub name="GutachterBar" link="GutachterBar.html"/>
       <sub name="GutachterXvfb" link="GutachterXvfb.html"/>
-      <sub name="gutachter-runner" link="gutachter-gutachter-runner.html"/>
-      <sub name="compat-gtk" link="gutachter-compat-gtk.html"/>
+      <sub name="GutachterRunner" link="GutachterRunner.html"/>
       <sub name="gutachter-paths" link="gutachter-gutachter-paths.html"/>
       <sub name="gutachter-types" link="gutachter-gutachter-types.html"/>
-      <sub name="test-main" link="gutachter-test-main.html"/>
+    </sub>
+    <sub name="Test Utilities" link="ch02.html">
+      <sub name="Widget Lookup" link="gutachter-Widget-Lookup.html"/>
     </sub>
     <sub name="Object Hierarchy" link="object-tree.html"/>
     <sub name="API Index" link="api-index-full.html"/>
   </chapters>
   <functions>
-    <keyword type="struct" name="GtkTestWidgetPrivate" link="GtkTestWidget.html#GtkTestWidgetPrivate"/>
-    <keyword type="function" name="gtk_test_widget_new ()" link="GtkTestWidget.html#gtk-test-widget-new"/>
-    <keyword type="function" name="gtk_test_widget_get_hierarchy ()" link="GtkTestWidget.html#gtk-test-widget-get-hierarchy"/>
-    <keyword type="function" name="gtk_test_widget_get_notebook ()" link="GtkTestWidget.html#gtk-test-widget-get-notebook"/>
-    <keyword type="function" name="gtk_test_widget_get_progress ()" link="GtkTestWidget.html#gtk-test-widget-get-progress"/>
-    <keyword type="function" name="gtk_test_widget_set_suite ()" link="GtkTestWidget.html#gtk-test-widget-set-suite"/>
-    <keyword type="struct" name="GtkTestWidget" link="GtkTestWidget.html#GtkTestWidget-struct"/>
+    <keyword type="struct" name="GutachterWidget" link="GutachterWidget.html#GutachterWidget-struct"/>
+    <keyword type="struct" name="GutachterWidgetClass" link="GutachterWidget.html#GutachterWidgetClass"/>
+    <keyword type="struct" name="GutachterWidgetPrivate" link="GutachterWidget.html#GutachterWidgetPrivate"/>
+    <keyword type="function" name="gutachter_widget_new ()" link="GutachterWidget.html#gutachter-widget-new"/>
+    <keyword type="function" name="gutachter_widget_set_suite ()" link="GutachterWidget.html#gutachter-widget-set-suite"/>
+    <keyword type="struct" name="GutachterTreeList" link="GutachterTreeList.html#GutachterTreeList-struct"/>
+    <keyword type="struct" name="GutachterTreeListClass" link="GutachterTreeList.html#GutachterTreeListClass"/>
     <keyword type="struct" name="GutachterTreeListPrivate" link="GutachterTreeList.html#GutachterTreeListPrivate"/>
     <keyword type="function" name="gutachter_tree_list_new ()" link="GutachterTreeList.html#gutachter-tree-list-new"/>
     <keyword type="function" name="gutachter_tree_list_get_model ()" link="GutachterTreeList.html#gutachter-tree-list-get-model"/>
     <keyword type="function" name="gutachter_tree_list_iter_from_child ()" link="GutachterTreeList.html#gutachter-tree-list-iter-from-child"/>
     <keyword type="function" name="gutachter_tree_list_iter_to_child ()" link="GutachterTreeList.html#gutachter-tree-list-iter-to-child"/>
-    <keyword type="struct" name="GutachterTreeList" link="GutachterTreeList.html#GutachterTreeList-struct"/>
     <keyword type="property" name="The &quot;model&quot; property" link="GutachterTreeList.html#GutachterTreeList--model"/>
+    <keyword type="struct" name="GutachterHierarchy" link="GutachterHierarchy.html#GutachterHierarchy-struct"/>
+    <keyword type="struct" name="GutachterHierarchyClass" link="GutachterHierarchy.html#GutachterHierarchyClass"/>
     <keyword type="struct" name="GutachterHierarchyPrivate" link="GutachterHierarchy.html#GutachterHierarchyPrivate"/>
     <keyword type="function" name="gutachter_hierarchy_new ()" link="GutachterHierarchy.html#gutachter-hierarchy-new"/>
+    <keyword type="function" name="gutachter_hierarchy_append_message ()" link="GutachterHierarchy.html#gutachter-hierarchy-append-message"/>
     <keyword type="function" name="gutachter_hierarchy_clear ()" link="GutachterHierarchy.html#gutachter-hierarchy-clear"/>
     <keyword type="function" name="gutachter_hierarchy_get_full_path ()" link="GutachterHierarchy.html#gutachter-hierarchy-get-full-path"/>
     <keyword type="function" name="gutachter_hierarchy_get_iter ()" link="GutachterHierarchy.html#gutachter-hierarchy-get-iter"/>
     <keyword type="function" name="gutachter_hierarchy_get_message ()" link="GutachterHierarchy.html#gutachter-hierarchy-get-message"/>
     <keyword type="function" name="gutachter_hierarchy_is_testcase ()" link="GutachterHierarchy.html#gutachter-hierarchy-is-testcase"/>
     <keyword type="function" name="gutachter_hierarchy_lookup_iter ()" link="GutachterHierarchy.html#gutachter-hierarchy-lookup-iter"/>
-    <keyword type="function" name="gutachter_hierarchy_set_unsure ()" link="GutachterHierarchy.html#gutachter-hierarchy-set-unsure"/>
-    <keyword type="function" name="gutachter_hierarchy_set_message ()" link="GutachterHierarchy.html#gutachter-hierarchy-set-message"/>
-    <keyword type="struct" name="GutachterHierarchy" link="GutachterHierarchy.html#GutachterHierarchy-struct"/>
-    <keyword type="struct" name="GtkTestWindowPrivate" link="GtkTestWindow.html#GtkTestWindowPrivate"/>
-    <keyword type="function" name="gtk_test_window_new ()" link="GtkTestWindow.html#gtk-test-window-new"/>
-    <keyword type="function" name="gtk_test_window_get_box ()" link="GtkTestWindow.html#gtk-test-window-get-box"/>
-    <keyword type="function" name="gtk_test_window_get_exec ()" link="GtkTestWindow.html#gtk-test-window-get-exec"/>
-    <keyword type="function" name="gtk_test_window_get_open ()" link="GtkTestWindow.html#gtk-test-window-get-open"/>
-    <keyword type="function" name="gtk_test_window_get_toolbar ()" link="GtkTestWindow.html#gtk-test-window-get-toolbar"/>
-    <keyword type="function" name="gtk_test_window_get_widget ()" link="GtkTestWindow.html#gtk-test-window-get-widget"/>
-    <keyword type="function" name="gtk_test_window_update_title ()" link="GtkTestWindow.html#gtk-test-window-update-title"/>
-    <keyword type="struct" name="GtkTestWindow" link="GtkTestWindow.html#GtkTestWindow-struct"/>
+    <keyword type="function" name="gutachter_hierarchy_reset ()" link="GutachterHierarchy.html#gutachter-hierarchy-reset"/>
+    <keyword type="struct" name="GutachterWindow" link="GutachterWindow.html#GutachterWindow-struct"/>
+    <keyword type="struct" name="GutachterWindowClass" link="GutachterWindow.html#GutachterWindowClass"/>
+    <keyword type="struct" name="GutachterWindowPrivate" link="GutachterWindow.html#GutachterWindowPrivate"/>
+    <keyword type="function" name="gutachter_window_new ()" link="GutachterWindow.html#gutachter-window-new"/>
+    <keyword type="struct" name="GutachterSuite" link="GutachterSuite.html#GutachterSuite-struct"/>
+    <keyword type="struct" name="GutachterSuiteClass" link="GutachterSuite.html#GutachterSuiteClass"/>
     <keyword type="struct" name="GutachterSuitePrivate" link="GutachterSuite.html#GutachterSuitePrivate"/>
     <keyword type="enum" name="enum GutachterSuiteRunningMode" link="GutachterSuite.html#GutachterSuiteRunningMode"/>
     <keyword type="enum" name="enum GutachterSuiteStatus" link="GutachterSuite.html#GutachterSuiteStatus"/>
@@ -61,6 +59,7 @@
     <keyword type="function" name="gutachter_suite_execute ()" link="GutachterSuite.html#gutachter-suite-execute"/>
     <keyword type="function" name="gutachter_suite_get_buffer ()" link="GutachterSuite.html#gutachter-suite-get-buffer"/>
     <keyword type="function" name="gutachter_suite_get_channel ()" link="GutachterSuite.html#gutachter-suite-get-channel"/>
+    <keyword type="function" name="gutachter_suite_get_error ()" link="GutachterSuite.html#gutachter-suite-get-error"/>
     <keyword type="function" name="gutachter_suite_get_executed ()" link="GutachterSuite.html#gutachter-suite-get-executed"/>
     <keyword type="function" name="gutachter_suite_get_failures ()" link="GutachterSuite.html#gutachter-suite-get-failures"/>
     <keyword type="function" name="gutachter_suite_get_file ()" link="GutachterSuite.html#gutachter-suite-get-file"/>
@@ -68,23 +67,21 @@
     <keyword type="function" name="gutachter_suite_get_status ()" link="GutachterSuite.html#gutachter-suite-get-status"/>
     <keyword type="function" name="gutachter_suite_get_tests ()" link="GutachterSuite.html#gutachter-suite-get-tests"/>
     <keyword type="function" name="gutachter_suite_get_tree ()" link="GutachterSuite.html#gutachter-suite-get-tree"/>
-    <keyword type="function" name="io_func ()" link="GutachterSuite.html#io-func"/>
-    <keyword type="function" name="run_test_child_watch ()" link="GutachterSuite.html#run-test-child-watch"/>
-    <keyword type="function" name="child_watch_cb ()" link="GutachterSuite.html#child-watch-cb"/>
-    <keyword type="function" name="run_or_warn ()" link="GutachterSuite.html#run-or-warn"/>
     <keyword type="function" name="gutachter_suite_load ()" link="GutachterSuite.html#gutachter-suite-load"/>
     <keyword type="function" name="gutachter_suite_read_available ()" link="GutachterSuite.html#gutachter-suite-read-available"/>
     <keyword type="function" name="gutachter_suite_reset ()" link="GutachterSuite.html#gutachter-suite-reset"/>
     <keyword type="function" name="gutachter_suite_set_channel ()" link="GutachterSuite.html#gutachter-suite-set-channel"/>
     <keyword type="function" name="gutachter_suite_set_executed ()" link="GutachterSuite.html#gutachter-suite-set-executed"/>
     <keyword type="function" name="gutachter_suite_set_status ()" link="GutachterSuite.html#gutachter-suite-set-status"/>
-    <keyword type="struct" name="GutachterSuite" link="GutachterSuite.html#GutachterSuite-struct"/>
     <keyword type="property" name="The &quot;file&quot; property" link="GutachterSuite.html#GutachterSuite--file"/>
     <keyword type="property" name="The &quot;status&quot; property" link="GutachterSuite.html#GutachterSuite--status"/>
+    <keyword type="struct" name="GutachterBar" link="GutachterBar.html#GutachterBar-struct"/>
+    <keyword type="struct" name="GutachterBarClass" link="GutachterBar.html#GutachterBarClass"/>
     <keyword type="struct" name="GutachterBarPrivate" link="GutachterBar.html#GutachterBarPrivate"/>
     <keyword type="function" name="gutachter_bar_new ()" link="GutachterBar.html#gutachter-bar-new"/>
     <keyword type="function" name="gutachter_bar_set_okay ()" link="GutachterBar.html#gutachter-bar-set-okay"/>
-    <keyword type="struct" name="GutachterBar" link="GutachterBar.html#GutachterBar-struct"/>
+    <keyword type="struct" name="GutachterXvfb" link="GutachterXvfb.html#GutachterXvfb-struct"/>
+    <keyword type="struct" name="GutachterXvfbClass" link="GutachterXvfb.html#GutachterXvfbClass"/>
     <keyword type="struct" name="GutachterXvfbPrivate" link="GutachterXvfb.html#GutachterXvfbPrivate"/>
     <keyword type="function" name="gutachter_xvfb_get_instance ()" link="GutachterXvfb.html#gutachter-xvfb-get-instance"/>
     <keyword type="function" name="gutachter_xvfb_get_display ()" link="GutachterXvfb.html#gutachter-xvfb-get-display"/>
@@ -92,20 +89,23 @@
     <keyword type="function" name="gutachter_xvfb_set_display ()" link="GutachterXvfb.html#gutachter-xvfb-set-display"/>
     <keyword type="function" name="gutachter_xvfb_set_pid ()" link="GutachterXvfb.html#gutachter-xvfb-set-pid"/>
     <keyword type="function" name="gutachter_xvfb_wait ()" link="GutachterXvfb.html#gutachter-xvfb-wait"/>
-    <keyword type="struct" name="GutachterXvfb" link="GutachterXvfb.html#GutachterXvfb-struct"/>
-    <keyword type="struct" name="GutachterRunner" link="gutachter-gutachter-runner.html#GutachterRunner-struct"/>
-    <keyword type="struct" name="GutachterRunnerIface" link="gutachter-gutachter-runner.html#GutachterRunnerIface"/>
-    <keyword type="function" name="gutachter_runner_get_file ()" link="gutachter-gutachter-runner.html#gutachter-runner-get-file"/>
-    <keyword type="function" name="gutachter_runner_get_suite ()" link="gutachter-gutachter-runner.html#gutachter-runner-get-suite"/>
-    <keyword type="function" name="gutachter_runner_set_file ()" link="gutachter-gutachter-runner.html#gutachter-runner-set-file"/>
-    <keyword type="property" name="The &quot;test-suite&quot; property" link="gutachter-gutachter-runner.html#GutachterRunner--test-suite"/>
-    <keyword type="macro" name="gtk_widget_get_allocation()" link="gutachter-compat-gtk.html#gtk-widget-get-allocation"/>
-    <keyword type="macro" name="gtk_widget_set_allocation()" link="gutachter-compat-gtk.html#gtk-widget-set-allocation"/>
-    <keyword type="macro" name="LOCALEDIR" link="gutachter-gutachter-paths.html#LOCALEDIR--CAPS"/>
-    <keyword type="macro" name="GUTACHTER_TYPE_SUITE_STATUS" link="gutachter-gutachter-types.html#GUTACHTER-TYPE-SUITE-STATUS--CAPS"/>
+    <keyword type="struct" name="GutachterRunner" link="GutachterRunner.html#GutachterRunner-struct"/>
+    <keyword type="struct" name="GutachterRunnerIface" link="GutachterRunner.html#GutachterRunnerIface"/>
+    <keyword type="function" name="gutachter_runner_get_file ()" link="GutachterRunner.html#gutachter-runner-get-file"/>
+    <keyword type="function" name="gutachter_runner_get_suite ()" link="GutachterRunner.html#gutachter-runner-get-suite"/>
+    <keyword type="function" name="gutachter_runner_set_file ()" link="GutachterRunner.html#gutachter-runner-set-file"/>
+    <keyword type="property" name="The &quot;test-suite&quot; property" link="GutachterRunner.html#GutachterRunner--test-suite"/>
+    <keyword type="macro" name="LOCALEDIR" link="gutachter-gutachter-paths.html#LOCALEDIR:CAPS"/>
+    <keyword type="macro" name="GUTACHTER_TYPE_SUITE_STATUS" link="gutachter-gutachter-types.html#GUTACHTER-TYPE-SUITE-STATUS:CAPS"/>
     <keyword type="function" name="gutachter_suite_status_get_type ()" link="gutachter-gutachter-types.html#gutachter-suite-status-get-type"/>
-    <keyword type="macro" name="NAMESPACE" link="gutachter-test-main.html#NAMESPACE--CAPS"/>
-    <keyword type="function" name="add_tests_for_xvfb ()" link="gutachter-test-main.html#add-tests-for-xvfb"/>
-    <keyword type="function" name="add_tests_for_suite ()" link="gutachter-test-main.html#add-tests-for-suite"/>
+    <keyword type="function" name="gutachter_lookup_n_windows ()" link="gutachter-Widget-Lookup.html#gutachter-lookup-n-windows"/>
+    <keyword type="function" name="gutachter_lookup_child ()" link="gutachter-Widget-Lookup.html#gutachter-lookup-child"/>
+    <keyword type="function" name="gutachter_lookup_widget ()" link="gutachter-Widget-Lookup.html#gutachter-lookup-widget"/>
+    <keyword type="constant" name="GUTACHTER_SUITE_INDETERMINED" link="GutachterSuite.html#GUTACHTER-SUITE-INDETERMINED:CAPS"/>
+    <keyword type="constant" name="GUTACHTER_SUITE_LOADING" link="GutachterSuite.html#GUTACHTER-SUITE-LOADING:CAPS"/>
+    <keyword type="constant" name="GUTACHTER_SUITE_LOADED" link="GutachterSuite.html#GUTACHTER-SUITE-LOADED:CAPS"/>
+    <keyword type="constant" name="GUTACHTER_SUITE_RUNNING" link="GutachterSuite.html#GUTACHTER-SUITE-RUNNING:CAPS"/>
+    <keyword type="constant" name="GUTACHTER_SUITE_FINISHED" link="GutachterSuite.html#GUTACHTER-SUITE-FINISHED:CAPS"/>
+    <keyword type="constant" name="GUTACHTER_SUITE_ERROR" link="GutachterSuite.html#GUTACHTER-SUITE-ERROR:CAPS"/>
   </functions>
 </book>

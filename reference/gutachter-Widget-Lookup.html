@@ -1,0 +1,330 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Widget Lookup</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
+<link rel="home" href="index.html" title="Gutachter Reference Manual">
+<link rel="up" href="ch02.html" title="Test Utilities">
+<link rel="prev" href="ch02.html" title="Test Utilities">
+<link rel="next" href="object-tree.html" title="Object Hierarchy">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
+<tr valign="middle">
+<td><a accesskey="p" href="ch02.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="u" href="ch02.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
+<th width="100%" align="center">Gutachter Reference Manual</th>
+<td><a accesskey="n" href="object-tree.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
+</tr>
+<tr><td colspan="5" class="shortcuts">
+<a href="#gutachter-Widget-Lookup.synopsis" class="shortcut">Top</a>
+                   | 
+                  <a href="#gutachter-Widget-Lookup.description" class="shortcut">Description</a>
+</td></tr>
+</table>
+<div class="refentry" title="Widget Lookup">
+<a name="gutachter-Widget-Lookup"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="gutachter-Widget-Lookup.top_of_page"></a>Widget Lookup</span></h2>
+<p>Widget Lookup — functions for looking up widgets</p>
+</td>
+<td valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsynopsisdiv" title="Synopsis">
+<a name="gutachter-Widget-Lookup.synopsis"></a><h2>Synopsis</h2>
+<pre class="synopsis"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint32"><span class="returnvalue">guint32</span></a>             <a class="link" href="gutachter-Widget-Lookup.html#gutachter-lookup-n-windows" title="gutachter_lookup_n_windows ()">gutachter_lookup_n_windows</a>          (<em class="parameter"><code><span class="type">void</span></code></em>);
+<span class="returnvalue">GtkWidget</span>*          <a class="link" href="gutachter-Widget-Lookup.html#gutachter-lookup-child" title="gutachter_lookup_child ()">gutachter_lookup_child</a>              (<em class="parameter"><code><span class="type">GtkWidget</span> *widget</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> const*path</code></em>);
+<span class="returnvalue">GtkWidget</span>*          <a class="link" href="gutachter-Widget-Lookup.html#gutachter-lookup-widget" title="gutachter_lookup_widget ()">gutachter_lookup_widget</a>             (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> const*path</code></em>);
+</pre>
+</div>
+<div class="refsect1" title="Description">
+<a name="gutachter-Widget-Lookup.description"></a><h2>Description</h2>
+<p>
+These functions are useful to lookup widgets in tests. Imagine this widget structure:
+</p>
+<p>
+</p>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1
+2
+3
+4
+5</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function">GtkWindow</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">title </span><span class="string">"main window"</span><span class="symbol">)</span>
+<span class="normal"> </span><span class="symbol">+</span><span class="normal"> GtkHBox</span>
+<span class="normal">    </span><span class="symbol">+</span><span class="normal"> GtkLabel</span>
+<span class="normal">    </span><span class="symbol">+</span><span class="normal"> GtkEntry</span>
+<span class="normal">    </span><span class="symbol">+</span><span class="normal"> GtkButton</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p>
+</p>
+<p>
+ You can do these kinds of lookups:
+</p>
+<p>
+ </p>
+<div class="itemizedlist"><ul class="itemizedlist" type="disc">
+<li class="listitem">
+<p>
+       </p>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gutachter-Widget-Lookup.html#gutachter-lookup-child">gutachter_lookup_child</a></span><span class="symbol">(</span><span class="normal"><a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> </span><span class="string">""</span><span class="symbol">)</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p> will return <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+     </p>
+</li>
+<li class="listitem">
+<p>
+       </p>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gutachter-Widget-Lookup.html#gutachter-lookup-child">gutachter_lookup_child</a></span><span class="symbol">(</span><span class="normal"><a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> </span><span class="string">"urn:gtk:"</span><span class="symbol">)</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p> will return <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+     </p>
+</li>
+<li class="listitem">
+<p>
+       </p>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gutachter-Widget-Lookup.html#gutachter-lookup-child">gutachter_lookup_child</a></span><span class="symbol">(</span><span class="normal">window</span><span class="symbol">,</span><span class="normal"> </span><span class="string">""</span><span class="symbol">)</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p> will return the GtkWindow
+     </p>
+</li>
+<li class="listitem">
+<p>
+       </p>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gutachter-Widget-Lookup.html#gutachter-lookup-child">gutachter_lookup_child</a></span><span class="symbol">(</span><span class="normal">window</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"urn:gtk:"</span><span class="symbol">)</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p> will return the GtkWindow
+     </p>
+</li>
+<li class="listitem">
+<p>
+       </p>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gutachter-Widget-Lookup.html#gutachter-lookup-child">gutachter_lookup_child</a></span><span class="symbol">(</span><span class="normal"><a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="string">"urn:gtk:GtkWindow(</span><span class="specialchar">\"</span><span class="string">main window</span><span class="specialchar">\"</span><span class="string">)"</span><span class="symbol">)</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p> will return the <span class="type">GtkWindow</span>
+     </p>
+</li>
+<li class="listitem">
+<p>
+       </p>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gutachter-Widget-Lookup.html#gutachter-lookup-child">gutachter_lookup_child</a></span><span class="symbol">(</span><span class="normal">hbox</span><span class="symbol">,</span><span class="normal"> </span><span class="string">""</span><span class="symbol">)</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p> will return the <span class="type">GtkHBox</span>
+     </p>
+</li>
+<li class="listitem">
+<p>
+       </p>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gutachter-Widget-Lookup.html#gutachter-lookup-child">gutachter_lookup_child</a></span><span class="symbol">(</span><span class="normal">hbox</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"urn:gtk:"</span><span class="symbol">)</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p> will return the <span class="type">GtkHBox</span>
+     </p>
+</li>
+<li class="listitem">
+<p>
+       </p>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gutachter-Widget-Lookup.html#gutachter-lookup-child">gutachter_lookup_child</a></span><span class="symbol">(</span><span class="normal">window</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"urn:gtk:GtkWidget[0]"</span><span class="symbol">)</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p> will return the <span class="type">GtkHBox</span>
+     </p>
+</li>
+<li class="listitem">
+<p>
+       </p>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gutachter-Widget-Lookup.html#gutachter-lookup-child">gutachter_lookup_child</a></span><span class="symbol">(</span><span class="normal">label</span><span class="symbol">,</span><span class="normal"> </span><span class="string">""</span><span class="symbol">)</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p> will return the <span class="type">GtkLabel</span>
+     </p>
+</li>
+<li class="listitem">
+<p>
+       </p>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gutachter-Widget-Lookup.html#gutachter-lookup-child">gutachter_lookup_child</a></span><span class="symbol">(</span><span class="normal"><a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="string">"urn:gtk:GtkWindow(</span><span class="specialchar">\"</span><span class="string">main window</span><span class="specialchar">\"</span><span class="string">):GtkWidget[0]:GtkWidget[2]"</span><span class="symbol">)</span></pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p> will return the <span class="type">GtkButton</span>
+     </p>
+</li>
+</ul></div>
+<p>
+</p>
+</div>
+<div class="refsect1" title="Details">
+<a name="gutachter-Widget-Lookup.details"></a><h2>Details</h2>
+<div class="refsect2" title="gutachter_lookup_n_windows ()">
+<a name="gutachter-lookup-n-windows"></a><h3>gutachter_lookup_n_windows ()</h3>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#guint32"><span class="returnvalue">guint32</span></a>             gutachter_lookup_n_windows          (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+<p>
+Find out how many windows there are.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody><tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> the number of alive <span class="type">GtkWindow</span> objects
+</td>
+</tr></tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_lookup_child ()">
+<a name="gutachter-lookup-child"></a><h3>gutachter_lookup_child ()</h3>
+<pre class="programlisting"><span class="returnvalue">GtkWidget</span>*          gutachter_lookup_child              (<em class="parameter"><code><span class="type">GtkWidget</span> *widget</code></em>,
+                                                         <em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> const*path</code></em>);</pre>
+<p>
+Lookup a child of <em class="parameter"><code>widget</code></em> (or from the toplevel if <em class="parameter"><code>widget</code></em> is <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>).
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>widget</code></em> :</span></p></td>
+<td>the parent <span class="type">GtkWidget</span> or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>path</code></em> :</span></p></td>
+<td>the path to the desired widget
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> the child specified by <em class="parameter"><code>widget</code></em> and <em class="parameter"><code>path</code></em> or <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if not found.
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<hr>
+<div class="refsect2" title="gutachter_lookup_widget ()">
+<a name="gutachter-lookup-widget"></a><h3>gutachter_lookup_widget ()</h3>
+<pre class="programlisting"><span class="returnvalue">GtkWidget</span>*          gutachter_lookup_widget             (<em class="parameter"><code><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> const*path</code></em>);</pre>
+<p>
+Look up a widget from the top level. This is the same as
+<a class="link" href="gutachter-Widget-Lookup.html#gutachter-lookup-child" title="gutachter_lookup_child ()"><code class="function">gutachter_lookup_child()</code></a> with <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> as the first parameter.
+</p>
+<div class="variablelist"><table border="0">
+<col align="left" valign="top">
+<tbody>
+<tr>
+<td><p><span class="term"><em class="parameter"><code>path</code></em> :</span></p></td>
+<td>the path (from the toplevel) to the child
+</td>
+</tr>
+<tr>
+<td><p><span class="term"><span class="emphasis"><em>Returns</em></span> :</span></p></td>
+<td> a <span class="type">GtkWidget</span> if a child was found, <a href="/usr/share/gtk-doc/html/glib/glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> otherwise.
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.15</div>
+</body>
+</html>

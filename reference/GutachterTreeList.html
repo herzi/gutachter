@@ -4,35 +4,32 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GutachterTreeList</title>
 <meta name="generator" content="DocBook XSL Stylesheets V1.75.2">
-<link rel="home" href="index.html" title="gutachter Reference Manual">
-<link rel="up" href="ch01.html" title="[Insert title here]">
-<link rel="prev" href="GtkTestWidget.html" title="GtkTestWidget">
+<link rel="home" href="index.html" title="Gutachter Reference Manual">
+<link rel="up" href="ch01.html" title="API Reference">
+<link rel="prev" href="GutachterWidget.html" title="GutachterWidget">
 <link rel="next" href="GutachterHierarchy.html" title="GutachterHierarchy">
-<meta name="generator" content="GTK-Doc V1.11 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.15 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
-<link rel="chapter" href="ch01.html" title="[Insert title here]">
-<link rel="chapter" href="object-tree.html" title="Object Hierarchy">
-<link rel="index" href="api-index-full.html" title="API Index">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
 <table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="2">
 <tr valign="middle">
-<td><a accesskey="p" href="GtkTestWidget.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
+<td><a accesskey="p" href="GutachterWidget.html"><img src="left.png" width="24" height="24" border="0" alt="Prev"></a></td>
 <td><a accesskey="u" href="ch01.html"><img src="up.png" width="24" height="24" border="0" alt="Up"></a></td>
 <td><a accesskey="h" href="index.html"><img src="home.png" width="24" height="24" border="0" alt="Home"></a></td>
-<th width="100%" align="center">gutachter Reference Manual</th>
+<th width="100%" align="center">Gutachter Reference Manual</th>
 <td><a accesskey="n" href="GutachterHierarchy.html"><img src="right.png" width="24" height="24" border="0" alt="Next"></a></td>
 </tr>
 <tr><td colspan="5" class="shortcuts">
 <a href="#GutachterTreeList.synopsis" class="shortcut">Top</a>
-                 | 
-                <a href="#GutachterTreeList.description" class="shortcut">Description</a>
-                 | 
-                <a href="#GutachterTreeList.object-hierarchy" class="shortcut">Object Hierarchy</a>
-                 | 
-                <a href="#GutachterTreeList.implemented-interfaces" class="shortcut">Implemented Interfaces</a>
-                 | 
-                <a href="#GutachterTreeList.properties" class="shortcut">Properties</a>
+                   | 
+                  <a href="#GutachterTreeList.description" class="shortcut">Description</a>
+                   | 
+                  <a href="#GutachterTreeList.object-hierarchy" class="shortcut">Object Hierarchy</a>
+                   | 
+                  <a href="#GutachterTreeList.implemented-interfaces" class="shortcut">Implemented Interfaces</a>
+                   | 
+                  <a href="#GutachterTreeList.properties" class="shortcut">Properties</a>
 </td></tr>
 </table>
 <div class="refentry" title="GutachterTreeList">
@@ -46,43 +43,23 @@
 </tr></table></div>
 <div class="refsynopsisdiv" title="Synopsis">
 <a name="GutachterTreeList.synopsis"></a><h2>Synopsis</h2>
-<pre class="synopsis">
-                    GutachterTreeListPrivate;
-<a
-href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html"
->GtkTreeModel</a>*       gutachter_tree_list_new             (<a
-href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html"
->GtkTreeModel</a> *real_tree);
-<a
-href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html"
->GtkTreeModel</a>*       gutachter_tree_list_get_model       (GutachterTreeList *self);
-<a
-href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
->gboolean</a>            gutachter_tree_list_iter_from_child (GutachterTreeList *self,
-                                                         <a
-href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
->GtkTreeIter</a> *iter,
-                                                         <a
-href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
->GtkTreeIter</a> *child_iter);
-<a
-href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
->gboolean</a>            gutachter_tree_list_iter_to_child   (GutachterTreeList *self,
-                                                         <a
-href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
->GtkTreeIter</a> *child_iter,
-                                                         <a
-href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
->GtkTreeIter</a> *iter);
-                    GutachterTreeList;
+<pre class="synopsis">                    <a class="link" href="GutachterTreeList.html#GutachterTreeList-struct" title="GutachterTreeList">GutachterTreeList</a>;
+                    <a class="link" href="GutachterTreeList.html#GutachterTreeListClass" title="GutachterTreeListClass">GutachterTreeListClass</a>;
+                    <a class="link" href="GutachterTreeList.html#GutachterTreeListPrivate" title="GutachterTreeListPrivate">GutachterTreeListPrivate</a>;
+<span class="returnvalue">GtkTreeModel</span>*       <a class="link" href="GutachterTreeList.html#gutachter-tree-list-new" title="gutachter_tree_list_new ()">gutachter_tree_list_new</a>             (<em class="parameter"><code><span class="type">GtkTreeModel</span> *real_tree</code></em>);
+<span class="returnvalue">GtkTreeModel</span>*       <a class="link" href="GutachterTreeList.html#gutachter-tree-list-get-model" title="gutachter_tree_list_get_model ()">gutachter_tree_list_get_model</a>       (<em class="parameter"><code><a class="link" href="GutachterTreeList.html" title="GutachterTreeList"><span class="type">GutachterTreeList</span></a> *self</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GutachterTreeList.html#gutachter-tree-list-iter-from-child" title="gutachter_tree_list_iter_from_child ()">gutachter_tree_list_iter_from_child</a> (<em class="parameter"><code><a class="link" href="GutachterTreeList.html" title="GutachterTreeList"><span class="type">GutachterTreeList</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><span class="type">GtkTreeIter</span> *iter</code></em>,
+                                                         <em class="parameter"><code><span class="type">GtkTreeIter</span> *child_iter</code></em>);
+<a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            <a class="link" href="GutachterTreeList.html#gutachter-tree-list-iter-to-child" title="gutachter_tree_list_iter_to_child ()">gutachter_tree_list_iter_to_child</a>   (<em class="parameter"><code><a class="link" href="GutachterTreeList.html" title="GutachterTreeList"><span class="type">GutachterTreeList</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><span class="type">GtkTreeIter</span> *child_iter</code></em>,
+                                                         <em class="parameter"><code><span class="type">GtkTreeIter</span> *iter</code></em>);
 </pre>
 </div>
 <div class="refsect1" title="Object Hierarchy">
 <a name="GutachterTreeList.object-hierarchy"></a><h2>Object Hierarchy</h2>
 <pre class="synopsis">
-  <a
-href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"
->GObject</a>
+  <a href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject">GObject</a>
    +----GutachterTreeList
 </pre>
 </div>
@@ -90,16 +67,12 @@ href="/usr/share/gtk-doc/html/gobject/gobject-The-Base-Object-Type.html#GObject"
 <a name="GutachterTreeList.implemented-interfaces"></a><h2>Implemented Interfaces</h2>
 <p>
 GutachterTreeList implements
- <a
-href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html"
->GtkTreeModel</a>.</p>
+ GtkTreeModel.</p>
 </div>
 <div class="refsect1" title="Properties">
 <a name="GutachterTreeList.properties"></a><h2>Properties</h2>
 <pre class="synopsis">
-  "model"                    <a
-href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html"
->GtkTreeModel</a>*         : Write / Construct Only
+  "<a class="link" href="GutachterTreeList.html#GutachterTreeList--model" title='The "model" property'>model</a>"                    <span class="type">GtkTreeModel</span>*         : Write / Construct Only
 </pre>
 </div>
 <div class="refsect1" title="Description">
@@ -107,6 +80,19 @@ href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html"
 </div>
 <div class="refsect1" title="Details">
 <a name="GutachterTreeList.details"></a><h2>Details</h2>
+<div class="refsect2" title="GutachterTreeList">
+<a name="GutachterTreeList-struct"></a><h3>GutachterTreeList</h3>
+<pre class="programlisting">typedef struct _GutachterTreeList GutachterTreeList;</pre>
+</div>
+<hr>
+<div class="refsect2" title="GutachterTreeListClass">
+<a name="GutachterTreeListClass"></a><h3>GutachterTreeListClass</h3>
+<pre class="programlisting">typedef struct {
+  GObjectClass              base_class;
+} GutachterTreeListClass;
+</pre>
+</div>
+<hr>
 <div class="refsect2" title="GutachterTreeListPrivate">
 <a name="GutachterTreeListPrivate"></a><h3>GutachterTreeListPrivate</h3>
 <pre class="programlisting">typedef struct _GutachterTreeListPrivate GutachterTreeListPrivate;</pre>
@@ -114,64 +100,39 @@ href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html"
 <hr>
 <div class="refsect2" title="gutachter_tree_list_new ()">
 <a name="gutachter-tree-list-new"></a><h3>gutachter_tree_list_new ()</h3>
-<pre class="programlisting"><a
-href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html"
->GtkTreeModel</a>*       gutachter_tree_list_new             (<a
-href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html"
->GtkTreeModel</a> *real_tree);</pre>
+<pre class="programlisting"><span class="returnvalue">GtkTreeModel</span>*       gutachter_tree_list_new             (<em class="parameter"><code><span class="type">GtkTreeModel</span> *real_tree</code></em>);</pre>
 </div>
 <hr>
 <div class="refsect2" title="gutachter_tree_list_get_model ()">
 <a name="gutachter-tree-list-get-model"></a><h3>gutachter_tree_list_get_model ()</h3>
-<pre class="programlisting"><a
-href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html"
->GtkTreeModel</a>*       gutachter_tree_list_get_model       (GutachterTreeList *self);</pre>
+<pre class="programlisting"><span class="returnvalue">GtkTreeModel</span>*       gutachter_tree_list_get_model       (<em class="parameter"><code><a class="link" href="GutachterTreeList.html" title="GutachterTreeList"><span class="type">GutachterTreeList</span></a> *self</code></em>);</pre>
 </div>
 <hr>
 <div class="refsect2" title="gutachter_tree_list_iter_from_child ()">
 <a name="gutachter-tree-list-iter-from-child"></a><h3>gutachter_tree_list_iter_from_child ()</h3>
-<pre class="programlisting"><a
-href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
->gboolean</a>            gutachter_tree_list_iter_from_child (GutachterTreeList *self,
-                                                         <a
-href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
->GtkTreeIter</a> *iter,
-                                                         <a
-href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
->GtkTreeIter</a> *child_iter);</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gutachter_tree_list_iter_from_child (<em class="parameter"><code><a class="link" href="GutachterTreeList.html" title="GutachterTreeList"><span class="type">GutachterTreeList</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><span class="type">GtkTreeIter</span> *iter</code></em>,
+                                                         <em class="parameter"><code><span class="type">GtkTreeIter</span> *child_iter</code></em>);</pre>
 </div>
 <hr>
 <div class="refsect2" title="gutachter_tree_list_iter_to_child ()">
 <a name="gutachter-tree-list-iter-to-child"></a><h3>gutachter_tree_list_iter_to_child ()</h3>
-<pre class="programlisting"><a
-href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"
->gboolean</a>            gutachter_tree_list_iter_to_child   (GutachterTreeList *self,
-                                                         <a
-href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
->GtkTreeIter</a> *child_iter,
-                                                         <a
-href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html#GtkTreeIter"
->GtkTreeIter</a> *iter);</pre>
-</div>
-<hr>
-<div class="refsect2" title="GutachterTreeList">
-<a name="GutachterTreeList-struct"></a><h3>GutachterTreeList</h3>
-<pre class="programlisting">typedef struct _GutachterTreeList GutachterTreeList;</pre>
+<pre class="programlisting"><a href="/usr/share/gtk-doc/html/glib/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>            gutachter_tree_list_iter_to_child   (<em class="parameter"><code><a class="link" href="GutachterTreeList.html" title="GutachterTreeList"><span class="type">GutachterTreeList</span></a> *self</code></em>,
+                                                         <em class="parameter"><code><span class="type">GtkTreeIter</span> *child_iter</code></em>,
+                                                         <em class="parameter"><code><span class="type">GtkTreeIter</span> *iter</code></em>);</pre>
 </div>
 </div>
 <div class="refsect1" title="Property Details">
 <a name="GutachterTreeList.property-details"></a><h2>Property Details</h2>
 <div class="refsect2" title='The "model" property'>
 <a name="GutachterTreeList--model"></a><h3>The <code class="literal">"model"</code> property</h3>
-<pre class="programlisting">  "model"                    <a
-href="/usr/share/gtk-doc/html/gtk/GtkTreeModel.html"
->GtkTreeModel</a>*         : Write / Construct Only</pre>
+<pre class="programlisting">  "model"                    <span class="type">GtkTreeModel</span>*         : Write / Construct Only</pre>
 <p></p>
 </div>
 </div>
 </div>
 <div class="footer">
 <hr>
-          Generated by GTK-Doc V1.11</div>
+          Generated by GTK-Doc V1.15</div>
 </body>
 </html>
