@@ -1,4 +1,7 @@
 *.bak
+*.css
+*.devhelp
+*.devhelp2
 gutachter.args
 gutachter.hierarchy
 gutachter.interfaces
@@ -6,6 +9,9 @@ gutachter.prerequisites
 gutachter.signals
 gutachter.types
 html
+index.sgml
+/*.html
+/*.png
 *.stamp
 *.txt
 xml
